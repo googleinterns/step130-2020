@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Givr</title>
+</head>
+
+<!-- This is a prototype of the register organization page
+     TODO: add code to handle 'open hours of the day' property -->
+
+
+<!-- this form does not protect against null right now, just is for testing -->
+
+<body>
+	<div id="auto-org-filling-script">
+    <form action="/add-organization" method="POST">
+      <input id="name" type="text" name="org-name" placeholder="Organization Name"></input>
+      <input id="email" type="text" name="email" placeholder="Primary Email"></input>
+      <input id="address" type="text" name="address" placeholder="Street address"></input>
+      <input id = "phone" type = "text" pattern = "[0-9]{10}" name = "phone-number" placeholder="phone number"></input>
+      <input id = "hour-open" type = "text" pattern = "[0-23]{1}" name = "hour-open" placeholder="hour you open (0-23)"></input>
+      <input id = "hour-closed" type = "text" pattern = "[0-23]{1}" name = "hour-closed" placeholder="hour you close (0-23)"></input>
+      <input id = "urllink" type = "text" name = "url-link" placeholder="website link"></input>
+      <textarea name="description" maxlength="180" placeholder="Org description"></textarea>
+      <input type="submit"></input>
+		</form>
+  </div>
+</body>
+</html>
