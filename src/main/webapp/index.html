@@ -1,13 +1,33 @@
 <!DOCTYPE html>
-  <html>
+<html>
 
-    <head>
-	    <meta charset="UTF-8">
-	    <title></title>
-    </head>
+<head>
+	<meta charset="UTF-8">
+	<title>Givr</title>
+	<link rel="stylesheet" href="style.css">
+	<script src="index_script.js"></script>
+</head>
 
-  <body>
-
-  </body>
+<body>
+	<div id="help-near-me-content">
+    <div id = "site-title">Givr</div>
+		<div id="nav-bar">
+			<a href="index.html">Help Near Me</a>
+			<a href="">Login</a>
+		</div>
+    <div id = "zipcode-form">
+      <form action="/list-organizations" method="POST">
+        <label for = "zipcode-entry" id = "zipcode-label">Enter A Zipcode: </label>
+        <input type = "text" id = "zipcode-entry" pattern = "[0-9]{5}" name = "zipcode"/>
+        <input type="submit" id = "submit-button" />
+      </form>
+    </div>
+    <div id = "filter-button-area">
+      <button type = "button" id = "filter-button">Filter</button>
+    </div>
+    <div id = "organization-list">
+    </div>
+  </div>
+</body>
 
 </html>
