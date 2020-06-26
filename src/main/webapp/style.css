@@ -50,12 +50,8 @@
   font-size: 24px;
 }
 
-#filter-button-area {
-  width: 80%;
-  margin-bottom: 10px;
-}
 
-.gray-button {
+#submit-button {
   border: 1px solid #ccc;
   background-color: #A9A9A9;
   border-radius: 4px;
@@ -63,13 +59,27 @@
   color: #ffffff;
   font-size: 16px;
   cursor: pointer;
-  width: 100px;
   margin-left: 10px;
   padding: 5px 20px;
 }
 
+#filter-button-area {
+  width: 80%;
+  margin-bottom: 10px;
+}
+
 #filter-button {
-    float: right;
+  border: 1px solid #ccc;
+  background-color: #A9A9A9;
+  border-radius: 4px;
+  font-family:'Courier New', Courier, monospace;
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+  float: right;
+  width: 100px;
+  margin-left: 10px;
+  padding: 5px 20px;
 }
 
 #organization-list {
@@ -92,3 +102,4 @@
 .organization-name {
   font-size: 36px;
 }
+

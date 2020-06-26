@@ -36,6 +36,31 @@ document.addEventListener("DOMContentLoaded", async function() {
     organizationArea.appendChild(createOrganization(organization));
   });
 });
+ 
+document.addEventListener("DOMContentLoaded", async function() {
+    let organizations = [{
+        "name" : "Organization A",
+    },
+    {
+        "name" : "Organization B",
+    },
+    {
+        "name" : "Organization C",
+    },
+    {
+        "name" : "Organization D",
+    },
+    {
+        "name" : "Organization E",
+    },
+    {
+        "name" : "Organization F"
+    }];
+    const organizationArea = document.getElementById('organization-list');
+    organizations.forEach((organization) => {
+      organizationArea.appendChild(createOrganization(organization));
+    });
+  });
 
 function createOrganization(organization) {
   const organizationElement = document.createElement("div");
@@ -48,6 +73,15 @@ function createOrganization(organization) {
   organizationElement.addEventListener('click', () => {
   });
 
+ 
+  const organizationNameElement = document.createElement('div');
+  organizationNameElement.classList.add("organization-name");
+  organizationNameElement.textContent = organization.name;
+ 
+  organizationElement.addEventListener('click', () => {
+   console.log("hello");
+  });
+ 
   organizationElement.appendChild(organizationNameElement);
   return organizationElement;
 }
