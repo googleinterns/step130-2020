@@ -79,7 +79,6 @@ function createOrganization(organization) {
   organizationNameElement.textContent = organization.name;
  
   organizationElement.addEventListener('click', () => {
-   console.log("hello");
   });
  
   organizationElement.appendChild(organizationNameElement);
