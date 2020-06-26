@@ -19,9 +19,57 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.User;
+import com.google.sps.data.LoginInfo;
 import java.io.IOException;
+import com.google.gson.Gson;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 
 @WebServlet("/add-user")
 public class AddUserServlet extends HttpServlet {
 
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse  response) throws IOException {
+    response.setContentType("application/json;");
+    Gson gson = new Gson();
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    UserService userService = UserServiceFactory.getUserService();
+    boolean isUserLoggedIn = userService.isUserLoggedIn();
+
+    if (isUserLoggedIn) {
+      String userEmail = userService.getCurrentUser().getEmail();
+      String userId = userService.getCurrentUser().getUserId();
+
+      boolean doesUserExist = false;
+
+      /* TO-DO
+       * 1) Check if user exists in Datastore by using INDEX for getCurrentUser().getUserId()
+       *    If user does not exist, then create a new user.
+       *    Use doesUserExist variable
+       */
+
+      User newUser = new User(userId, false);
+      
+      Entity userEntity = new Entity("User");
+      userEntity.setProperty("userId", userId);
+      userEntity.setProperty("isMaintainer", false);
+      datastore.put(userEntity);
+     
+      String urlToRedirectAfterUserLogsOut = "/";
+      String logoutUrl = userService.createLogoutURL(urlToRedirectAfterUserLogsOut);
+      LoginInfo loginInfo = new LoginInfo(null, true, logoutUrl);
+      String json = gson.toJson(loginInfo);
+      response.getWriter().println(json);
+    } else {
+      String urlToRedirectAfterUserLogsIn = "/";
+      String loginUrl = userService.createLoginURL(urlToRedirectAfterUserLogsIn);
+      LoginInfo loginInfo = new LoginInfo(null, false, loginUrl);
+      String json = gson.toJson(loginInfo);
+      response.getWriter().println(json);
+    }
+  }
 }

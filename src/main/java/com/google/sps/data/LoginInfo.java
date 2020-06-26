@@ -14,12 +14,18 @@
 
 package com.google.sps.data;
 
-public final class User {
-  private String id;
-  private boolean isMaintainer = false;
+import com.google.sps.data.User;
 
-  public User(String id, boolean isMaintainer) {
-    this.id = id;
-    this.isMaintainer = isMaintainer;
+public final class LoginInfo {
+  private User user;
+  private boolean isLoggedIn;
+  private String url;
+
+  public LoginInfo(User user, boolean isLoggedIn, String url) {
+    // this.user.id = user.id;
+    // this.user.isMaintainer = user.isMaintainer;
+    this.user = user;
+    this.isLoggedIn = isLoggedIn;
+    this.url = url;
   }
 }
