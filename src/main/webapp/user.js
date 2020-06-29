@@ -31,14 +31,13 @@ class User {
       document.getElementById('login-url').innerText = "Log Out";
       document.getElementById('login-url').href = loginData.url;
 
+      // TODO: Change to check if user is Maintainer. Using ! for displaying purposes.
       if (!this.isMaintainer) {
         const newAnchorItem = document.createElement('a');
         newAnchorItem.innerText = 'Organizations';
         newAnchorItem.href = 'edit.html';
         document.getElementById('nav-bar').appendChild(newAnchorItem);
       }
-      
-      
     } else {
       document.getElementById('login-url').innerText = "Log In";
       document.getElementById('login-url').href = loginData.url;

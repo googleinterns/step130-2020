@@ -68,8 +68,8 @@
 }
 
 #filter-button-area {
-  width: 80%;
   margin-bottom: 10px;
+  height: 30px;
 }
 
 .gray-button {
@@ -91,7 +91,7 @@
 
 #organization-list {
   margin: 0 auto;
-  width: 60%;
+
   height: 495px;
   overflow-y: scroll;
 }
@@ -108,4 +108,17 @@
 
 .organization-name {
   font-size: 36px;
+}
+
+#search-area {
+  display: flex;
+  justify-content: space-around;
+}
+
+#organization-popup-area {
+    display: none;
+}
+
+.popup-close-button {
+  cursor: pointer;
 }
