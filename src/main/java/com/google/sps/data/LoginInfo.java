@@ -22,8 +22,6 @@ public final class LoginInfo {
   private String url;
 
   public LoginInfo(User user, boolean isLoggedIn, String url) {
-    // this.user.id = user.id;
-    // this.user.isMaintainer = user.isMaintainer;
     this.user = user;
     this.isLoggedIn = isLoggedIn;
     this.url = url;
