@@ -72,6 +72,8 @@ class SearchArea {
   }
 
   requestAndDisplayOrganizations() {
+      
+    //TODO: fetch organizations with param
     let organizations = [{
       "name": "Organization A",
       "address": "123 Billy Bur Way, FakeCity 00000",
