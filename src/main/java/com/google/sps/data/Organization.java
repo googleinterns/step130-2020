@@ -15,5 +15,10 @@
 package com.google.sps.data;
 
 public final class Organization {
-  
+  // private int id;
+  // private string name;
+  // private string email;
+  // private string address;
+  // private HashMap<Day, Hours> openHours;
+  // private HashSet<String> moderators;
 }
