@@ -21,6 +21,11 @@ class User {
     const response = await fetch('/add-user');
     const loginData = await response.json();
 
+    if (response.status !== 200) {
+      throw new Error('Did not successfully authenticate user.');
+      return;
+    }
+
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.user.isMaintainer;
       document.getElementById('login-url').innerText = "Log Out";

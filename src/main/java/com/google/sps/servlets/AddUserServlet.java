@@ -54,6 +54,7 @@ public class AddUserServlet extends HttpServlet {
 
       boolean doesUserExist = false;
       boolean isUserMaintainer = false;
+      boolean isLoggedIn = true;
 
       Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
       Query query = new Query("User").setFilter(queryFilter);
@@ -78,13 +79,14 @@ public class AddUserServlet extends HttpServlet {
      
       String urlToRedirectAfterUserLogsOut = "/";
       String logoutUrl = userService.createLogoutURL(urlToRedirectAfterUserLogsOut);
-      UserLoginInfo loginInfo = new UserLoginInfo(currentUser, true, logoutUrl);
+      UserLoginInfo loginInfo = new UserLoginInfo(currentUser, isLoggedIn, logoutUrl);
       String json = gson.toJson(loginInfo);
       response.getWriter().println(json);
     } else {
       String urlToRedirectAfterUserLogsIn = "/";
       String loginUrl = userService.createLoginURL(urlToRedirectAfterUserLogsIn);
-      UserLoginInfo loginInfo = new UserLoginInfo(null, false, loginUrl);
+      boolean isLoggedIn = false;
+      UserLoginInfo loginInfo = new UserLoginInfo(null, isLoggedIn, loginUrl);
       String json = gson.toJson(loginInfo);
       response.getWriter().println(json);
     }
