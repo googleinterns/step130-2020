@@ -27,6 +27,13 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.QueryResultList;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.FetchOptions;
 
 @WebServlet("/add-user")
 public class AddUserServlet extends HttpServlet {
@@ -43,25 +50,30 @@ public class AddUserServlet extends HttpServlet {
     if (isUserLoggedIn) {
       String userEmail = userService.getCurrentUser().getEmail();
       String userId = userService.getCurrentUser().getUserId();
+      User currentUser = null;
 
       boolean doesUserExist = false;
+      boolean isUserMaintainer = false;
 
-      /* TO-DO
-       * 1) Check if user exists in Datastore by using INDEX for getCurrentUser().getUserId()
-       *    If user does not exist, then create a new user.
-       *    Use doesUserExist variable
-       */
-
-      User newUser = new User(userId, false);
+      Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
+      Query query = new Query("User").setFilter(queryFilter);
       
-      Entity userEntity = new Entity("User");
-      userEntity.setProperty("userId", userId);
-      userEntity.setProperty("isMaintainer", false);
-      datastore.put(userEntity);
+      FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
+      PreparedQuery preparedQuery = datastore.prepare(query);
+      QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
+      if (userResult.size() < 1) {
+        User newUser = new User(userId, isUserMaintainer);
+        currentUser = newUser;
+      
+        Entity userEntity = new Entity("User");
+        userEntity.setProperty("userId", userId);
+        userEntity.setProperty("isMaintainer", isUserMaintainer);
+        datastore.put(userEntity);
+      }
      
       String urlToRedirectAfterUserLogsOut = "/";
       String logoutUrl = userService.createLogoutURL(urlToRedirectAfterUserLogsOut);
-      LoginInfo loginInfo = new LoginInfo(null, true, logoutUrl);
+      LoginInfo loginInfo = new LoginInfo(currentUser, true, logoutUrl);
       String json = gson.toJson(loginInfo);
       response.getWriter().println(json);
     } else {
