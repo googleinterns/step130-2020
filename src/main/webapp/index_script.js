@@ -33,21 +33,7 @@ document.addEventListener("DOMContentLoaded", async function() {
   }];
   const organizationArea = document.getElementById('organization-list');
   organizations.forEach((organization) => {
-    organizationArea.appendChild(createOrganization(organization));
+    const newOrganization = new Organization();
+    organizationArea.appendChild(newOrganization.createOrganization(organization));
   });
 });
-
-function createOrganization(organization) {
-  const organizationElement = document.createElement("div");
-  organizationElement.classList.add("organization");
-
-  const organizationNameElement = document.createElement('div');
-  organizationNameElement.classList.add("organization-name");
-  organizationNameElement.textContent = organization.name;
-
-  organizationElement.addEventListener('click', () => {
-  });
-
-  organizationElement.appendChild(organizationNameElement);
-  return organizationElement;
-}
