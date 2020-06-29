@@ -13,41 +13,147 @@
 // limitations under the License.
 
 document.addEventListener("DOMContentLoaded", async function() {
-  let organizations = [{
-    "name": "Organization A",
-  },
-  {
-    "name": "Organization B",
-  },
-  {
-    "name": "Organization C",
-  },
-  {
-    "name": "Organization D",
-  },
-  {
-    "name": "Organization E",
-  },
-  {
-    "name": "Organization F"
-  }];
-  const organizationArea = document.getElementById('organization-list');
-  organizations.forEach((organization) => {
-    organizationArea.appendChild(createOrganization(organization));
-  });
+  const searchArea = new SearchArea(document.getElementById('search-area'));
+
 });
 
-function createOrganization(organization) {
-  const organizationElement = document.createElement("div");
-  organizationElement.classList.add("organization");
+class SearchArea {
+  constructor(searchAreaElement) {
+    this.searchArea = searchAreaElement;
+    this.organizationSearchArea = document.createElement("div");
 
-  const organizationNameElement = document.createElement('div');
-  organizationNameElement.classList.add("organization-name");
-  organizationNameElement.textContent = organization.name;
+    this.zipcodeForm = document.createElement("div");
+    this.form = document.createElement("form");
+    this.form.setAttribute("action", "/list-organizations");
+    this.form.setAttribute("method", "POST");
 
-  organizationElement.addEventListener('click', () => {
-  });
+    this.zipcodeFormLabel = document.createElement("label");
+    this.zipcodeFormLabel.setAttribute("for", "zipcode-entry");
+    this.zipcodeFormLabel.setAttribute("id", "zipcode-label");
+    this.zipcodeFormLabel.textContent = "Enter a zipcode: ";
+    this.zipcodeForm.appendChild(this.zipcodeFormLabel);
 
-  organizationElement.appendChild(organizationNameElement);
-  return organizationElement;
+    this.zipcodeFormEntry = document.createElement("input");
+    this.zipcodeFormEntry.setAttribute("type", "text");
+    this.zipcodeFormEntry.setAttribute("id", "zipcode-entry");
+    this.zipcodeFormEntry.setAttribute("pattern", "[0-9]{5}");
+    this.zipcodeFormEntry.setAttribute("name", "zipcode");
+    this.zipcodeForm.appendChild(this.zipcodeFormEntry);
+
+    this.zipcodeSubmit = document.createElement("input");
+    this.zipcodeSubmit.setAttribute("type", "submit");
+    this.zipcodeSubmit.setAttribute("class", "gray-button");
+    this.zipcodeForm.appendChild(this.zipcodeSubmit);
+
+    this.organizationSearchArea.appendChild(this.zipcodeForm);
+
+    this.filterButtonArea = document.createElement("div");
+    this.filterButtonArea.setAttribute("id", "filter-button-area");
+
+    this.filterButton = document.createElement("button");
+    this.filterButton.setAttribute("type", "button");
+    this.filterButton.setAttribute("class", "gray-button");
+    this.filterButton.setAttribute("id", "filter-button");
+    this.filterButton.textContent = "Filter";
+    this.filterButtonArea.appendChild(this.filterButton);
+
+    this.organizationSearchArea.appendChild(this.filterButtonArea);
+
+    this.organizationList = document.createElement("div");
+    this.organizationList.setAttribute("id", "organization-list");
+    this.requestAndDisplayOrganizations();
+    this.organizationSearchArea.appendChild(this.organizationList);
+
+    this.organizationPopupArea = document.createElement("div");
+    this.organizationPopupArea.setAttribute("id", "organization-popup-area");
+
+    this.searchArea.appendChild(this.organizationSearchArea);
+    this.searchArea.appendChild(this.organizationPopupArea);
+  }
+
+  requestAndDisplayOrganizations() {
+    let organizations = [{
+      "name": "Organization A",
+      "address": "123 Billy Bur Way, FakeCity 00000",
+      "phone": "123-456-7890"
+    },
+    {
+      "name": "Organization B",
+      "address": "123 Billy Bur Way, FakeCity 00000",
+      "phone": "123-456-7890"
+    },
+    {
+      "name": "Organization C",
+      "address": "123 Billy Bur Way, FakeCity 00000",
+      "phone": "123-456-7890"
+    },
+    {
+      "name": "Organization D",
+      "address": "123 Billy Bur Way, FakeCity 00000",
+      "phone": "123-456-7890"
+    },
+    {
+      "name": "Organization E",
+      "address": "123 Billy Bur Way, FakeCity 00000",
+      "phone": "123-456-7890"
+    },
+    {
+      "name": "Organization F",
+      "address": "123 Billy Bur Way, FakeCity 00000",
+      "phone": "123-456-7890"
+    }];
+    organizations.forEach((organization) => {
+      this.organizationList.appendChild(this.createOrganization(organization));
+    });
+  }
+
+  createOrganization(organization) {
+    const organizationElement = document.createElement("div");
+    organizationElement.classList.add("organization");
+
+    const organizationNameElement = document.createElement('div');
+    organizationNameElement.classList.add("organization-name");
+    organizationNameElement.textContent = organization.name;
+
+    organizationElement.addEventListener('click', () => {
+      document.getElementById("organization-popup-area").textContent = "";
+      document.getElementById("organization-popup-area").appendChild(this.organizationPopup(organization));
+      document.getElementById("organization-popup-area").style.display = 'block';
+    });
+
+    organizationElement.appendChild(organizationNameElement);
+    return organizationElement;
+  }
+
+  organizationPopup(organization) {
+    const popupElement = document.createElement("div");
+    popupElement.classList.add("organization-popup");
+
+    const popupNameElement = document.createElement('div');
+    popupNameElement.classList.add("organization-name");
+    popupNameElement.textContent = organization.name;
+
+    const popupPhoneElement = document.createElement('div');
+    popupPhoneElement.classList.add("organization-popup-phone");
+    popupPhoneElement.textContent = organization.phone;
+
+    const popupAddressElement = document.createElement('div');
+    popupAddressElement.classList.add("organization-popup-address");
+    popupAddressElement.textContent = organization.address;
+
+    const closeButtonElement = document.createElement('div');
+    closeButtonElement.classList.add("popup-close-button");
+    closeButtonElement.textContent = 'X';
+    closeButtonElement.addEventListener('click', () => {
+      // Remove the popup from the DOM.
+      document.getElementById("organization-popup-area").style.display = 'none';
+      popupElement.remove();
+    });
+
+    popupElement.appendChild(closeButtonElement);
+    popupElement.appendChild(popupNameElement);
+    popupElement.appendChild(popupPhoneElement);
+    popupElement.appendChild(popupAddressElement);
+    return popupElement;
+  }
 }
