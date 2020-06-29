@@ -69,17 +69,22 @@ public class AddUserServlet extends HttpServlet {
         userEntity.setProperty("userId", userId);
         userEntity.setProperty("isMaintainer", isUserMaintainer);
         datastore.put(userEntity);
+      } else {
+        for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
+          isUserMaintainer = (boolean) entity.getProperty("isMaintainer");
+        }
+        currentUser = new User(userId, isUserMaintainer);
       }
      
       String urlToRedirectAfterUserLogsOut = "/";
       String logoutUrl = userService.createLogoutURL(urlToRedirectAfterUserLogsOut);
-      LoginInfo loginInfo = new LoginInfo(currentUser, true, logoutUrl);
+      UserLoginInfo loginInfo = new UserLoginInfo(currentUser, true, logoutUrl);
       String json = gson.toJson(loginInfo);
       response.getWriter().println(json);
     } else {
       String urlToRedirectAfterUserLogsIn = "/";
       String loginUrl = userService.createLoginURL(urlToRedirectAfterUserLogsIn);
-      LoginInfo loginInfo = new LoginInfo(null, false, loginUrl);
+      UserLoginInfo loginInfo = new UserLoginInfo(null, false, loginUrl);
       String json = gson.toJson(loginInfo);
       response.getWriter().println(json);
     }
