@@ -13,29 +13,21 @@
 // limitations under the License.
 
 document.addEventListener("DOMContentLoaded", async function() {
-  let organizations = [{
-    "name": "Organization A",
-  },
-  {
-    "name": "Organization B",
-  },
-  {
-    "name": "Organization C",
-  },
-  {
-    "name": "Organization D",
-  },
-  {
-    "name": "Organization E",
-  },
-  {
-    "name": "Organization F"
-  }];
   const organizationArea = document.getElementById('organization-list');
-  organizations.forEach((organization) => {
-    organizationArea.appendChild(createOrganization(organization));
-  });
+  renderOrganizations(organizationArea);
 });
+
+/* 
+ * This async function gets a default list of organization names to display when the dom content
+ * loads by not passing any parameters to /list-organizations
+ */
+async function renderOrganizations(organizationArea) {
+  const response = await fetch(`/list-organizations`);
+  const organizationNames = await response.json();
+  for (let i = 0; i < organizationNames.length; i++) {
+    organizationArea.appendChild(createOrganization(organizationNames[i]));
+  }
+}
 
 function createOrganization(organization) {
   const organizationElement = document.createElement("div");
@@ -43,7 +35,7 @@ function createOrganization(organization) {
 
   const organizationNameElement = document.createElement('div');
   organizationNameElement.classList.add("organization-name");
-  organizationNameElement.textContent = organization.name;
+  organizationNameElement.textContent = organization;
 
   organizationElement.addEventListener('click', () => {
   });
