@@ -22,10 +22,10 @@ class SearchArea {
     this.searchArea = searchAreaElement;
     this.organizationSearchArea = document.createElement("div");
 
-    this.zipcodeForm = document.createElement("div");
-    this.form = document.createElement("form");
-    this.form.setAttribute("action", "/list-organizations");
-    this.form.setAttribute("method", "POST");
+    this.zipcodeFormArea = document.createElement("div");
+    this.zipcodeForm = document.createElement("form");
+    this.zipcodeForm.setAttribute("action", "/list-organizations");
+    this.zipcodeForm.setAttribute("method", "POST");
 
     this.zipcodeFormLabel = document.createElement("label");
     this.zipcodeFormLabel.setAttribute("for", "zipcode-entry");
@@ -45,6 +45,7 @@ class SearchArea {
     this.zipcodeSubmit.setAttribute("class", "gray-button");
     this.zipcodeForm.appendChild(this.zipcodeSubmit);
 
+    this.zipcodeFormArea.appendChild(this.zipcodeForm);
     this.organizationSearchArea.appendChild(this.zipcodeForm);
 
     this.filterButtonArea = document.createElement("div");
@@ -66,6 +67,7 @@ class SearchArea {
 
     this.organizationPopupArea = document.createElement("div");
     this.organizationPopupArea.setAttribute("id", "organization-popup-area");
+    this.organizationPopupArea.classList.add("hide-popup");
 
     this.searchArea.appendChild(this.organizationSearchArea);
     this.searchArea.appendChild(this.organizationPopupArea);
@@ -118,9 +120,11 @@ class SearchArea {
     organizationNameElement.textContent = organization.name;
 
     organizationElement.addEventListener('click', () => {
-      document.getElementById("organization-popup-area").textContent = "";
-      document.getElementById("organization-popup-area").appendChild(this.organizationPopup(organization));
-      document.getElementById("organization-popup-area").style.display = 'block';
+      const organizationPopupArea = document.getElementById("organization-popup-area");
+      organizationPopupArea.textContent = "";
+      organizationPopupArea.appendChild(this.organizationPopup(organization));
+      organizationPopupArea.classList.remove("hide-popup");
+      organizationPopupArea.classList.add("show-popup");
     });
 
     organizationElement.appendChild(organizationNameElement);
@@ -148,7 +152,9 @@ class SearchArea {
     closeButtonElement.textContent = 'X';
     closeButtonElement.addEventListener('click', () => {
       // Remove the popup from the DOM.
-      document.getElementById("organization-popup-area").style.display = 'none';
+      const organizationPopupArea = document.getElementById("organization-popup-area");
+      organizationPopupArea.classList.remove("show-popup");
+      organizationPopupArea.classList.add("hide-popup")
       popupElement.remove();
     });
 
