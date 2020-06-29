@@ -12,21 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById("login-url").addEventListener('click', renderLoginStatus);
-  // Called to set log in/out URL when site loads.
-  renderLoginStatus();
-});
+class User {
+  User() {
+    document.getElementById("login-url").addEventListener('click', this.renderLoginStatus);
+  }
 
-async function renderLoginStatus() {
-  const response = await fetch('/add-user');
-  const loginData = await response.json();
+  async renderLoginStatus() {
+    const response = await fetch('/add-user');
+    const loginData = await response.json();
 
-  if (loginData.isLoggedIn) {
-    document.getElementById("login-url").innerText = "Log Out";
-    document.getElementById("login-url").href = loginData.url;
-  } else {
-    document.getElementById("login-url").innerText = "Log In";
-    document.getElementById("login-url").href = loginData.url;
+    if (loginData.isLoggedIn) {
+      this.isMaintainer = loginData.user.isMaintainer;
+      document.getElementById("login-url").innerText = "Log Out";
+      document.getElementById("login-url").href = loginData.url;
+      // document.getElementById()
+    } else {
+      document.getElementById("login-url").innerText = "Log In";
+      document.getElementById("login-url").href = loginData.url;
+    }
   }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const currentUser = new User();
+  // Called to set log in/out URL when site loads.
+  currentUser.renderLoginStatus();
+});
