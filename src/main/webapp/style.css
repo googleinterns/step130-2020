@@ -110,8 +110,12 @@
   justify-content: space-around;
 }
 
-#organization-popup-area {
+.hide-popup {
     display: none;
+}
+
+.show-popup {
+    display: block;
 }
 
 .popup-close-button {
