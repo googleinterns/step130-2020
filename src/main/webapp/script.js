@@ -14,7 +14,7 @@
 
 class User {
   User() {
-    document.getElementById("login-url").addEventListener('click', this.renderLoginStatus);
+    document.getElementById('login-url').addEventListener('click', this.renderLoginStatus);
   }
 
   async renderLoginStatus() {
@@ -23,12 +23,20 @@ class User {
 
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.user.isMaintainer;
-      document.getElementById("login-url").innerText = "Log Out";
-      document.getElementById("login-url").href = loginData.url;
-      // document.getElementById()
+      document.getElementById('login-url').innerText = "Log Out";
+      document.getElementById('login-url').href = loginData.url;
+
+      if (!this.isMaintainer) {
+        const newAnchorItem = document.createElement('a');
+        newAnchorItem.innerText = 'Organizations';
+        newAnchorItem.href = 'edit.html';
+        document.getElementById('nav-bar').appendChild(newAnchorItem);
+      }
+      
+      
     } else {
-      document.getElementById("login-url").innerText = "Log In";
-      document.getElementById("login-url").href = loginData.url;
+      document.getElementById('login-url').innerText = "Log In";
+      document.getElementById('login-url').href = loginData.url;
     }
   }
 }
