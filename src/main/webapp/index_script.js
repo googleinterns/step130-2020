@@ -13,6 +13,7 @@
 // limitations under the License.
 
 document.addEventListener("DOMContentLoaded", async function() {
+<<<<<<< HEAD
   const searchArea = new SearchArea(document.getElementById('search-area'));
 
 });
@@ -142,6 +143,31 @@ class SearchArea {
     const popupAddressElement = document.createElement('div');
     popupAddressElement.classList.add("organization-popup-address");
     popupAddressElement.textContent = organization.address;
+=======
+  const organizationArea = document.getElementById('organization-list');
+  renderOrganizations(organizationArea);
+});
+
+/* 
+ * This async function gets a default list of organization names to display when the dom content
+ * loads by not passing any parameters to /list-organizations
+ */
+async function renderOrganizations(organizationArea) {
+  const response = await fetch(`/list-organizations`);
+  const organizationNames = await response.json();
+  for (let i = 0; i < organizationNames.length; i++) {
+    organizationArea.appendChild(createOrganization(organizationNames[i]));
+  }
+}
+
+function createOrganization(organization) {
+  const organizationElement = document.createElement("div");
+  organizationElement.classList.add("organization");
+
+  const organizationNameElement = document.createElement('div');
+  organizationNameElement.classList.add("organization-name");
+  organizationNameElement.textContent = organization;
+>>>>>>> add list org servlet & connect front page to it
 
     const closeButtonElement = document.createElement('div');
     closeButtonElement.classList.add("popup-close-button");
