@@ -13,12 +13,12 @@
 // limitations under the License.
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById("login-url").addEventListener('click', login);
+  document.getElementById("login-url").addEventListener('click', renderLoginStatus);
   // Called to set log in/out URL when site loads.
-  login();
+  renderLoginStatus();
 });
 
-async function login() {
+async function renderLoginStatus() {
   const response = await fetch('/add-user');
   const loginData = await response.json();
 
