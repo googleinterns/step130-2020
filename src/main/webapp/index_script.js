@@ -45,9 +45,6 @@ function createOrganization(organization) {
   organizationNameElement.classList.add("organization-name");
   organizationNameElement.textContent = organization.name;
 
-  organizationElement.addEventListener('click', () => {
-  });
-
   organizationElement.appendChild(organizationNameElement);
   return organizationElement;
 }
