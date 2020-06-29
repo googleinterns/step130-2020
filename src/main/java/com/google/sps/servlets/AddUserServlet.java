@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.User;
-import com.google.sps.data.LoginInfo;
+import com.google.sps.data.UserLoginInfo;
 import java.io.IOException;
 import com.google.gson.Gson;
 import com.google.appengine.api.users.UserService;

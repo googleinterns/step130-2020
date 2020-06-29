@@ -16,12 +16,12 @@ package com.google.sps.data;
 
 import com.google.sps.data.User;
 
-public final class LoginInfo {
+public final class UserLoginInfo {
   private User user;
   private boolean isLoggedIn;
   private String url;
 
-  public LoginInfo(User user, boolean isLoggedIn, String url) {
+  public UserLoginInfo(User user, boolean isLoggedIn, String url) {
     this.user = user;
     this.isLoggedIn = isLoggedIn;
     this.url = url;
