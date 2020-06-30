@@ -80,7 +80,7 @@ class SearchArea {
     const response = await fetch(`/list-organizations`);
     const organizationNames = await response.json();
     for (let i = 0; i < organizationNames.length; i++) {
-      organizationArea.appendChild(createOrganization(organizationNames[i]));
+      this.organizationList.appendChild(this.createOrganization(organizationNames[i]));
     }
   }
 
