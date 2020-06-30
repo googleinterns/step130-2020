@@ -68,10 +68,7 @@ public class ListOrganizationsServlet extends HttpServlet {
     if (isUserLoggedIn && displayUserOrgs) {
       /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
       String userId = userService.getCurrentUser().getUserId();
-
-      query = new Query("Distributor").setFilter(new FilterPredicate("moderatorList",
-                                                                        FilterOperator.EQUAL, userId))
-                                                                        .addSort("creationTimeStamp", SortDirection.DESCENDING);
+      query = ConstructQueryForUserInfo(userId);
     } else {
       /* If no username was included, it just returns all orgs */
         // TODO: make this only return approved orgs
@@ -97,5 +94,11 @@ public class ListOrganizationsServlet extends HttpServlet {
     Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(requestedOrganizations));
+  }
+
+  public Query ConstructQueryForUserInfo(String userID) {
+    Query query = new Query("Distributor").setFilter(new FilterPredicate("moderatorList",
+                    FilterOperator.EQUAL, userID)).addSort("creationTimeStamp", SortDirection.DESCENDING);
+    return query;
   }
 }

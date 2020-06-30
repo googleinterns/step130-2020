@@ -73,42 +73,16 @@ class SearchArea {
     this.searchArea.appendChild(this.organizationPopupArea);
   }
 
-  requestAndDisplayOrganizations() {
-      
-    //TODO: fetch organizations with param
-    let organizations = [{
-      "name": "Organization A",
-      "address": "123 Billy Bur Way, FakeCity 00000",
-      "phone": "123-456-7890"
-    },
-    {
-      "name": "Organization B",
-      "address": "123 Billy Bur Way, FakeCity 00000",
-      "phone": "123-456-7890"
-    },
-    {
-      "name": "Organization C",
-      "address": "123 Billy Bur Way, FakeCity 00000",
-      "phone": "123-456-7890"
-    },
-    {
-      "name": "Organization D",
-      "address": "123 Billy Bur Way, FakeCity 00000",
-      "phone": "123-456-7890"
-    },
-    {
-      "name": "Organization E",
-      "address": "123 Billy Bur Way, FakeCity 00000",
-      "phone": "123-456-7890"
-    },
-    {
-      "name": "Organization F",
-      "address": "123 Billy Bur Way, FakeCity 00000",
-      "phone": "123-456-7890"
-    }];
-    organizations.forEach((organization) => {
-      this.organizationList.appendChild(this.createOrganization(organization));
-    });
+   /* 
+     * This async function gets a default list of organization names to display when the dom content
+     * loads by not passing any parameters to /list-organizations
+     */
+  async requestAndDisplayOrganizations() {
+    const response = await fetch(`/list-organizations`);
+    const organizationNames = await response.json();
+    for (let i = 0; i < organizationNames.length; i++) {
+      this.organizationList.appendChild(this.createOrganization(organizationNames[i]));
+    }
   }
 
   createOrganization(organization) {
