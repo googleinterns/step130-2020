@@ -12,16 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.servlets;
+package com.google.sps.data;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.User;
-import java.io.IOException;
 
-@WebServlet("/delete-organization")
-public class DeleteOrganizationServlet extends HttpServlet {
+public final class UserLoginInfo {
+  private User user;
+  private boolean isLoggedIn;
+  private String url;
 
+  public UserLoginInfo(User user, boolean isLoggedIn, String url) {
+    this.user = user;
+    this.isLoggedIn = isLoggedIn;
+    this.url = url;
+  }
 }
