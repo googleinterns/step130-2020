@@ -14,7 +14,6 @@
 
 document.addEventListener("DOMContentLoaded", async function() {
   const searchArea = new SearchArea(document.getElementById('search-area'));
-
 });
 
 class SearchArea {
@@ -120,7 +119,22 @@ class SearchArea {
     const popupAddressElement = document.createElement('div');
     popupAddressElement.classList.add("organization-popup-address");
     popupAddressElement.textContent = organization.address;
-    const organizationArea = document.getElementById('organization-list');
-    renderOrganizations(organizationArea);
+
+    const closeButtonElement = document.createElement('div');
+    closeButtonElement.classList.add("popup-close-button");
+    closeButtonElement.textContent = 'X';
+    closeButtonElement.addEventListener('click', () => {
+      // Remove the popup from the DOM.
+      const organizationPopupArea = document.getElementById("organization-popup-area");
+      organizationPopupArea.classList.remove("show-popup");
+      organizationPopupArea.classList.add("hide-popup")
+      popupElement.remove();
+    });
+
+    popupElement.appendChild(closeButtonElement);
+    popupElement.appendChild(popupNameElement);
+    popupElement.appendChild(popupPhoneElement);
+    popupElement.appendChild(popupAddressElement);
+    return popupElement;
   }
 }
