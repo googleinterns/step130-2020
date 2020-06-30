@@ -23,6 +23,7 @@ class SearchArea {
     this.organizationSearchArea = document.createElement("div");
 
     this.zipcodeFormArea = document.createElement("div");
+    this.zipcodeFormArea.setAttribute("id", "zipcode-form-area");
     this.zipcodeForm = document.createElement("form");
     this.zipcodeForm.setAttribute("action", "/list-organizations");
     this.zipcodeForm.setAttribute("method", "POST");
