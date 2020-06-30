@@ -70,8 +70,7 @@ public class ListOrganizationsServlet extends HttpServlet {
       String userId = userService.getCurrentUser().getUserId();
 
       query = new Query("Distributor").setFilter(new FilterPredicate("moderatorList",
-                                                                        FilterOperator.EQUAL, userId))
-                                                                        .addSort("creationTimeStamp", SortDirection.DESCENDING);
+                    FilterOperator.EQUAL, userId)).addSort("creationTimeStamp", SortDirection.DESCENDING);
     } else {
       /* If no username was included, it just returns all orgs */
         // TODO: make this only return approved orgs
