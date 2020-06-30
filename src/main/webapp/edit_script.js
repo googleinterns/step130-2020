@@ -13,9 +13,6 @@
 // limitations under the License.
 
 document.addEventListener('DOMContentLoaded', () => {
-  // document.getElementById('approved-organization-list');
-  // document.getElementById('not-approved-organization-list');
-
   // TODO: display approved list ONLY if User is a Moderator.
   
   // TODO: display not-approved list if User is a Maintainer.
@@ -44,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
   organizationPopupArea.setAttribute("id", "organization-popup-area-edit");
   
   organizations.forEach((organization) => {
-    const newOrganization = new Organization();
-    document.getElementById('approved-organization-list').appendChild(newOrganization.createOrganization(organization, isMaintainer));
+    const newOrganization = new Organization(organization, isMaintainer);
+    document.getElementById('approved-organization-list').appendChild(newOrganization.getOrganization());
   });
 
   organizationArea.appendChild(organizationPopupArea);
