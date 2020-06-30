@@ -44,11 +44,19 @@ document.addEventListener("DOMContentLoaded", async function() {
     "address": "123 Billy Bur Way, FakeCity 00000",
     "phone": "123-456-7890"
   }];
-  const searchArea = new SearchArea(document.getElementById('search-area'), organizations);
+
+  let isMaintainer = false;
+  if (document.getElementById('search-area')) {
+    const mainSearchArea = new SearchArea(document.getElementById('search-area'), organizations, isMaintainer);
+  }
+  isMaintainer = true;
+  if (document.getElementById('all-organizations')) {
+    const organizationSearchArea = new SearchArea(document.getElementById('all-organizations'), organizations, isMaintainer);
+  }
 });
 
 class SearchArea {
-  constructor(searchAreaElement, organizations) {
+  constructor(searchAreaElement, organizations, isMaintainer) {
     this.searchArea = searchAreaElement;
     this.organizationSearchArea = document.createElement("div");
 
@@ -93,10 +101,10 @@ class SearchArea {
     this.organizationList.setAttribute("id", "organization-list");
 
     this.organizationPopupArea = document.createElement("div");
-    this.organizationPopupArea.setAttribute("id", "organization-popup-area-index");
-    
+    this.organizationPopupArea.setAttribute("id", "organization-popup-area");
+
     organizations.forEach((organization) => {
-      const newOrganization = new Organization(organization);
+      const newOrganization = new Organization(organization, isMaintainer);
       this.organizationList.appendChild(newOrganization.getOrganization());
     });
 

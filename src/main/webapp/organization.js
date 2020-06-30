@@ -34,20 +34,12 @@ class Organization {
     this.organizationElement.addEventListener('click', () => {
       // TODO: GetOrganizationServlet to display more information about this servlet
 
-      // Checks if organization-popup-area element exists in index.html
-      let popupIndexPage = document.getElementById("organization-popup-area-index");
+      // Checks if organization-popup-area element exists.
+      let popupIndexPage = document.getElementById("organization-popup-area");
       if (popupIndexPage) {
         popupIndexPage.textContent = "";
         popupIndexPage.appendChild(this.createOrganizationPopup());
         popupIndexPage.style.display = 'block';
-      }
-
-      // Checks if organization-popup-area element exists in edit.html
-      let popupEditPage = document.getElementById("organization-popup-area-edit");
-      if (popupEditPage) {
-        popupEditPage.textContent = "";
-        popupEditPage.appendChild(this.createOrganizationPopup());
-        popupEditPage.style.display = 'block';
       }
     });
 
@@ -86,11 +78,8 @@ class Organization {
     closeButtonElement.textContent = 'X';
     closeButtonElement.addEventListener('click', () => {
       // Remove the popup from the DOM.
-      if (document.getElementById("organization-popup-area-edit")) {
-        document.getElementById("organization-popup-area-edit").style.display = 'none';
-      }
-      if (document.getElementById("organization-popup-area-index")) {
-        document.getElementById("organization-popup-area-index").style.display = 'none';
+      if (document.getElementById("organization-popup-area")) {
+        document.getElementById("organization-popup-area").style.display = 'none';
       }
       popupElement.remove();
     });
