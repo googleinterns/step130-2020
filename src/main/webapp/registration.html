@@ -15,15 +15,15 @@
 <body>
 	<div id="auto-org-filling-script">
     <form action="/add-organization" method="POST">
-      <input id="name" type="text" name="org-name" placeholder="Organization Name"></input>
-      <input id="email" type="text" name="email" placeholder="Primary Email"></input>
-      <input id="address" type="text" name="address" placeholder="Street address"></input>
-      <input id = "phone" type = "text" pattern = "[0-9]{10}" name = "phone-number" placeholder="phone number"></input>
-      <input id = "hour-open" type = "text" pattern = "[0-23]{1}" name = "hour-open" placeholder="hour you open (0-23)"></input>
-      <input id = "hour-closed" type = "text" pattern = "[0-23]{1}" name = "hour-closed" placeholder="hour you close (0-23)"></input>
-      <input id = "urllink" type = "text" name = "url-link" placeholder="website link"></input>
+      <input id="name" type="text" name="org-name" placeholder="Organization Name">
+      <input id="email" type="text" name="email" placeholder="Primary Email">
+      <input id="address" type="text" name="address" placeholder="Street address">
+      <input id = "phone" type = "text" pattern = "[0-9]{10}" name = "phone-number" placeholder="phone number">
+      <input id = "hour-open" type="number" min="0" max="23" name = "hour-open" placeholder="hour you open (0-23)">
+      <input id = "hour-closed" type="number" min="0" max="23" name = "hour-closed" placeholder="hour you close (0-23)">
+      <input id = "urllink" type = "text" name = "url-link" placeholder="website link">
       <textarea name="description" maxlength="180" placeholder="Org description"></textarea>
-      <input type="submit"></input>
+      <input type="submit">
 		</form>
   </div>
 </body>
