@@ -15,5 +15,11 @@
 package com.google.sps.data;
 
 public final class User {
+  private String id;
+  private boolean isMaintainer = false;
 
+  public User(String id, boolean isMaintainer) {
+    this.id = id;
+    this.isMaintainer = isMaintainer;
+  }
 }

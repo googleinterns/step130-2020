@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
 }
- 
+
 #help-near-me-content a {
   color: #666666;
   text-decoration: none;
@@ -50,9 +50,21 @@
   font-size: 24px;
 }
 
+#submit-button {
+  border: 1px solid #ccc;
+  background-color: #A9A9A9;
+  border-radius: 4px;
+  font-family:'Courier New', Courier, monospace;
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 10px;
+  padding: 5px 20px;
+}
+
 #filter-button-area {
-  width: 80%;
   margin-bottom: 10px;
+  height: 30px;
 }
 
 .gray-button {
@@ -74,7 +86,7 @@
 
 #organization-list {
   margin: 0 auto;
-  width: 60%;
+
   height: 495px;
   overflow-y: scroll;
 }
@@ -91,4 +103,21 @@
 
 .organization-name {
   font-size: 36px;
+}
+
+#search-area {
+  display: flex;
+  justify-content: space-around;
+}
+
+.hide-popup {
+    display: none;
+}
+
+.show-popup {
+    display: block;
+}
+
+.popup-close-button {
+  cursor: pointer;
 }

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
@@ -6,6 +7,7 @@
 	<title>Givr</title>
 	<link rel="stylesheet" href="style.css">
 	<script src="index_script.js"></script>
+  <script src="user.js"></script>
 </head>
 
 <body>
@@ -13,20 +15,11 @@
 		<div id="site-title">Givr</div>
 		<div id="nav-bar">
 			<a href="index.html">Help Near Me</a>
-			<a href="">Login</a>
+			<a id="login-url" href="">Login</a>
       <a href="registration.html">Register Org</a> <!--this will only appear when logged in after login is setup -->
+			<a id="login-url">Login</a>
 		</div>
-		<div id="zipcode-form">
-			<form action="/list-organizations" method="POST">
-				<label for = "zipcode-entry" id = "zipcode-label">Enter A Zipcode: </label>
-				<input type = "text" id = "zipcode-entry" pattern = "[0-9]{5}" name = "zipcode"/>
-				<input type="submit" class = "gray-button" />
-      </form>
-		</div>
-		<div id="filter-button-area">
-			<button type = "button" class = "gray-button" id = "filter-button">Filter</button>
-		</div>
-		<div id="organization-list">
+		<div id="search-area">
 		</div>
 	</div>
 </body>

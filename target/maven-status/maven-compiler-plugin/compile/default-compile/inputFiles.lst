@@ -1,0 +1,14 @@
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/servlets/GetOrganizationServlet.java
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/servlets/EditOrganizationServlet.java
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/servlets/DeleteOrganizationServlet.java
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/servlets/DeleteUserServlet.java
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/data/Organization.java
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/servlets/EditUserServlet.java
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/servlets/ListOrganizationsServlet.java
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/servlets/AddUserServlet.java
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/data/User.java
+<<<<<<< HEAD
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/data/UserLoginInfo.java
+=======
+>>>>>>> Code tweaks
+/home/masek/caviar/step130-2020/src/main/java/com/google/sps/servlets/AddOrganizationServlet.java

@@ -1,0 +1,14 @@
+com/google/sps/data/User.class
+com/google/sps/servlets/ListOrganizationsServlet.class
+com/google/sps/servlets/EditUserServlet.class
+com/google/sps/servlets/DeleteUserServlet.class
+com/google/sps/servlets/DeleteOrganizationServlet.class
+com/google/sps/data/Organization.class
+com/google/sps/servlets/AddOrganizationServlet.class
+com/google/sps/servlets/EditOrganizationServlet.class
+com/google/sps/servlets/AddUserServlet.class
+<<<<<<< HEAD
+com/google/sps/data/UserLoginInfo.class
+=======
+>>>>>>> Code tweaks
+com/google/sps/servlets/GetOrganizationServlet.class
