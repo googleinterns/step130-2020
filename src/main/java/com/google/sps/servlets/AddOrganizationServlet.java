@@ -46,6 +46,7 @@ public class AddOrganizationServlet extends HttpServlet {
     Entity newOrganization = new Entity("Distributor");
 
     // for now just taking open & closed hours from form, not checking for null or that closed time > open
+    // This implementation has 0 = 12:00AM, 1 = 1:00AM, 13 = 1:00PM, etc. 
     ArrayList<Integer> openHours = new ArrayList<Integer>();
     openHours.add(Integer.parseInt(hourOpen));
     openHours.add(Integer.parseInt(hourClosed));
