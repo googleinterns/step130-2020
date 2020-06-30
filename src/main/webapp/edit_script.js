@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }];
 
   const organizationArea = document.getElementById("all-organizations");
-  // organizationArea.setAttribute(")
   // TODO: Change isMaintainer or isModerator based on User status.
   let isMaintainer = true;
   let organizationPopupArea = document.createElement("div");

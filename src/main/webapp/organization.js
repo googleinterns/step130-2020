@@ -27,20 +27,19 @@ class Organization {
     organizationElement.addEventListener('click', () => {
     // TODO: GetOrganizationServlet to display more information about this servlet
 
-//TODO REFACTOR
-    // organization-popup-area element exists in index.html
+    // Checks if organization-popup-area element exists in index.html
     let popup_index_page = document.getElementById("organization-popup-area-index");
     if (popup_index_page) {
-      document.getElementById("organization-popup-area-index").textContent = "";
-      document.getElementById("organization-popup-area-index").appendChild(this.organizationPopup(organization));
-      document.getElementById("organization-popup-area-index").style.display = 'block';
-      this.organizationPopup(organization)
+      popup_index_page.textContent = "";
+      popup_index_page.appendChild(this.createOrganizationPopup(organization));
+      popup_index_page.style.display = 'block';
     }
 
+    // Checks if organization-popup-area element exists in edit.html
     let popup_edit_page = document.getElementById("organization-popup-area-edit");
     if (popup_edit_page) {
       popup_edit_page.textContent = "";
-      popup_edit_page.appendChild(this.organizationPopup(organization, isMaintainer));
+      popup_edit_page.appendChild(this.createOrganizationPopup(organization, isMaintainer));
       popup_edit_page.style.display = 'block';
     }
       
@@ -50,7 +49,7 @@ class Organization {
     return organizationElement;
   }
 
-  organizationPopup(organization, isMaintainer = false) {
+  createOrganizationPopup(organization, isMaintainer = false) {
     const popupElement = document.createElement("div");
     popupElement.classList.add("organization-popup");
 
@@ -72,8 +71,7 @@ class Organization {
       popupEditButton.classList.add("organization-edit-button");
       popupEditButton.textContent = "Edit";
       popupEditButton.addEventListener('click', () => {
-        console.log("Edit has been clicked.");
-        // TODO: Edit selected organization.
+        // TODO: Edit selected organization. Call fetch('/edit-organization') with params.
       });
       popupElement.appendChild(popupEditButton);
     }
