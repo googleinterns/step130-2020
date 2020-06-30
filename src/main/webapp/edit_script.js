@@ -37,13 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
     "phone": "123-456-7890"
   }];
 
+  const organizationArea = document.getElementById("all-organizations");
+  // organizationArea.setAttribute(")
   // TODO: Change isMaintainer or isModerator based on User status.
   let isMaintainer = true;
   let organizationPopupArea = document.createElement("div");
-  organizationPopupArea.setAttribute("id", "organization-popup-area"); // START HERE
+  organizationPopupArea.setAttribute("id", "organization-popup-area-edit");
   
   organizations.forEach((organization) => {
     const newOrganization = new Organization();
     document.getElementById('approved-organization-list').appendChild(newOrganization.createOrganization(organization, isMaintainer));
   });
+
+  organizationArea.appendChild(organizationPopupArea);
 });

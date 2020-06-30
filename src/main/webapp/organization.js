@@ -26,10 +26,24 @@ class Organization {
 
     organizationElement.addEventListener('click', () => {
     // TODO: GetOrganizationServlet to display more information about this servlet
-      document.getElementById("organization-popup-area").textContent = "";
-      document.getElementById("organization-popup-area").appendChild(this.organizationPopup(organization));
-      document.getElementById("organization-popup-area").style.display = 'block';
-      this.organizationPopup(organization, isMaintainer)
+
+//TODO REFACTOR
+    // organization-popup-area element exists in index.html
+    let popup_index_page = document.getElementById("organization-popup-area-index");
+    if (popup_index_page) {
+      document.getElementById("organization-popup-area-index").textContent = "";
+      document.getElementById("organization-popup-area-index").appendChild(this.organizationPopup(organization));
+      document.getElementById("organization-popup-area-index").style.display = 'block';
+      this.organizationPopup(organization)
+    }
+
+    let popup_edit_page = document.getElementById("organization-popup-area-edit");
+    if (popup_edit_page) {
+      popup_edit_page.textContent = "";
+      popup_edit_page.appendChild(this.organizationPopup(organization, isMaintainer));
+      popup_edit_page.style.display = 'block';
+    }
+      
     });
 
     organizationElement.appendChild(organizationNameElement);
@@ -52,19 +66,30 @@ class Organization {
     popupAddressElement.classList.add("organization-popup-address");
     popupAddressElement.textContent = organization.address;
 
-    const popupEditElement = document.createElement('button');
-    popupEditElement.classList.add("organization-edit-button");
-    popupEditElement.textContent = "Edit";
-    popupEditElement.addEventListener('click', () => {
-      
-    });
+    const popupEditElement = document.createElement('div');
+    if (isMaintainer) {
+      const popupEditButton = document.createElement('button');
+      popupEditButton.classList.add("organization-edit-button");
+      popupEditButton.textContent = "Edit";
+      popupEditButton.addEventListener('click', () => {
+        console.log("Edit has been clicked.");
+        // TODO: Edit selected organization.
+      });
+      popupElement.appendChild(popupEditButton);
+    }
+    
 
     const closeButtonElement = document.createElement('div');
     closeButtonElement.classList.add("popup-close-button");
     closeButtonElement.textContent = 'X';
     closeButtonElement.addEventListener('click', () => {
       // Remove the popup from the DOM.
-      document.getElementById("organization-popup-area").style.display = 'none';
+      if (document.getElementById("organization-popup-area-edit")) {
+        document.getElementById("organization-popup-area-edit").style.display = 'none';
+      }
+      if (document.getElementById("organization-popup-area-index")) {
+        document.getElementById("organization-popup-area-index").style.display = 'none';
+      }
       popupElement.remove();
     });
 

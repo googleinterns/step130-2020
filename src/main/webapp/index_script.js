@@ -98,7 +98,7 @@ class SearchArea {
     this.organizationSearchArea.appendChild(this.organizationList);
 
     this.organizationPopupArea = document.createElement("div");
-    this.organizationPopupArea.setAttribute("id", "organization-popup-area");
+    this.organizationPopupArea.setAttribute("id", "organization-popup-area-index");
 
     this.searchArea.appendChild(this.organizationSearchArea);
     this.searchArea.appendChild(this.organizationPopupArea);
