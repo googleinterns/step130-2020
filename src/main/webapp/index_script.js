@@ -35,7 +35,7 @@ function createOrganization(organization) {
 
   const organizationNameElement = document.createElement('div');
   organizationNameElement.classList.add("organization-name");
-  organizationNameElement.textContent = organization;
+  organizationNameElement.textContent = organization.name;
 
   organizationElement.addEventListener('click', () => {
   });

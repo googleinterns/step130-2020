@@ -32,6 +32,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.sps.data.Organization;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.User;
@@ -81,14 +82,20 @@ public class ListOrganizationsServlet extends HttpServlet {
     PreparedQuery prepQuery = datastore.prepare(query);
     
     QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
-    ArrayList<String> requestedOrganizationNames = new ArrayList<String>();
+    ArrayList<Organization> requestedOrganizations = new ArrayList<Organization>();
 
+    /* Fills requestedOrganizations array with 4 fields of each org- name, phone, addres, and desc. */
     for (Entity entity : results) {
-      requestedOrganizationNames.add((String) entity.getProperty("orgName"));
+
+      Organization newOrg = new Organization((String) entity.getProperty("orgName"),
+                                             (String) entity.getProperty("orgEmail"),
+                                             (String) entity.getProperty("orgStreetAddress"),
+                                             (String) entity.getProperty("orgPhoneNum"),
+                                             (String) entity.getProperty("orgDescription"));
+      requestedOrganizations.add(newOrg);
     }
-  
     Gson gson = new Gson();
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(requestedOrganizationNames));
+    response.getWriter().println(gson.toJson(requestedOrganizations));
   }
 }
