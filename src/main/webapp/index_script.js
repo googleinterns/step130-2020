@@ -94,10 +94,12 @@ class SearchArea {
 
     this.organizationPopupArea = document.createElement("div");
     this.organizationPopupArea.setAttribute("id", "organization-popup-area-index");
+    
     organizations.forEach((organization) => {
       const newOrganization = new Organization(organization);
       this.organizationList.appendChild(newOrganization.getOrganization());
     });
+
     this.organizationSearchArea.appendChild(this.organizationList);
     this.searchArea.appendChild(this.organizationSearchArea);
     this.searchArea.appendChild(this.organizationPopupArea);

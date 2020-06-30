@@ -170,7 +170,7 @@ class Organization {
     this.orgPhoneEntry.setAttribute("pattern", "[0-9]{10}");
     this.orgPhoneEntry.setAttribute("placeholder", "phone");
     this.orgPhoneEntry.setAttribute("name", "phone");
-    this.editForm.appendChild(this.orgPhoneLabel);
+    this.editForm.appendChild(this.orgPhoneEntry);
  
     // label and entry area for organization hour open
     this.orgHourOpenLabel = document.createElement("label");
@@ -232,6 +232,11 @@ class Organization {
     this.orgDescriptionEntry.setAttribute("name", "description");
     this.editForm.appendChild(this.orgDescriptionEntry);
  
+    this.editFormSubmit = document.createElement("input");
+    this.editFormSubmit.setAttribute("type", "submit");
+    this.editFormSubmit.setAttribute("class", "gray-button");
+    this.editForm.appendChild(this.editFormSubmit);
+
     this.editFormArea.appendChild(this.editForm);
  
     return this.editFormArea;
