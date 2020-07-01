@@ -34,13 +34,9 @@ class Organization {
     this.organizationElement.addEventListener('click', () => {
       // TODO: GetOrganizationServlet to display more information about this servlet
 
-      // Checks if organization-popup-area element exists.
-      let popupIndexPage = document.getElementById("organization-popup-area");
-      if (popupIndexPage) {
-        popupIndexPage.textContent = "";
-        popupIndexPage.appendChild(this.createOrganizationPopup());
-        popupIndexPage.style.display = 'block';
-      }
+      const popupIndexPage = document.getElementById("organization-popup-area");
+      popupIndexPage.textContent = "";
+      popupIndexPage.appendChild(this.createOrganizationPopup());
     });
 
     this.organizationElement.appendChild(organizationNameElement);
@@ -56,7 +52,7 @@ class Organization {
 
     const popupPhoneElement = document.createElement('div');
     popupPhoneElement.classList.add("organization-popup-phone");
-    popupPhoneElement.textContent = this.organization.phone;
+    popupPhoneElement.textContent = this.organization.phoneNum;
 
     const popupAddressElement = document.createElement('div');
     popupAddressElement.classList.add("organization-popup-address");
@@ -73,7 +69,7 @@ class Organization {
     closeButtonElement.addEventListener('click', () => {
       // Remove the popup from the DOM.
       if (document.getElementById("organization-popup-area")) {
-        document.getElementById("organization-popup-area").style.display = 'none';
+        document.getElementById("organization-popup-area").classList.add("hide-popup");
       }
       popupElement.remove();
     });

@@ -99,14 +99,16 @@ class SearchArea {
 
     this.organizationList = document.createElement("div");
     this.organizationList.setAttribute("id", "organization-list");
-
-    this.organizationPopupArea = document.createElement("div");
-    this.organizationPopupArea.setAttribute("id", "organization-popup-area");
-
+    
     organizations.forEach((organization) => {
       const newOrganization = new Organization(organization, isMaintainer);
       this.organizationList.appendChild(newOrganization.getOrganization());
     });
+
+    this.organizationPopupArea = document.createElement("div");
+    this.organizationPopupArea.setAttribute("id", "organization-popup-area");
+
+    
 
     this.organizationSearchArea.appendChild(this.organizationList);
     this.searchArea.appendChild(this.organizationSearchArea);
