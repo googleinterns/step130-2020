@@ -100,7 +100,7 @@ class Organization {
  
     // create edit form element
     this.editForm = document.createElement("form");
-    this.editForm.setAttribute("action", "/edit-organizations");
+    this.editForm.setAttribute("action", "/edit-organization");
     this.editForm.setAttribute("method", "POST");
     this.editForm.setAttribute("body", params);
  
@@ -226,8 +226,34 @@ class Organization {
     this.editFormSubmit.setAttribute("class", "gray-button");
     this.editForm.appendChild(this.editFormSubmit);
 
+    // Allows Maintainers to delete organization when in Edit view.
+    // TODO: Add functionality to check if User is a Moderator for User editing organization.
+    this.editFormDeleteDiv = document.createElement("div");
+    if (this.isMaintainer) {
+      this.editFormDeleteButton = document.createElement("button");
+      this.editFormDeleteButton.setAttribute("class", "org-delete-button");
+      this.editFormDeleteButton.textContent = "Delete Organization";
+      this.editFormDeleteButton.addEventListener('click', () => {
+        
+      });
+      this.editFormArea.appendChild(this.editFormDeleteButton);
+    }
     this.editFormArea.appendChild(this.editForm);
  
     return this.editFormArea;
+  }
+
+  async deleteOrganization() {
+    const params = new URLSearchParams();
+    console.log(this.organization.id);
+    params.append("id", organization.id);  
+  
+    this.editForm = document.createElement("form");
+    this.editFormDeleteButton.setAttribute("action", "/delete-organization?${params.toString()}");
+    this.editFormDeleteButton.setAttribute("method", "POST");
+    console.log("Delete has been called");
+    const response = await fetch('/delete-organization');
+    const deleteStatus = response.json();
+
   }
 }

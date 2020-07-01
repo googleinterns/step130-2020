@@ -20,8 +20,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.User;
 import java.io.IOException;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 @WebServlet("/delete-organization")
 public class DeleteOrganizationServlet extends HttpServlet {
+  public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("application/json;");
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
+    long orgId = Long.parseLong(request.getParameter("id"));
+    // TODO: Change "Distributor" to handle both Supplier and Distributor.
+    Key orgEntityKey = KeyFactory.createKey("Distributor", orgId);
+    datastore.delete(orgEntityKey);
+  }
 }

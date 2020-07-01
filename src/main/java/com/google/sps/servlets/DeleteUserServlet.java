@@ -20,8 +20,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.User;
 import java.io.IOException;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 @WebServlet("/delete-user")
 public class DeleteUserServlet extends HttpServlet {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("application/json;");
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
+    long userId = Long.parseLong(request.getParameter("userId"));
+
+    Key userEntityKey = KeyFactory.createKey("User", userId);
+    datastore.delete(userEntityKey);
+  }
 }
