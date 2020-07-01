@@ -74,10 +74,10 @@ class SearchArea {
     this.searchArea.appendChild(this.organizationPopupArea);
   }
 
-   /* 
-     * This async function gets a default list of organization names to display when the dom content
-     * loads by not passing any parameters to /list-organizations
-     */
+  /* 
+    * This async function gets a default list of organization names to display when the dom content
+    * loads by not passing any parameters to /list-organizations
+    */
   async requestAndDisplayOrganizations() {
     //TODO: fetch organizations with param
     const response = await fetch(`/list-organizations`);
@@ -126,7 +126,7 @@ class SearchArea {
     const popupEditElement = document.createElement('button');
     popupEditElement.textContent = "Edit";
     popupEditElement.addEventListener('click', () => {
-        popupElement.appendChild(this.editOrganization(organization));
+      popupElement.appendChild(this.editOrganization(organization));
     });
 
     const closeButtonElement = document.createElement('div');
@@ -147,11 +147,20 @@ class SearchArea {
     popupElement.appendChild(popupEditElement);
     return popupElement;
   }
-  
+
   editOrganization(organization) {
+    // all entry fields will be prepopulated with the current values for user experience
+
+    //TODO: get if user is maintainer, will determine showing approval buttons
+    const isMaintainer = true;
+
+    // concatenate moderator list array into comma separated string
+    let moderatorListString = organization.moderators.join(", ");
+
     //use param list to pass in id to servlet
     const params = new URLSearchParams();
-    params.append("id", organization.id);  
+    params.append("id", organization.id);
+
     this.editFormArea = document.createElement("div");
 
     // create edit form element
@@ -272,9 +281,58 @@ class SearchArea {
     this.orgDescriptionEntry = document.createElement("textarea");
     this.orgDescriptionEntry.setAttribute("type", "text");
     this.orgDescriptionEntry.setAttribute("id", "description");
-    this.orgDescriptionEntry.setAttribute("value", `${organization.description}`);
     this.orgDescriptionEntry.setAttribute("name", "description");
+    this.orgDescriptionEntry.textContent = organization.description;
     this.editForm.appendChild(this.orgDescriptionEntry);
+
+    // label and entry area for organization moderator list
+    this.orgModeratorListLabel = document.createElement("label");
+    this.orgModeratorListLabel.setAttribute("for", "moderator-list");
+    this.orgModeratorListLabel.setAttribute("id", "moderator-list-label");
+    this.orgModeratorListLabel.textContent = "Moderator List: ";
+    this.editForm.appendChild(this.orgModeratorListLabel);
+
+    this.orgModeratorListEntry = document.createElement("textarea");
+    this.orgModeratorListEntry.setAttribute("type", "text");
+    this.orgModeratorListEntry.setAttribute("id", "moderator-list");
+    this.orgModeratorListEntry.setAttribute("name", "moderator-list");
+    this.orgModeratorListEntry.textContent = moderatorListString;
+    this.editForm.appendChild(this.orgModeratorListEntry);
+
+    if (isMaintainer) {
+      // label and approval buttons for maintainer approval
+      this.approvedLabel = document.createElement("label");
+      this.approvedLabel.setAttribute("for", "approved");
+      this.approvedLabel.setAttribute("id", "approved-label");
+      this.approvedLabel.textContent = "Approved: ";
+      this.editForm.appendChild(this.approvedLabel);
+
+      this.approvedButton = document.createElement("input");
+      this.approvedButton.setAttribute("type", "radio");
+      this.approvedButton.setAttribute("id", "approved");
+      this.approvedButton.setAttribute("value", "approved");
+      this.approvedButton.setAttribute("name", "approval");
+      if (organization.isApproved == true) {
+        this.approvedButton.setAttribute("checked", "checked");
+      }
+      this.editForm.appendChild(this.approvedButton);
+
+      this.notApprovedLabel = document.createElement("label");
+      this.notApprovedLabel.setAttribute("for", "notApproved");
+      this.notApprovedLabel.setAttribute("id", "not-approved-label");
+      this.notApprovedLabel.textContent = "Not Approved: ";
+      this.editForm.appendChild(this.notApprovedLabel)
+
+      this.notApprovedButton = document.createElement("input");
+      this.notApprovedButton.setAttribute("type", "radio");
+      this.notApprovedButton.setAttribute("id", "notApproved");
+      this.notApprovedButton.setAttribute("value", "notApproved");
+      this.notApprovedButton.setAttribute("name", "approval");
+      if (organization.isApproved == false) {
+        this.notApprovedButton.setAttribute("checked", "checked");
+      }
+      this.editForm.appendChild(this.notApprovedButton);
+    }
 
     this.editFormSubmit = document.createElement("input");
     this.editFormSubmit.setAttribute("type", "submit");

@@ -32,25 +32,20 @@ import com.google.gson.Gson;
 @WebServlet("/edit-organization")
 public class EditOrganizationServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
-    //TODO: get user to determine if maintainer
-    // UserService userService = UserServiceFactory.getUserService();
-    // boolean isUserLoggedIn = userService.isUserLoggedIn();
-    boolean isUserMaintainer = false;
 
     //Get the proper organization entity for updating
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    System.out.println(request.getParameter("id"));
     long id = Long.parseLong(request.getParameter("id"));
     Key organizationKey = KeyFactory.createKey("Distributor", id);
     Entity organization = new Entity("Distributor");
 
     try {
-    organization = datastore.get(organizationKey);
+      organization = datastore.get(organizationKey);
     } catch(com.google.appengine.api.datastore.EntityNotFoundException err) {
-        System.out.println("failure");
+        System.out.println("Entity Not Found");
     }
 
+    // Get all information from form
     String newOrgName = request.getParameter("org-name");
     String newOrgEmail = request.getParameter("email");
     String newOrgStreetAddress = request.getParameter("address");
@@ -59,12 +54,13 @@ public class EditOrganizationServlet extends HttpServlet {
     String newOrgDescription = request.getParameter("description");
     String newHourOpen = request.getParameter("hour-open");
     String newHourClosed = request.getParameter("hour-closed");
-    String newApproval = request.getParameter("approved");
+    String newApproval = request.getParameter("approval");
     String newModeratorList = request.getParameter("moderator-list");
 
     //TODO: get timestamp with transactions instead
     long timestampMillis = System.currentTimeMillis();
 
+    // Set organization properties with inputted form information
     organization.setProperty("orgName", newOrgName);
     organization.setProperty("orgEmail", newOrgEmail);
     organization.setProperty("orgStreetAddress", newOrgStreetAddress);
@@ -73,13 +69,11 @@ public class EditOrganizationServlet extends HttpServlet {
     organization.setProperty("orgDescription", newOrgDescription);
     organization.setProperty("lastEditTimestamp", timestampMillis);
 
-    if(isUserMaintainer) {
-        if(newApproval == "approved") {
-            organization.setProperty("isApproved", true);
-        }
-        else {
-            organization.setProperty("isApproved", false);
-        }
+    // Will only be changed by maintainers
+    if(newApproval.equals("approved")) {
+        organization.setProperty("isApproved", true);
+    } else if(newApproval.equals("notApproved")) {
+        organization.setProperty("isApproved", false);
     }
 
 
@@ -89,14 +83,14 @@ public class EditOrganizationServlet extends HttpServlet {
     openHours.add(Integer.parseInt(newHourClosed));
     organization.setProperty("openHours", openHours);
 
-    // // Will split the list using the delimitter zero or more whitespace, comma, zero or more whitespace
-    // ArrayList<Integer> moderatorList = Arrays.asList(newModeratorList.split("\\s*,\\s*"));
-    // organization.setProperty("moderatorList", newModeratorList);
+    // Will split the list using the delimitter zero or more whitespace, comma, zero or more whitespace
+    ArrayList<String> moderatorList = new ArrayList<String>(Arrays.asList(newModeratorList.split("\\s*,\\s*")));
+    organization.setProperty("moderatorList", moderatorList);
 
     // // TODO: change this to our History object- for prototyping just using strings
-    // ArrayList<String> changeHistory = organization.changeHistory;
-    // changeHistory.add("Organization was was edited at " + timestampMillis);
-    // organization.setProperty("changeHistory", changeHistory);
+    ArrayList<String> changeHistory = (ArrayList) organization.getProperty("changeHistory");
+    changeHistory.add("Organization was was edited at " + timestampMillis);
+    organization.setProperty("changeHistory", changeHistory);
 
   
     datastore.put(organization);
