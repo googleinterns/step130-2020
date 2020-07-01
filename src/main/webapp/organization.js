@@ -37,6 +37,7 @@ class Organization {
       const popupIndexPage = document.getElementById("organization-popup-area");
       popupIndexPage.textContent = "";
       popupIndexPage.appendChild(this.createOrganizationPopup());
+      popupIndexPage.classList.add("show-popup")
     });
 
     this.organizationElement.appendChild(organizationNameElement);
