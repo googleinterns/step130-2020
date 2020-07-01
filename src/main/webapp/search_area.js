@@ -12,39 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-document.addEventListener("DOMContentLoaded", async function() {
-  // TODO: Fetch list of organizations using servlet.
-  let organizations = [{
-    "name": "Organization A",
-    "address": "123 Billy Bur Way, FakeCity 00000",
-    "phone": "123-456-7890"
-  },
-  {
-    "name": "Organization B",
-    "address": "123 Billy Bur Way, FakeCity 00000",
-    "phone": "123-456-7890"
-  },
-  {
-    "name": "Organization C",
-    "address": "123 Billy Bur Way, FakeCity 00000",
-    "phone": "123-456-7890"
-  },
-  {
-    "name": "Organization D",
-    "address": "123 Billy Bur Way, FakeCity 00000",
-    "phone": "123-456-7890"
-  },
-  {
-    "name": "Organization E",
-    "address": "123 Billy Bur Way, FakeCity 00000",
-    "phone": "123-456-7890"
-  },
-  {
-    "name": "Organization F",
-    "address": "123 Billy Bur Way, FakeCity 00000",
-    "phone": "123-456-7890"
-  }];
+async function getListOfOrganizations() {
+  const response = await fetch(`/list-organizations`);
+  const organizations = await response.json();
 
+  return organizations;
+}
+
+document.addEventListener("DOMContentLoaded", async function() {
+  const organizations = await getListOfOrganizations();
+
+  // TODO: Get Maintainer status by checking if requester User is a Maintainer. 
+  // This checks that requester User has valid credentials to edit/delete/view ALL organizations. (by checking userID)
   let isMaintainer = false;
   if (document.getElementById('search-area')) {
     const mainSearchArea = new SearchArea(document.getElementById('search-area'), organizations, isMaintainer);
@@ -107,8 +86,6 @@ class SearchArea {
 
     this.organizationPopupArea = document.createElement("div");
     this.organizationPopupArea.setAttribute("id", "organization-popup-area");
-
-    
 
     this.organizationSearchArea.appendChild(this.organizationList);
     this.searchArea.appendChild(this.organizationSearchArea);
