@@ -39,6 +39,7 @@ public class EditOrganizationServlet extends HttpServlet {
     Key organizationKey = KeyFactory.createKey("Distributor", id);
     Entity organization = new Entity("Distributor");
 
+    // try catch for compliation purposes, servlet will not be called without a valid id param
     try {
       organization = datastore.get(organizationKey);
     } catch(com.google.appengine.api.datastore.EntityNotFoundException err) {
