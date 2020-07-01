@@ -1,17 +1,17 @@
-.all-content {
+#help-near-me-content {
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
   display: flex;
   flex-direction: column;
 }
  
-.all-content a {
+#help-near-me-content a {
   color: #666666;
   text-decoration: none;
   border-bottom: 3px solid transparent;
 }
 
-.all-content a:hover {
+#help-near-me-content a:hover {
   border-bottom: 3px solid #666666;
 }
  
@@ -48,18 +48,6 @@
 #zipcode-label {
   margin: auto 2px auto 0;
   font-size: 24px;
-}
-
-#submit-button {
-  border: 1px solid #ccc;
-  background-color: #A9A9A9;
-  border-radius: 4px;
-  font-family:'Courier New', Courier, monospace;
-  color: #ffffff;
-  font-size: 16px;
-  cursor: pointer;
-  margin-left: 10px;
-  padding: 5px 20px;
 }
 
 #filter-button-area {
