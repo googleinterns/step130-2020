@@ -124,9 +124,13 @@ class SearchArea {
     popupAddressElement.textContent = organization.address;
 
     const popupEditElement = document.createElement('button');
+    popupEditElement.classList.add("gray-button");
     popupEditElement.textContent = "Edit";
     popupEditElement.addEventListener('click', () => {
-      popupElement.appendChild(this.editOrganization(organization));
+      const editFormArea = document.getElementById("edit-form-area");
+      editFormArea.appendChild(this.editOrganization(organization));
+      editFormArea.classList.remove("hide-edit-modal");
+      editFormArea.classList.add("show-edit-modal")
     });
 
     const closeButtonElement = document.createElement('div');
@@ -161,187 +165,214 @@ class SearchArea {
     const params = new URLSearchParams();
     params.append("id", organization.id);
 
-    this.editFormArea = document.createElement("div");
+    const editFormAreaContent = document.createElement("div");
+    editFormAreaContent.setAttribute("id", "edit-form-area-content");
+
+    const closeButtonElement = document.createElement('div');
+    closeButtonElement.classList.add("popup-close-button");
+    closeButtonElement.textContent = 'X';
+    closeButtonElement.addEventListener('click', () => {
+      // Remove the popup from the DOM.
+      const editFormArea = document.getElementById("edit-form-area");
+      editFormArea.classList.remove("show-edit-modal");
+      editFormArea.classList.add("hide-edit-modal")
+      editFormAreaContent.remove();
+    });
+    editFormAreaContent.appendChild(closeButtonElement);
 
     // create edit form element
-    this.editForm = document.createElement("form");
-    this.editForm.setAttribute("action", `/edit-organization?${params.toString()}`);
-    this.editForm.setAttribute("method", "POST");
+    const editForm = document.createElement("form");
+    editForm.setAttribute("action", `/edit-organization?${params.toString()}`);
+    editForm.setAttribute("method", "POST");
 
     // label and entry area for organization name
-    this.orgNameLabel = document.createElement("label");
-    this.orgNameLabel.setAttribute("for", "name");
-    this.orgNameLabel.setAttribute("id", "name-label");
-    this.orgNameLabel.textContent = "Organization Name: ";
-    this.editForm.appendChild(this.orgNameLabel);
+    const orgNameLabel = document.createElement("label");
+    orgNameLabel.setAttribute("for", "name");
+    orgNameLabel.setAttribute("id", "name-label");
+    orgNameLabel.textContent = "Organization Name: ";
+    editForm.appendChild(orgNameLabel);
 
-    this.orgNameEntry = document.createElement("input");
-    this.orgNameEntry.setAttribute("type", "text");
-    this.orgNameEntry.setAttribute("id", "name");
-    this.orgNameEntry.setAttribute("value", `${organization.name}`);
-    this.orgNameEntry.setAttribute("name", "org-name");
-    this.editForm.appendChild(this.orgNameEntry);
+    const orgNameEntry = document.createElement("input");
+    orgNameEntry.setAttribute("type", "text");
+    orgNameEntry.setAttribute("id", "name");
+    orgNameEntry.setAttribute("value", `${organization.name}`);
+    orgNameEntry.setAttribute("name", "org-name");
+    orgNameEntry.classList.add("edit-entry");
+    editForm.appendChild(orgNameEntry);
 
     // label and entry area for organization email
-    this.orgEmailLabel = document.createElement("label");
-    this.orgEmailLabel.setAttribute("for", "email");
-    this.orgEmailLabel.setAttribute("id", "email-label");
-    this.orgEmailLabel.textContent = "Email: ";
-    this.editForm.appendChild(this.orgEmailLabel);
+    const orgEmailLabel = document.createElement("label");
+    orgEmailLabel.setAttribute("for", "email");
+    orgEmailLabel.setAttribute("id", "email-label");
+    orgEmailLabel.textContent = "Email: ";
+    editForm.appendChild(orgEmailLabel);
 
-    this.orgEmailEntry = document.createElement("input");
-    this.orgEmailEntry.setAttribute("type", "text");
-    this.orgEmailEntry.setAttribute("id", "email");
-    this.orgEmailEntry.setAttribute("value", `${organization.email}`);
-    this.orgEmailEntry.setAttribute("name", "email");
-    this.editForm.appendChild(this.orgEmailEntry);
+    const orgEmailEntry = document.createElement("input");
+    orgEmailEntry.setAttribute("type", "text");
+    orgEmailEntry.setAttribute("id", "email");
+    orgEmailEntry.setAttribute("value", `${organization.email}`);
+    orgEmailEntry.setAttribute("name", "email");
+    orgEmailEntry.classList.add("edit-entry");
+    editForm.appendChild(orgEmailEntry);
 
     // label and entry area for organization address
-    this.orgAddressLabel = document.createElement("label");
-    this.orgAddressLabel.setAttribute("for", "address");
-    this.orgAddressLabel.setAttribute("id", "address-label");
-    this.orgAddressLabel.textContent = "Address: ";
-    this.editForm.appendChild(this.orgAddressLabel);
+    const orgAddressLabel = document.createElement("label");
+    orgAddressLabel.setAttribute("for", "address");
+    orgAddressLabel.setAttribute("id", "address-label");
+    orgAddressLabel.textContent = "Address: ";
+    editForm.appendChild(orgAddressLabel);
 
-    this.orgAddressEntry = document.createElement("input");
-    this.orgAddressEntry.setAttribute("type", "text");
-    this.orgAddressEntry.setAttribute("id", "address");
-    this.orgAddressEntry.setAttribute("value", `${organization.address}`);
-    this.orgAddressEntry.setAttribute("name", "address");
-    this.editForm.appendChild(this.orgAddressEntry);
+    const orgAddressEntry = document.createElement("input");
+    orgAddressEntry.setAttribute("type", "text");
+    orgAddressEntry.setAttribute("id", "address");
+    orgAddressEntry.setAttribute("value", `${organization.address}`);
+    orgAddressEntry.setAttribute("name", "address");
+    orgAddressEntry.classList.add("edit-entry");
+    editForm.appendChild(orgAddressEntry);
 
     // label and entry area for organization phone
-    this.orgPhoneLabel = document.createElement("label");
-    this.orgPhoneLabel.setAttribute("for", "phone");
-    this.orgPhoneLabel.setAttribute("id", "phone-label");
-    this.orgPhoneLabel.textContent = "Phone: ";
-    this.editForm.appendChild(this.orgPhoneLabel);
+    const orgPhoneLabel = document.createElement("label");
+    orgPhoneLabel.setAttribute("for", "phone");
+    orgPhoneLabel.setAttribute("id", "phone-label");
+    orgPhoneLabel.textContent = "Phone: ";
+    editForm.appendChild(orgPhoneLabel);
 
-    this.orgPhoneEntry = document.createElement("input");
-    this.orgPhoneEntry.setAttribute("type", "text");
-    this.orgPhoneEntry.setAttribute("id", "phone-number");
-    this.orgPhoneEntry.setAttribute("pattern", "[0-9]{10}");
-    this.orgPhoneEntry.setAttribute("value", `${organization.phoneNum}`);
-    this.orgPhoneEntry.setAttribute("name", "phone-number");
-    this.editForm.appendChild(this.orgPhoneEntry);
+    const orgPhoneEntry = document.createElement("input");
+    orgPhoneEntry.setAttribute("type", "text");
+    orgPhoneEntry.setAttribute("id", "phone-number");
+    orgPhoneEntry.setAttribute("pattern", "[0-9]{10}");
+    orgPhoneEntry.setAttribute("value", `${organization.phoneNum}`);
+    orgPhoneEntry.setAttribute("name", "phone-number");
+    orgPhoneEntry.classList.add("edit-entry");
+    editForm.appendChild(orgPhoneEntry);
 
     // label and entry area for organization hour open
-    this.orgHourOpenLabel = document.createElement("label");
-    this.orgHourOpenLabel.setAttribute("for", "hour-open");
-    this.orgHourOpenLabel.setAttribute("id", "hour-open-label");
-    this.orgHourOpenLabel.textContent = "Hour Open: ";
-    this.editForm.appendChild(this.orgHourOpenLabel);
+    const orgHourOpenLabel = document.createElement("label");
+    orgHourOpenLabel.setAttribute("for", "hour-open");
+    orgHourOpenLabel.setAttribute("id", "hour-open-label");
+    orgHourOpenLabel.textContent = "Hour Open: ";
+    editForm.appendChild(orgHourOpenLabel);
 
-    this.orgHourOpenEntry = document.createElement("input");
-    this.orgHourOpenEntry.setAttribute("type", "number");
-    this.orgHourOpenEntry.setAttribute("min", "0");
-    this.orgHourOpenEntry.setAttribute("max", "23");
-    this.orgHourOpenEntry.setAttribute("id", "hour-open");
-    this.orgHourOpenEntry.setAttribute("value", `${organization.openingHour}`);
-    this.orgHourOpenEntry.setAttribute("name", "hour-open");
-    this.editForm.appendChild(this.orgHourOpenEntry);
+    const orgHourOpenEntry = document.createElement("input");
+    orgHourOpenEntry.setAttribute("type", "number");
+    orgHourOpenEntry.setAttribute("min", "0");
+    orgHourOpenEntry.setAttribute("max", "23");
+    orgHourOpenEntry.setAttribute("id", "hour-open");
+    orgHourOpenEntry.setAttribute("value", `${organization.openingHour}`);
+    orgHourOpenEntry.setAttribute("name", "hour-open");
+    orgHourOpenEntry.classList.add("edit-entry");
+    editForm.appendChild(orgHourOpenEntry);
 
     // label and entry area for organization hour closed
-    this.orgHourClosedLabel = document.createElement("label");
-    this.orgHourClosedLabel.setAttribute("for", "hour-closed");
-    this.orgHourClosedLabel.setAttribute("id", "hour-closed-label");
-    this.orgHourClosedLabel.textContent = "Hour Closed: ";
-    this.editForm.appendChild(this.orgHourClosedLabel);
+    const orgHourClosedLabel = document.createElement("label");
+    orgHourClosedLabel.setAttribute("for", "hour-closed");
+    orgHourClosedLabel.setAttribute("id", "hour-closed-label");
+    orgHourClosedLabel.textContent = "Hour Closed: ";
+    editForm.appendChild(orgHourClosedLabel);
 
-    this.orgHourClosedEntry = document.createElement("input");
-    this.orgHourClosedEntry.setAttribute("type", "number");
-    this.orgHourClosedEntry.setAttribute("min", "0");
-    this.orgHourClosedEntry.setAttribute("max", "23");
-    this.orgHourClosedEntry.setAttribute("id", "hour-closed");
-    this.orgHourClosedEntry.setAttribute("value", `${organization.closingHour}`);
-    this.orgHourClosedEntry.setAttribute("name", "hour-closed");
-    this.editForm.appendChild(this.orgHourClosedEntry);
+    const orgHourClosedEntry = document.createElement("input");
+    orgHourClosedEntry.setAttribute("type", "number");
+    orgHourClosedEntry.setAttribute("min", "0");
+    orgHourClosedEntry.setAttribute("max", "23");
+    orgHourClosedEntry.setAttribute("id", "hour-closed");
+    orgHourClosedEntry.setAttribute("value", `${organization.closingHour}`);
+    orgHourClosedEntry.setAttribute("name", "hour-closed");
+    orgHourClosedEntry.classList.add("edit-entry");
+    editForm.appendChild(orgHourClosedEntry);
 
     // label and entry area for organization url-link
-    this.orgUrlLinkLabel = document.createElement("label");
-    this.orgUrlLinkLabel.setAttribute("for", "url-link");
-    this.orgUrlLinkLabel.setAttribute("id", "url-link-label");
-    this.orgUrlLinkLabel.textContent = "URL Link: ";
-    this.editForm.appendChild(this.orgUrlLinkLabel);
+    const orgUrlLinkLabel = document.createElement("label");
+    orgUrlLinkLabel.setAttribute("for", "url-link");
+    orgUrlLinkLabel.setAttribute("id", "url-link-label");
+    orgUrlLinkLabel.textContent = "URL Link: ";
+    editForm.appendChild(orgUrlLinkLabel);
 
-    this.orgUrlLinkEntry = document.createElement("input");
-    this.orgUrlLinkEntry.setAttribute("type", "text");
-    this.orgUrlLinkEntry.setAttribute("id", "url-link");
-    this.orgUrlLinkEntry.setAttribute("value", `${organization.urlLink}`);
-    this.orgUrlLinkEntry.setAttribute("name", "url-link");
-    this.editForm.appendChild(this.orgUrlLinkEntry);
+    const orgUrlLinkEntry = document.createElement("input");
+    orgUrlLinkEntry.setAttribute("type", "text");
+    orgUrlLinkEntry.setAttribute("id", "url-link");
+    orgUrlLinkEntry.setAttribute("value", `${organization.urlLink}`);
+    orgUrlLinkEntry.setAttribute("name", "url-link");
+    orgUrlLinkEntry.classList.add("edit-entry");
+    editForm.appendChild(orgUrlLinkEntry);
 
     // label and entry area for organization description
-    this.orgDescriptionLabel = document.createElement("label");
-    this.orgDescriptionLabel.setAttribute("for", "description");
-    this.orgDescriptionLabel.setAttribute("id", "description-label");
-    this.orgDescriptionLabel.textContent = "Description: ";
-    this.editForm.appendChild(this.orgDescriptionLabel);
+    const orgDescriptionLabel = document.createElement("label");
+    orgDescriptionLabel.setAttribute("for", "description");
+    orgDescriptionLabel.setAttribute("id", "description-label");
+    orgDescriptionLabel.textContent = "Description: ";
+    editForm.appendChild(orgDescriptionLabel);
 
-    this.orgDescriptionEntry = document.createElement("textarea");
-    this.orgDescriptionEntry.setAttribute("type", "text");
-    this.orgDescriptionEntry.setAttribute("id", "description");
-    this.orgDescriptionEntry.setAttribute("name", "description");
-    this.orgDescriptionEntry.textContent = organization.description;
-    this.editForm.appendChild(this.orgDescriptionEntry);
+    const orgDescriptionEntry = document.createElement("textarea");
+    orgDescriptionEntry.setAttribute("type", "text");
+    orgDescriptionEntry.setAttribute("id", "description");
+    orgDescriptionEntry.setAttribute("name", "description");
+    orgDescriptionEntry.classList.add("edit-entry");
+    orgDescriptionEntry.textContent = organization.description;
+    editForm.appendChild(orgDescriptionEntry);
 
     // label and entry area for organization moderator list
-    this.orgModeratorListLabel = document.createElement("label");
-    this.orgModeratorListLabel.setAttribute("for", "moderator-list");
-    this.orgModeratorListLabel.setAttribute("id", "moderator-list-label");
-    this.orgModeratorListLabel.textContent = "Moderator List: ";
-    this.editForm.appendChild(this.orgModeratorListLabel);
+    const orgModeratorListLabel = document.createElement("label");
+    orgModeratorListLabel.setAttribute("for", "moderator-list");
+    orgModeratorListLabel.setAttribute("id", "moderator-list-label");
+    orgModeratorListLabel.textContent = "Moderator List: ";
+    editForm.appendChild(orgModeratorListLabel);
 
-    this.orgModeratorListEntry = document.createElement("textarea");
-    this.orgModeratorListEntry.setAttribute("type", "text");
-    this.orgModeratorListEntry.setAttribute("id", "moderator-list");
-    this.orgModeratorListEntry.setAttribute("name", "moderator-list");
-    this.orgModeratorListEntry.textContent = moderatorListString;
-    this.editForm.appendChild(this.orgModeratorListEntry);
+    const orgModeratorListEntry = document.createElement("textarea");
+    orgModeratorListEntry.setAttribute("type", "text");
+    orgModeratorListEntry.setAttribute("id", "moderator-list");
+    orgModeratorListEntry.setAttribute("name", "moderator-list");
+    orgModeratorListEntry.classList.add("edit-entry");
+    orgModeratorListEntry.textContent = moderatorListString;
+    editForm.appendChild(orgModeratorListEntry);
 
     if (isMaintainer) {
       // label and approval buttons for maintainer approval
-      this.approvedLabel = document.createElement("label");
-      this.approvedLabel.setAttribute("for", "approved");
-      this.approvedLabel.setAttribute("id", "approved-label");
-      this.approvedLabel.textContent = "Approved: ";
-      this.editForm.appendChild(this.approvedLabel);
+      const approvedLabel = document.createElement("label");
+      approvedLabel.setAttribute("for", "approved");
+      approvedLabel.setAttribute("id", "approved-label");
+      approvedLabel.textContent = "Approved: ";
+      editForm.appendChild(approvedLabel);
 
-      this.approvedButton = document.createElement("input");
-      this.approvedButton.setAttribute("type", "radio");
-      this.approvedButton.setAttribute("id", "approved");
-      this.approvedButton.setAttribute("value", "approved");
-      this.approvedButton.setAttribute("name", "approval");
+      const approvedButton = document.createElement("input");
+      approvedButton.setAttribute("type", "radio");
+      approvedButton.setAttribute("id", "approved");
+      approvedButton.setAttribute("value", "approved");
+      approvedButton.setAttribute("name", "approval");
       if (organization.isApproved == true) {
-        this.approvedButton.setAttribute("checked", "checked");
+        approvedButton.setAttribute("checked", "checked");
       }
-      this.editForm.appendChild(this.approvedButton);
+      editForm.appendChild(approvedButton);
+      
+      // page break for styling purposes
+      editForm.appendChild(document.createElement("br"));
 
-      this.notApprovedLabel = document.createElement("label");
-      this.notApprovedLabel.setAttribute("for", "notApproved");
-      this.notApprovedLabel.setAttribute("id", "not-approved-label");
-      this.notApprovedLabel.textContent = "Not Approved: ";
-      this.editForm.appendChild(this.notApprovedLabel)
+      const notApprovedLabel = document.createElement("label");
+      notApprovedLabel.setAttribute("for", "notApproved");
+      notApprovedLabel.setAttribute("id", "not-approved-label");
+      notApprovedLabel.textContent = "Not Approved: ";
+      editForm.appendChild(notApprovedLabel)
 
-      this.notApprovedButton = document.createElement("input");
-      this.notApprovedButton.setAttribute("type", "radio");
-      this.notApprovedButton.setAttribute("id", "notApproved");
-      this.notApprovedButton.setAttribute("value", "notApproved");
-      this.notApprovedButton.setAttribute("name", "approval");
+      const notApprovedButton = document.createElement("input");
+      notApprovedButton.setAttribute("type", "radio");
+      notApprovedButton.setAttribute("id", "notApproved");
+      notApprovedButton.setAttribute("value", "notApproved");
+      notApprovedButton.setAttribute("name", "approval");
       if (organization.isApproved == false) {
-        this.notApprovedButton.setAttribute("checked", "checked");
+        notApprovedButton.setAttribute("checked", "checked");
       }
-      this.editForm.appendChild(this.notApprovedButton);
+      editForm.appendChild(notApprovedButton);
+
+      editForm.appendChild(document.createElement("br"));
     }
 
-    this.editFormSubmit = document.createElement("input");
-    this.editFormSubmit.setAttribute("type", "submit");
-    this.editFormSubmit.setAttribute("class", "gray-button");
-    this.editForm.appendChild(this.editFormSubmit);
+    const editFormSubmit = document.createElement("input");
+    editFormSubmit.setAttribute("type", "submit");
+    editFormSubmit.setAttribute("class", "gray-button");
+    editForm.appendChild(editFormSubmit);
 
-    this.editFormArea.appendChild(this.editForm);
+    editFormAreaContent.appendChild(editForm);
 
-    return this.editFormArea;
+    return editFormAreaContent;
   }
 }
 

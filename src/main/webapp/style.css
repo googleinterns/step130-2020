@@ -110,14 +110,48 @@
   justify-content: space-around;
 }
 
-.hide-popup {
+.hide-popup,
+.hide-edit-modal {
     display: none;
 }
 
-.show-popup {
+.show-popup,
+.show-edit-modal {
     display: block;
 }
 
 .popup-close-button {
   cursor: pointer;
+  width: 10px;
+}
+
+.edit-entry {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#edit-form-area {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+#edit-form-area-content {
+  display: flex;
+  flex-direction: column;
+  background-color: #fefefe;
+  margin: 10px auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 70%;
 }
