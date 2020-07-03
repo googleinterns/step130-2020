@@ -4,6 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Givr</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <!-- This is a prototype of the register organization page
@@ -13,18 +14,39 @@
 <!-- this form does not protect against null right now, just is for testing -->
 
 <body>
-	<div id="auto-org-filling-script">
-    <form action="/add-organization" method="POST">
-      <input id="name" type="text" name="org-name" placeholder="Organization Name">
-      <input id="email" type="text" name="email" placeholder="Primary Email">
-      <input id="address" type="text" name="address" placeholder="Street address">
-      <input id = "phone" type = "text" pattern = "[0-9]{10}" name = "phone-number" placeholder="phone number">
-      <input id = "hour-open" type="number" min="0" max="23" name = "hour-open" placeholder="hour you open (0-23)">
-      <input id = "hour-closed" type="number" min="0" max="23" name = "hour-closed" placeholder="hour you close (0-23)">
-      <input id = "urllink" type = "text" name = "url-link" placeholder="website link">
-      <textarea name="description" maxlength="180" placeholder="Org description"></textarea>
-      <input type="submit">
-		</form>
-  </div>
+	<div id="registration-content">
+		<div id="site-title">Givr</div>
+		<div id="registration-form-header">Register An Organization</div>
+		<div id="registration-form-area">
+			<form action="/add-organization" method="POST">
+				<label for = "registration-name" id = "registration-entry-label">Organization Name: </label>
+				<input id = "registration-name" class = "registration-entry" type = "text" name = "org-name"/>
+
+				<label for = "registration-email" id = "registration-entry-label">Primary Email: </label>
+				<input id = "registration-email"  class = "registration-entry" type = "text" name = "email"/>
+
+				<label for = "registration-address" id = "registration-entry-label">Organization Address: </label>
+				<input id = "registration-address"  class = "registration-entry" type = "text" name = "address"/>
+
+				<label for = "registration-phone" id = "registration-entry-label">Primary Phone Number: </label>
+				<input id = "registration-phone"  class = "registration-entry" type = "text" pattern = "[0-9]{10}" name = "phone-number"/>
+
+				<label for = "registration-hour-open" id = "registration-entry-label">Hour Organization Opens: </label>
+				<input id = "registration-hour-open"  class = "registration-entry" type="number" min = "0" max = "23" name = "hour-open"/>
+
+				<label for = "registration-hour-closed" id = "registration-entry-label">Hour Organization Closes: </label>
+				<input id = "registration-hour-closed"  class = "registration-entry" type = "number" min ="0" max = "23" name = "hour-closed"/>
+
+				<label for = "registration-url-link" id = "registration-entry-label">Organization Website Link: </label>
+				<input id = "registration-url-link"  class = "registration-entry" type = "text" name = "url-link"/>
+
+				<label for = "registration-description" id = "registration-entry-label">Organization Description: </label>
+				<textarea id = "registration-description"  class = "registration-entry" name ="description" maxlength = "180"></textarea>
+
+				<input id = "registration-submit-button" class = "gray-button" type="submit"/>
+	  </form>
+		</div>
+	</div>
 </body>
+
 </html>
