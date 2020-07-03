@@ -18,28 +18,39 @@ import java.util.ArrayList;
 
 public final class Organization {
 
-  private int id;
+  private long id;
   private String name;
   private String email;
   private String address;
   private String description;
   private String phoneNum;
-  private int openHour;
-  private int closingHour;
+  private long openingHour;
+  private long closingHour;
   private long creationTimeStamp;
   private long lastEditedTimeStamp;
   private boolean isApproved;
-  private String orgUrl;
+  private String urlLink;
   private ArrayList<String> moderators;
 
   /* To construct the organization object, we are only worrying about these parameters
    * so it can be created in ListOrganizationServlet & sent back to be displayed in a
    *  popup. GetOrganizationServlet will fill in the rest of these fields w/ setters */
-  public Organization(String name, String email, String address, String phoneNum, String description) {
-    this.name = name;
-    this.email = email;
-    this.address = address;
-    this.phoneNum = phoneNum;
-    this.description = description;
+
+  public Organization(long id, String name, String email, String address, String description, String phoneNum, 
+  long openingHour, long closingHour, long creationTimeStamp, long lastEditedTimeStamp, boolean isApproved, String urlLink,
+   ArrayList<String> moderators) {
+     this.id = id;
+     this.name = name;
+     this.email = email;
+     this.address = address;
+     this.description = description;
+     this.phoneNum = phoneNum;
+     this.openingHour = openingHour;
+     this.closingHour = closingHour;
+     this.creationTimeStamp = creationTimeStamp;
+     this.lastEditedTimeStamp = lastEditedTimeStamp;
+     this.isApproved = isApproved;
+     this.urlLink = urlLink;
+     this.moderators = moderators;
   }
 }

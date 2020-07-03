@@ -95,13 +95,35 @@
   cursor: pointer;
 }
 
-.organization-name {
-  font-size: 36px;
+.organization-name,
+.organization-popup-name {
+  font-size: 30px;
 }
 
 #search-area {
   display: flex;
   justify-content: space-around;
+}
+
+#organization-popup-area {
+  width: 50%;
+  font-size: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 40px 20px 10px 20px;
+}
+
+.organization-popup-name {
+    margin: 2% auto;
+}
+
+.organization-popup-phone,
+.organization-popup-address,
+.organization-popup-hours,
+.organization-popup-email,
+.organization-popup-url-link,
+.organization-popup-description {
+    margin: 2% 0;
 }
 
 .hide-popup {
