@@ -68,7 +68,7 @@ public class EditOrganizationServlet extends HttpServlet {
     organization.setProperty("orgPhoneNum", newOrgPhoneNum);
     organization.setProperty("orgUrl", newOrgUrl);
     organization.setProperty("orgDescription", newOrgDescription);
-    organization.setProperty("lastEditTimestamp", timestampMillis);
+    organization.setProperty("lastEditTimeStamp", timestampMillis);
 
     // Will only be changed by maintainers
     if(newApproval.equals("approved")) {
