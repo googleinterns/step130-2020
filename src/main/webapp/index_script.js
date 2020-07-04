@@ -112,16 +112,32 @@ class SearchArea {
     popupElement.classList.add("organization-popup");
 
     const popupNameElement = document.createElement('div');
-    popupNameElement.classList.add("organization-name");
+    popupNameElement.classList.add("organization-popup-name");
     popupNameElement.textContent = organization.name;
 
-    const popupPhoneNumElement = document.createElement('div');
-    popupPhoneNumElement.classList.add("organization-popup-phoneNum");
-    popupPhoneNumElement.textContent = organization.phoneNum;
+    const popupPhoneElement = document.createElement('div');
+    popupPhoneElement.classList.add("organization-popup-phone");
+    popupPhoneElement.textContent = organization.phoneNum;
 
     const popupAddressElement = document.createElement('div');
     popupAddressElement.classList.add("organization-popup-address");
     popupAddressElement.textContent = organization.address;
+
+    const popupHoursElement = document.createElement('div');
+    popupHoursElement.classList.add("organization-popup-hours");
+    popupHoursElement.textContent = `Hours: ${organization.openingHour} - ${organization.closingHour}`;
+
+    const popupEmailElement = document.createElement('div');
+    popupEmailElement.classList.add("organization-popup-email");
+    popupEmailElement.textContent = organization.email;
+
+    const popupUrlLinkElement = document.createElement('div');
+    popupUrlLinkElement.classList.add("organization-popup-url-link");
+    popupUrlLinkElement.textContent = organization.urlLink;
+
+    const popupDescriptionElement = document.createElement('div');
+    popupDescriptionElement.classList.add("organization-popup-description");
+    popupDescriptionElement.textContent = organization.description;
 
     const popupEditElement = document.createElement('button');
     popupEditElement.classList.add("gray-button");
@@ -146,8 +162,12 @@ class SearchArea {
 
     popupElement.appendChild(closeButtonElement);
     popupElement.appendChild(popupNameElement);
-    popupElement.appendChild(popupPhoneNumElement);
+    popupElement.appendChild(popupPhoneElement);
     popupElement.appendChild(popupAddressElement);
+    popupElement.appendChild(popupHoursElement);
+    popupElement.appendChild(popupEmailElement);
+    popupElement.appendChild(popupUrlLinkElement);
+    popupElement.appendChild(popupDescriptionElement);
     popupElement.appendChild(popupEditElement);
     return popupElement;
   }
