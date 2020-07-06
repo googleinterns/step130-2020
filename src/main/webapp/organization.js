@@ -31,15 +31,17 @@ class Organization {
     organizationNameElement.classList.add("organization-name");
     organizationNameElement.textContent = this.organization.name;
 
-    this.organizationElement.addEventListener('click', () => {
-      // TODO: GetOrganizationServlet to display more information about this servlet
+    // this.organizationElement.addEventListener()
 
-      const organizationPopupArea = document.getElementById("organization-popup-area");
-      organizationPopupArea.textContent = "";
-      organizationPopupArea.appendChild(this.createOrganizationPopup());
-      organizationPopupArea.classList.add("show-popup");
-      organizationPopupArea.classList.remove("hide-popup");
-    });
+    // this.organizationElement.addEventListener('click', () => {
+    //   // TODO: GetOrganizationServlet to display more information about this servlet
+
+    //   const organizationPopupArea = document.getElementById("organization-popup-area");
+    //   organizationPopupArea.textContent = "";
+    //   organizationPopupArea.appendChild(this.createOrganizationPopup());
+    //   organizationPopupArea.classList.add("show-popup");
+    //   organizationPopupArea.classList.remove("hide-popup");
+    // });
 
     this.organizationElement.appendChild(organizationNameElement);
   }

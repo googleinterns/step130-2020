@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", async function() {
   // TODO: Get Maintainer status by checking if requester User is a Maintainer. 
   // This checks that requester User has valid credentials to edit/delete/view ALL organizations. (by checking userID)
   let isMaintainer = false;
+
+  // TODO: Create separate JS file for listing organizations, instead of using SearchArea and having these checks below
   if (document.getElementById('search-area')) {
     const mainSearchArea = new SearchArea(document.getElementById('search-area'), organizations, isMaintainer);
   }
@@ -81,6 +83,19 @@ class SearchArea {
     
     organizations.forEach((organization) => {
       const newOrganization = new Organization(organization, isMaintainer);
+
+      newOrganization.organizationElement.addEventListener('click', () => {
+        var event = new CustomEvent('organization-selected');
+        newOrganization.organizationElement.dispatchEvent(event);
+      })
+
+      newOrganization.organizationElement.addEventListener('organization-selected', (organizationElement) => {
+      const organizationPopupArea = document.getElementById("organization-popup-area");
+      organizationPopupArea.textContent = "";
+      organizationPopupArea.appendChild(newOrganization.createOrganizationPopup());
+      organizationPopupArea.classList.add("show-popup");
+      organizationPopupArea.classList.remove("hide-popup");
+      });
       this.organizationList.appendChild(newOrganization.getOrganization());
     });
 
