@@ -81,14 +81,23 @@ public class ListOrganizationsServlet extends HttpServlet {
     QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
     ArrayList<Organization> requestedOrganizations = new ArrayList<Organization>();
 
-    /* Fills requestedOrganizations array with 4 fields of each org- name, phone, addres, and desc. */
+    /* Fills requestedOrganizations array*/
     for (Entity entity : results) {
-
-      Organization newOrg = new Organization((String) entity.getProperty("orgName"),
-                                             (String) entity.getProperty("orgEmail"),
+      long openingHour = (long) ((ArrayList)entity.getProperty("openHours")).get(0);
+      long closingHour = (long) ((ArrayList)entity.getProperty("openHours")).get(1);
+      Organization newOrg = new Organization((long) entity.getKey().getId(), 
+                                             (String) entity.getProperty("orgName"),
+                                             (String) entity.getProperty("orgEmail"), 
                                              (String) entity.getProperty("orgStreetAddress"),
+                                             (String) entity.getProperty("orgDescription"), 
                                              (String) entity.getProperty("orgPhoneNum"),
-                                             (String) entity.getProperty("orgDescription"));
+                                             openingHour, 
+                                             closingHour, 
+                                             (long) entity.getProperty("creationTimeStamp"),
+                                             (long) entity.getProperty("lastEditTimeStamp"), 
+                                             (boolean) entity.getProperty("isApproved"),
+                                             (String) entity.getProperty("orgUrl"),
+                                             (ArrayList) entity.getProperty("moderatorList"));
       requestedOrganizations.add(newOrg);
     }
     Gson gson = new Gson();
