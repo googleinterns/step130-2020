@@ -35,7 +35,7 @@ class User {
       if (!this.isMaintainer) {
         const newAnchorItem = document.createElement('a');
         newAnchorItem.innerText = 'Organizations';
-        newAnchorItem.href = 'edit.html';
+        newAnchorItem.href = 'organizations.html';
         document.getElementById('nav-bar').appendChild(newAnchorItem);
       }
     } else {

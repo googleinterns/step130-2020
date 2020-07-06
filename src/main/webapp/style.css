@@ -1,17 +1,20 @@
-.all-content {
+.help-near-me-content,
+.organizations-content {
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
   display: flex;
   flex-direction: column;
 }
  
-.all-content a {
+.help-near-me-content a,
+.organizations-content a {
   color: #666666;
   text-decoration: none;
   border-bottom: 3px solid transparent;
 }
 
-.all-content a:hover {
+.help-near-me-content a:hover,
+.organizations-content a:hover {
   border-bottom: 3px solid #666666;
 }
  
@@ -111,11 +114,11 @@
 }
 
 .hide-popup {
-    display: none;
+  display: none;
 }
 
 .show-popup {
-    display: block;
+  display: block;
 }
 
 .popup-close-button {
