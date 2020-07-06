@@ -66,16 +66,19 @@ public class AddOrganizationServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     boolean isUserLoggedIn = userService.isUserLoggedIn();
     String username;
+    String userId;
     if (isUserLoggedIn) {
       /* Currently uses user email to be consistent w other parts of codebase, subject to change */
       username = userService.getCurrentUser().getEmail();
+      userId = userService.getCurrentUser().getUserId();
     } else {
-      username = "Unknown Author";
+      throw new IllegalArgumentException("Error: unable to register organization if user is not logged in.");
     }
     
     EmbeddedEntity historyEntry = new EmbeddedEntity();
 
-    historyEntry.setProperty("changeAuthor", username);
+    historyEntry.setProperty("changeAuthorEmail", username);
+    historyEntry.setProperty("changeAuthorId", userId);
     historyEntry.setProperty("changeMessage", "Organization was registered");
     historyEntry.setProperty("changeTimeStamp", millisecondSinceEpoch);
     changeHistory.add(historyEntry);
