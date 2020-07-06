@@ -45,7 +45,7 @@ public class AddOrganizationServlet extends HttpServlet {
     String hourOpen = request.getParameter("hour-open");
     String hourClosed = request.getParameter("hour-closed");
 
-    long secondSinceEpoch = Instant.now().toEpochMilli();
+    long millisecondSinceEpoch = Instant.now().toEpochMilli();
 
     // when suppliers are added, Entity kind will be from a parameter- for now is hardcoded
     Entity newOrganization = new Entity("Distributor");
@@ -74,14 +74,14 @@ public class AddOrganizationServlet extends HttpServlet {
 
     historyEntry.setProperty("changeAuthor", username);
     historyEntry.setProperty("changeMessage", "Organization was registered");
-    historyEntry.setProperty("changeTimeStamp", secondSinceEpoch);
+    historyEntry.setProperty("changeTimeStamp", millisecondSinceEpoch);
     changeHistory.add(historyEntry);
 
     ArrayList<String> moderatorList = new ArrayList<String>();
     moderatorList.add(username);
 
-    newOrganization.setProperty("creationTimeStamp", secondSinceEpoch);
-    newOrganization.setProperty("lastEditTimeStamp", secondSinceEpoch);
+    newOrganization.setProperty("creationTimeStamp", millisecondSinceEpoch);
+    newOrganization.setProperty("lastEditTimeStamp", millisecondSinceEpoch);
     newOrganization.setProperty("orgName", orgName);
     newOrganization.setProperty("orgEmail", orgEmail);
     newOrganization.setProperty("orgPhoneNum", orgPhoneNum);
