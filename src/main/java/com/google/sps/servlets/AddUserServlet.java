@@ -34,6 +34,8 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 @WebServlet("/add-user")
 public class AddUserServlet extends HttpServlet {
@@ -62,8 +64,9 @@ public class AddUserServlet extends HttpServlet {
       FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
       PreparedQuery preparedQuery = datastore.prepare(query);
       QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
+
       if (userResult.size() < 1) {
-        User newUser = new User(userId, isUserMaintainer);
+        User newUser = new User(userId, isUserMaintainer, userEmail);
         currentUser = newUser;
       
         Entity userEntity = new Entity("User");
@@ -74,7 +77,7 @@ public class AddUserServlet extends HttpServlet {
         for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
           isUserMaintainer = (boolean) entity.getProperty("isMaintainer");
         }
-        currentUser = new User(userId, isUserMaintainer);
+        currentUser = new User(userId, isUserMaintainer, userEmail);
       }
      
       String urlToRedirectAfterUserLogsOut = "/";
