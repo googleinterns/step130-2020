@@ -85,21 +85,7 @@ public class ListOrganizationsServlet extends HttpServlet {
     for (Entity entity : results) {
       
       // TODO(): Implement better schema to represent opening and closing hours for different days
-      long openingHour = (long) ((ArrayList)entity.getProperty("openHours")).get(0);
-      long closingHour = (long) ((ArrayList)entity.getProperty("openHours")).get(1);
-      Organization newOrg = new Organization((long) entity.getKey().getId(), 
-                                             (String) entity.getProperty("orgName"),
-                                             (String) entity.getProperty("orgEmail"), 
-                                             (String) entity.getProperty("orgStreetAddress"),
-                                             (String) entity.getProperty("orgDescription"), 
-                                             (String) entity.getProperty("orgPhoneNum"),
-                                             openingHour, 
-                                             closingHour, 
-                                             (long) entity.getProperty("creationTimeStamp"),
-                                             (long) entity.getProperty("lastEditTimeStamp"), 
-                                             (boolean) entity.getProperty("isApproved"),
-                                             (String) entity.getProperty("orgUrl"),
-                                             (ArrayList) entity.getProperty("moderatorList"));
+      Organization newOrg = new Organization(entity);
       requestedOrganizations.add(newOrg);
     }
     Gson gson = new Gson();

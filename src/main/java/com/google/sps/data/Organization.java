@@ -15,6 +15,7 @@
 package com.google.sps.data;
 
 import java.util.ArrayList;
+import com.google.appengine.api.datastore.Entity;
 
 public final class Organization {
 
@@ -32,25 +33,22 @@ public final class Organization {
   private String urlLink;
   private ArrayList<String> moderators;
 
-  /* To construct the organization object, we are only worrying about these parameters
-   * so it can be created in ListOrganizationServlet & sent back to be displayed in a
-   *  popup. GetOrganizationServlet will fill in the rest of these fields w/ setters */
+  /* An Organization Object takes in an entity and assigns all of its fields based on the entity's
+   * properties */
 
-  public Organization(long id, String name, String email, String address, String description, String phoneNum, 
-  long openingHour, long closingHour, long creationTimeStamp, long lastEditedTimeStamp, boolean isApproved, String urlLink,
-   ArrayList<String> moderators) {
-     this.id = id;
-     this.name = name;
-     this.email = email;
-     this.address = address;
-     this.description = description;
-     this.phoneNum = phoneNum;
-     this.openingHour = openingHour;
-     this.closingHour = closingHour;
-     this.creationTimeStamp = creationTimeStamp;
-     this.lastEditedTimeStamp = lastEditedTimeStamp;
-     this.isApproved = isApproved;
-     this.urlLink = urlLink;
-     this.moderators = moderators;
+  public Organization(Entity entity) {
+     this.id = (long) entity.getKey().getId();
+     this.name = (String) entity.getProperty("orgName");
+     this.email = (String) entity.getProperty("orgEmail");
+     this.address = (String) entity.getProperty("orgStreetAddress");
+     this.description = (String) entity.getProperty("orgDescription");
+     this.phoneNum = (String) entity.getProperty("orgPhoneNum");
+     this.openingHour = (long) ((ArrayList)entity.getProperty("openHours")).get(0);
+     this.closingHour = (long) ((ArrayList)entity.getProperty("openHours")).get(1);
+     this.creationTimeStamp = (long) entity.getProperty("creationTimeStamp");
+     this.lastEditedTimeStamp = (long) entity.getProperty("lastEditTimeStamp");
+     this.isApproved = (boolean) entity.getProperty("isApproved");
+     this.urlLink = (String) entity.getProperty("orgUrl");
+     this.moderators = (ArrayList) entity.getProperty("moderatorList");
   }
 }
