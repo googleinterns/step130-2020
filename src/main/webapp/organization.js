@@ -34,11 +34,11 @@ class Organization {
     this.organizationElement.addEventListener('click', () => {
       // TODO: GetOrganizationServlet to display more information about this servlet
 
-      const popupIndexPage = document.getElementById("organization-popup-area");
-      popupIndexPage.textContent = "";
-      popupIndexPage.appendChild(this.createOrganizationPopup());
-      popupIndexPage.classList.add("show-popup");
-      popupIndexPage.classList.remove("hide-popup");
+      const organizationPopupArea = document.getElementById("organization-popup-area");
+      organizationPopupArea.textContent = "";
+      organizationPopupArea.appendChild(this.createOrganizationPopup());
+      organizationPopupArea.classList.add("show-popup");
+      organizationPopupArea.classList.remove("hide-popup");
     });
 
     this.organizationElement.appendChild(organizationNameElement);
@@ -70,9 +70,8 @@ class Organization {
     closeButtonElement.textContent = 'X';
     closeButtonElement.addEventListener('click', () => {
       // Remove the popup from the DOM.
-      if (document.getElementById("organization-popup-area")) {
-        document.getElementById("organization-popup-area").classList.add("hide-popup");
-      }
+      document.getElementById("organization-popup-area").classList.add("hide-popup");
+      document.getElementById("organization-popup-area").classList.remove("show-popup");
       popupElement.remove();
     });
 
