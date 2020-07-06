@@ -35,6 +35,18 @@ import java.io.IOException;
 public class AddOrganizationServlet extends HttpServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+    boolean isUserLoggedIn = userService.isUserLoggedIn();
+    String username;
+    String userId;
+    if (isUserLoggedIn) {
+      /* Currently uses user email to be consistent w other parts of codebase, subject to change */
+      username = userService.getCurrentUser().getEmail();
+      userId = userService.getCurrentUser().getUserId();
+    } else {
+      throw new IllegalArgumentException("Error: unable to register organization if user is not logged in.");
+    }
+    
     // for now, ID will just be the one datastore gives it automatically
     String orgName = request.getParameter("org-name");
     String orgEmail = request.getParameter("email");
@@ -63,17 +75,6 @@ public class AddOrganizationServlet extends HttpServlet {
     /* This implementation stores history entries as embedded entities instead of custom objects
      * because it is much simpler that way */
     ArrayList changeHistory = new ArrayList<>();
-    UserService userService = UserServiceFactory.getUserService();
-    boolean isUserLoggedIn = userService.isUserLoggedIn();
-    String username;
-    String userId;
-    if (isUserLoggedIn) {
-      /* Currently uses user email to be consistent w other parts of codebase, subject to change */
-      username = userService.getCurrentUser().getEmail();
-      userId = userService.getCurrentUser().getUserId();
-    } else {
-      throw new IllegalArgumentException("Error: unable to register organization if user is not logged in.");
-    }
     
     EmbeddedEntity historyEntry = new EmbeddedEntity();
 
