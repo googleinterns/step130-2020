@@ -1,5 +1,4 @@
-#help-near-me-content,
-#registration-content {
+#help-near-me-content {
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
   display: flex;
@@ -121,25 +120,4 @@
 
 .popup-close-button {
   cursor: pointer;
-}
-
-#registration-form-header{ 
-  display: flex;
-  margin: 1% auto 2% auto;
-  justify-content: space-between;
-  font-size: 30px;
-}
-
-#registration-form-area {
-    width: 60%;
-    margin: 0 auto;
-}
-.registration-entry {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
 }
