@@ -45,9 +45,6 @@ public class AddOrganizationServlet extends HttpServlet {
     // when suppliers are added, Entity kind will be from a parameter- for now is hardcoded
     Entity newOrganization = new Entity("Distributor");
 
-    // for now just taking open & closed hours from form, not checking for null or that closed time > open
-
-    // This implementation has 0 = 12:00AM, 1 = 1:00AM, 13 = 1:00PM, etc. 
     ArrayList<Integer> openHours = new ArrayList<Integer>();
     openHours.add(Integer.parseInt(hourOpen));
     openHours.add(Integer.parseInt(hourClosed));
@@ -66,7 +63,7 @@ public class AddOrganizationServlet extends HttpServlet {
     newOrganization.setProperty("orgPhoneNum", orgPhoneNum);
     newOrganization.setProperty("orgStreetAddress", orgStreetAddress);
     newOrganization.setProperty("orgDescription", orgDescription);
-    newOrganization.setProperty("orgWebsite", orgUrl);
+    newOrganization.setProperty("orgUrl", orgUrl);
     newOrganization.setProperty("openHours", openHours);
     newOrganization.setProperty("isApproved", false);
     newOrganization.setProperty("moderatorList", moderatorList);
