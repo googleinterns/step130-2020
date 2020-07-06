@@ -90,11 +90,11 @@ class SearchArea {
       })
 
       newOrganization.organizationElement.addEventListener('organization-selected', (organizationElement) => {
-      const organizationPopupArea = document.getElementById("organization-popup-area");
-      organizationPopupArea.textContent = "";
-      organizationPopupArea.appendChild(newOrganization.createOrganizationPopup());
-      organizationPopupArea.classList.add("show-popup");
-      organizationPopupArea.classList.remove("hide-popup");
+        const organizationPopupArea = document.getElementById("organization-popup-area");
+        organizationPopupArea.textContent = "";
+        organizationPopupArea.appendChild(newOrganization.createOrganizationPopup());
+        organizationPopupArea.classList.add("show-popup");
+        organizationPopupArea.classList.remove("hide-popup");
       });
       this.organizationList.appendChild(newOrganization.getOrganization());
     });
