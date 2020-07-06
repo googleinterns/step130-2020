@@ -45,6 +45,9 @@ public class AddOrganizationServlet extends HttpServlet {
     String hourOpen = request.getParameter("hour-open");
     String hourClosed = request.getParameter("hour-closed");
 
+    /* MillisecondSinceEpoch represent the number of milliseconds that have passed since
+     * 00:00:00 on January 1, 1970. It ensures that all users are entering a representation
+     * of time that is independent of their time zone */
     long millisecondSinceEpoch = Instant.now().toEpochMilli();
 
     // when suppliers are added, Entity kind will be from a parameter- for now is hardcoded
