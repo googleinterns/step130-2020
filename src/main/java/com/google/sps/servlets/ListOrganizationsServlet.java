@@ -83,6 +83,8 @@ public class ListOrganizationsServlet extends HttpServlet {
 
     /* Fills requestedOrganizations array*/
     for (Entity entity : results) {
+      
+      // TODO(): Implement better schema to represent opening and closing hours for different days
       long openingHour = (long) ((ArrayList)entity.getProperty("openHours")).get(0);
       long closingHour = (long) ((ArrayList)entity.getProperty("openHours")).get(1);
       Organization newOrg = new Organization((long) entity.getKey().getId(), 
