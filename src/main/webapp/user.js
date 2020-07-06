@@ -29,10 +29,10 @@ class User {
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.user.isMaintainer;
 
-      // TODO: set maintainer status correctly, manually doing this for testing purposes
+      // TODO(): set maintainer status correctly, manually doing this for testing purposes
       this.isMaintainer = true;
 
-      // TODO: add isModerator check
+      // TODO(): add isModerator check
       if (!this.isMaintainer) {
         this.rebuildNavBar(/*isMaintainer*/ false, /*isModerator*/ false, /*logOutLink*/ loginData.url);
       }
