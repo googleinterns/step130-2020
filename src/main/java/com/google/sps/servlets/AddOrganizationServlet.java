@@ -17,12 +17,18 @@ package com.google.sps.servlets;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import com.google.sps.data.User;
+import java.time.Instant;
 import java.io.IOException;
 
 @WebServlet("/add-organization")
@@ -39,8 +45,7 @@ public class AddOrganizationServlet extends HttpServlet {
     String hourOpen = request.getParameter("hour-open");
     String hourClosed = request.getParameter("hour-closed");
 
-    //TODO: get timestamp with transactions instead
-    long timestampMillis = System.currentTimeMillis();
+    long secondSinceEpoch = Instant.now().toEpochMilli();
 
     // when suppliers are added, Entity kind will be from a parameter- for now is hardcoded
     Entity newOrganization = new Entity("Distributor");
@@ -52,15 +57,31 @@ public class AddOrganizationServlet extends HttpServlet {
     openHours.add(Integer.parseInt(hourOpen));
     openHours.add(Integer.parseInt(hourClosed));
 
+    /* This implementation stores history entries as embedded entities instead of custom objects
+     * because it is much simpler that way */
+    ArrayList changeHistory = new ArrayList<>();
+    UserService userService = UserServiceFactory.getUserService();
+    boolean isUserLoggedIn = userService.isUserLoggedIn();
+    String username;
+    if (isUserLoggedIn) {
+      /* Currently uses user email to be consistent w other parts of codebase, subject to change */
+      username = userService.getCurrentUser().getEmail();
+    } else {
+      username = "Unknown Author";
+    }
+    
+    EmbeddedEntity historyEntry = new EmbeddedEntity();
+
+    historyEntry.setProperty("changeAuthor", username);
+    historyEntry.setProperty("changeMessage", "Organization was registered");
+    historyEntry.setProperty("changeTimeStamp", secondSinceEpoch);
+    changeHistory.add(historyEntry);
+
     ArrayList<String> moderatorList = new ArrayList<String>();
-    moderatorList.add("anon creator"); //dummy value for before auth gets set up
+    moderatorList.add(username);
 
-    // TODO change this to our History object- for prototyping just using strings
-    ArrayList<String> changeHistory = new ArrayList<String>();
-    changeHistory.add("Organization was registered");
-
-    newOrganization.setProperty("creationTimeStamp", timestampMillis);
-    newOrganization.setProperty("lastEditTimeStamp", timestampMillis);
+    newOrganization.setProperty("creationTimeStamp", secondSinceEpoch);
+    newOrganization.setProperty("lastEditTimeStamp", secondSinceEpoch);
     newOrganization.setProperty("orgName", orgName);
     newOrganization.setProperty("orgEmail", orgEmail);
     newOrganization.setProperty("orgPhoneNum", orgPhoneNum);
@@ -77,5 +98,6 @@ public class AddOrganizationServlet extends HttpServlet {
 
     System.out.println("Added to datastore");
     response.sendRedirect("/index.html");
+  
   }
 }
