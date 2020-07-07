@@ -55,8 +55,6 @@ public class AddOrganizationServlet extends HttpServlet {
     String orgPhoneNum = request.getParameter("phone-number");
     String orgUrl = request.getParameter("url-link");
     String orgDescription = request.getParameter("description");
-    String hourOpen = request.getParameter("hour-open");
-    String hourClosed = request.getParameter("hour-closed");
 
     /* MillisecondSinceEpoch represent the number of milliseconds that have passed since
      * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
@@ -66,13 +64,6 @@ public class AddOrganizationServlet extends HttpServlet {
     // when suppliers are added, Entity kind will be from a parameter- for now is hardcoded
     Entity newOrganization = new Entity("Distributor");
 
-    // for now just taking open & closed hours from form, not checking for null or that closed time > open
-
-    // This implementation has 0 = 12:00AM, 1 = 1:00AM, 13 = 1:00PM, etc. 
-    ArrayList<Integer> openHours = new ArrayList<Integer>();
-    openHours.add(Integer.parseInt(hourOpen));
-    openHours.add(Integer.parseInt(hourClosed));
-
     /* This implementation stores history entries as embedded entities instead of custom objects
      * because it is much simpler that way */
     ArrayList changeHistory = new ArrayList<>();
@@ -81,6 +72,7 @@ public class AddOrganizationServlet extends HttpServlet {
 
     changeHistory.add(history.recordHistory(userId, "Organization was registered", millisecondSinceEpoch));
     newOrganization.setProperty("changeHistory", changeHistory);
+
 
     ArrayList<String> moderatorList = new ArrayList<String>();
     moderatorList.add(username);
@@ -93,7 +85,6 @@ public class AddOrganizationServlet extends HttpServlet {
     newOrganization.setProperty("orgStreetAddress", orgStreetAddress);
     newOrganization.setProperty("orgDescription", orgDescription);
     newOrganization.setProperty("orgWebsite", orgUrl);
-    newOrganization.setProperty("openHours", openHours);
     newOrganization.setProperty("isApproved", false);
     newOrganization.setProperty("moderatorList", moderatorList);
     newOrganization.setProperty("changeHistory", changeHistory);
