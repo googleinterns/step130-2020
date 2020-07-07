@@ -18,13 +18,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
-
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 
 public final class HistoryManager {
 
-  public EmbeddedEntity recordHistory(String userId, String historyMessage, long millisecondSinceEpoch) {
+  public EmbeddedEntity recordHistory(String historyMessage, long millisecondSinceEpoch) {
     EmbeddedEntity historyEntry = new EmbeddedEntity();
+
+    UserService userService = UserServiceFactory.getUserService();
+    String userId = userService.getCurrentUser().getUserId();
 
     historyEntry.setProperty("changeAuthorId", userId);
     historyEntry.setProperty("changeMessage", historyMessage);

@@ -70,7 +70,7 @@ public class AddOrganizationServlet extends HttpServlet {
     
     HistoryManager history = new HistoryManager();
 
-    changeHistory.add(history.recordHistory(userId, "Organization was registered", millisecondSinceEpoch));
+    changeHistory.add(history.recordHistory("Organization was registered", millisecondSinceEpoch));
     newOrganization.setProperty("changeHistory", changeHistory);
 
 
