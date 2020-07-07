@@ -46,32 +46,12 @@ public class ListOrganizationsServlet extends HttpServlet {
    * If no parameters are included, it will return a default list of organizations
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    /* All get requests will return a maximum of 5 organization entities */
-    FetchOptions fetchOptions = getFetchOptionsFromParams(request);
-
-    /* This parameter is used to tell the servlet whether the user is requesting to see just the orgs they moderate*/
-    String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
-    boolean displayUserOrgs = false;
-
-    /* If a parameter was sent & is set to 'true', then the displayUserOrgs boolean changes to true */
-    if ((displayUserOrgsParameter != null) && (displayUserOrgsParameter.equals("true"))) {
-      displayUserOrgs = true;
-    }
-
     UserService userService = UserServiceFactory.getUserService();
-    boolean isUserLoggedIn = userService.isUserLoggedIn();
-    String userId = userService.getCurrentUser().getUserId();
-    boolean userIsMaintainer = userIsMaintainer(userId);
-    Query query;
 
-    if (isUserLoggedIn && displayUserOrgs) {
-      /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
-      query = ConstructQueryForUserInfo(userId);
-    } else {
-      /* If no username was included, it just returns all orgs */
-      query = new Query("Distributor").addSort("creationTimeStamp", SortDirection.DESCENDING);
-    }
+    /* All get requests will return a maximum of 5 organization entities */
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
 
+    Query query = getQueryFromParams(request, userService);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
@@ -93,22 +73,39 @@ public class ListOrganizationsServlet extends HttpServlet {
     response.getWriter().println(gson.toJson(requestedOrganizations));
   }
 
-  public Query ConstructQueryForUserInfo(String userID) {
-    Query query = new Query("Distributor").setFilter(new FilterPredicate("moderatorList",
-                    FilterOperator.EQUAL, userID)).addSort("creationTimeStamp", SortDirection.DESCENDING);
-    return query;
-  }
-
   /* Given a user id, this function checks if that user has a maintainer role in the datastore */
   public boolean userIsMaintainer(String userId) {
     //TODO(): Check if given user ID has maintainer role in the datastore
     return true;
   }
 
-  /* Given the servlet request, create a fetchOptions object that can be used to query/filter the correct data */
-  public FetchOptions getFetchOptionsFromParams(HttpServletRequest request) {
-    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
-    // TODO(): Read through request parameters and for all valid parameters, add it to the fetchOptions
-    return fetchOptions;
+  /* This function constructs a query based on the request parameters & user's role */
+  public Query getQueryFromParams(HttpServletRequest request, UserService userService) {
+    Query query = new Query("Distributor").addSort("creationTimeStamp", SortDirection.DESCENDING);;
+
+    /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
+    String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
+    boolean displayUserOrgs = false;
+    if ((displayUserOrgsParameter != null) && (displayUserOrgsParameter.equals("true"))) {
+      /* If a parameter was sent & is set to 'true', then the displayUserOrgs boolean changes to true */
+      displayUserOrgs = true;
+    }
+
+    boolean isUserLoggedIn = userService.isUserLoggedIn();
+    String userId = userService.getCurrentUser().getUserId();
+    boolean userIsMaintainer = userIsMaintainer(userId);
+
+    if (isUserLoggedIn && displayUserOrgs) {
+      /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
+      query.setFilter(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
+    }
+
+    if (!userIsMaintainer) {
+      /* If the user is not a maintainer, only allow them to see approved orgs */
+      query.setFilter(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
+    }
+
+    // TODO(): Read through request parameters and for all valid parameters and use them to modify query (filtering)
+    return query;
   }
 }
