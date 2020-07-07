@@ -23,10 +23,6 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 
 public final class HistoryManager {
 
-  public HistoryManager() {
-    
-  }
-
   public EmbeddedEntity recordHistory(String userId, String historyMessage, long millisecondSinceEpoch) {
     EmbeddedEntity historyEntry = new EmbeddedEntity();
 
