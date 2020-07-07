@@ -35,6 +35,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Transaction;
 
 @WebServlet("/add-maintainer")
 public class AddMaintainerServlet extends HttpServlet {
@@ -48,19 +49,16 @@ public class AddMaintainerServlet extends HttpServlet {
     if (isUserLoggedIn) {
       String userId = userService.getCurrentUser().getUserId();
       User currUser = getUser(userId);
+
       if (currUser.getMaintainerStatus()) {
-        System.out.println("IS MAINTAINER");
         String newMaintainerEmail = request.getParameter("user-email");
+        // TODO: Check if the newMaintainer already has an account. Do we limit to only accounts that exist within our Datastore?
         changeMaintainerStatus(newMaintainerEmail);
       } else {
-        System.out.println("IS NOT MAINTAINER");
-        // TODO: send a message disallowing this addition , or put a check before
+        // User is not maintainer, therefore cannot perform this action.
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
       }
     }
-
-    // if user is maintainer, go on, if not, then this request cannot be met
-
-    // 
   }
 
   public void changeMaintainerStatus(String email) {
@@ -73,20 +71,27 @@ public class AddMaintainerServlet extends HttpServlet {
     QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
     boolean isMaintainer = false;
-    String userId;
+    String userId = "";
     for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
       userId = (String) entity.getProperty("userId");
       isMaintainer = (boolean) entity.getProperty("isMaintainer");
+      Key userKey = entity.getKey();
+      
+      Transaction txn = datastore.beginTransaction();
+      try {
+        entity.setProperty("isMaintainer", !isMaintainer);
+        datastore.put(txn, entity);
+        txn.commit();
+      } finally {
+        if (txn.isActive()) {
+          txn.rollback();
+        }
+      }
     }
-
-    Entity updatedUserEntity = new Entity("User");
-    updatedUserEntity.setProperty("userId", userId);
-    updatedUserEntity.setProperty("isMaintainer", !isMaintainer);
-    updatedUserEntity.setProperty("userEmail", email);
-    datastore.put(updatedUserEntity);
   }
 
   public User getUser(String userId) {
+    User user = null;
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
     Query query = new Query("User").setFilter(queryFilter);
@@ -96,10 +101,12 @@ public class AddMaintainerServlet extends HttpServlet {
     QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
     boolean isMaintainer = false;
+    String userEmail = "";
     for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
       isMaintainer = (boolean) entity.getProperty("isMaintainer");
+      userEmail = (String) entity.getProperty("userEmail");
     }
-    User user = new User(userId, isMaintainer);
+    user = new User(userId, isMaintainer, userEmail);
     return user;
   }
 }

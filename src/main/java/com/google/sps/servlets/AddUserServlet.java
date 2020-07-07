@@ -72,6 +72,7 @@ public class AddUserServlet extends HttpServlet {
         Entity userEntity = new Entity("User");
         userEntity.setProperty("userId", userId);
         userEntity.setProperty("isMaintainer", isUserMaintainer);
+        userEntity.setProperty("userEmail", userEmail);
         datastore.put(userEntity);
       } else {
         for (Entity entity: preparedQuery.asIterable(fetchOptions)) {

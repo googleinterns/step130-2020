@@ -13,10 +13,16 @@
 // limitations under the License.
 
 document.addEventListener('DOMContentLoaded', () => {
-  getMaintainerStatus();
+  getMaintainerStatus("text1@example.com");
 });
 
-async function getMaintainerStatus() {
-  const response = await fetch('/add-maintainer');
+async function getMaintainerStatus(email) {
+  const response = await fetch(`/add-maintainer?user-email=${email}`);
   console.log(response);
+  const responseData = await response.json();
+
+  if (response.status !== 200) {
+    throw new Error('Could not successfully add new maintainer.');
+    return;
+  }
 }
