@@ -11,6 +11,7 @@
   color: #666666;
   text-decoration: none;
   border-bottom: 3px solid transparent;
+  margin: 0 20px;
 }
 
 .help-near-me-content a:hover,
@@ -18,13 +19,18 @@
   border-bottom: 3px solid #666666;
 }
  
-#nav-bar,
 #site-title {
   display: flex;
+  margin-top: 1%;
   justify-content: space-between;
   font-size: 36px;
-  margin: 0 auto;
-  width: 650px;
+}
+
+#nav-bar {
+  display: flex;
+  justify-content: center;
+  font-size: 28px;
+  margin: 1% 0 2% 0;
 }
 
 #site-title {
@@ -40,7 +46,6 @@
 
 #zipcode-entry {
   width: 20%;
-  padding: 8px 10px;
   margin: 8px 0;
   display: inline-block;
   border: 1px solid #ccc;
@@ -50,23 +55,11 @@
 
 #zipcode-label {
   margin: auto 2px auto 0;
-  font-size: 24px;
-}
-
-#submit-button {
-  border: 1px solid #ccc;
-  background-color: #A9A9A9;
-  border-radius: 4px;
-  font-family:'Courier New', Courier, monospace;
-  color: #ffffff;
-  font-size: 16px;
-  cursor: pointer;
-  margin-left: 10px;
-  padding: 5px 20px;
+  font-size: 20px;
 }
 
 #filter-button-area {
-  margin-bottom: 10px;
+  margin: 3% auto;
   height: 30px;
 }
 
@@ -76,7 +69,7 @@
   border-radius: 4px;
   font-family:'Courier New', Courier, monospace;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   width: 100px;
   margin-left: 10px;
@@ -104,13 +97,35 @@
   cursor: pointer;
 }
 
-.organization-name {
-  font-size: 36px;
+.organization-name,
+.organization-popup-name {
+  font-size: 30px;
 }
 
 #search-area {
   display: flex;
   justify-content: space-around;
+}
+
+#organization-popup-area {
+  width: 50%;
+  font-size: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 40px 20px 10px 20px;
+}
+
+.organization-popup-name {
+    margin: 2% auto;
+}
+
+.organization-popup-phone,
+.organization-popup-address,
+.organization-popup-hours,
+.organization-popup-email,
+.organization-popup-url-link,
+.organization-popup-description {
+    margin: 2% 0;
 }
 
 .hide-popup {
