@@ -17,6 +17,8 @@ class Organization {
     this.organization = organization;
     this.isMaintainer = isMaintainer;
     this.organizationElement = document.createElement("div");
+    this.closeButtonElement = document.createElement("div");
+    this.popupElement = document.createElement("div");
     this.createOrganization();
   }
 
@@ -25,30 +27,33 @@ class Organization {
   }
 
   createOrganization() {
+    this.organizationElement.addEventListener('click', () => {
+      let event = new CustomEvent('organization-selected');
+      this.organizationElement.dispatchEvent(event);
+    });
+
+    this.closeButtonElement.addEventListener('click', () => {
+      let event = new CustomEvent('organization-close');
+      this.closeButtonElement.dispatchEvent(event);
+    });
+
     this.organizationElement.classList.add("organization");
 
     const organizationNameElement = document.createElement('div');
     organizationNameElement.classList.add("organization-name");
     organizationNameElement.textContent = this.organization.name;
 
-    // this.organizationElement.addEventListener()
-
-    // this.organizationElement.addEventListener('click', () => {
-    //   // TODO: GetOrganizationServlet to display more information about this servlet
-
-    //   const organizationPopupArea = document.getElementById("organization-popup-area");
-    //   organizationPopupArea.textContent = "";
-    //   organizationPopupArea.appendChild(this.createOrganizationPopup());
-    //   organizationPopupArea.classList.add("show-popup");
-    //   organizationPopupArea.classList.remove("hide-popup");
-    // });
-
     this.organizationElement.appendChild(organizationNameElement);
   }
 
+  createCloseButton() {
+    this.closeButtonElement.classList.add("popup-close-button");
+    this.closeButtonElement.textContent = 'X';
+  }
+
   createOrganizationPopup() {
-    const popupElement = document.createElement("div");
-    popupElement.classList.add("organization-popup");
+    this.popupElement = document.createElement("div");
+    this.popupElement.classList.add("organization-popup");
 
     const popupNameElement = document.createElement('div');
     popupNameElement.classList.add("organization-name");
@@ -67,21 +72,13 @@ class Organization {
       //TODO: Create Edit Organization Button for Maintainer.
     }
 
-    const closeButtonElement = document.createElement('div');
-    closeButtonElement.classList.add("popup-close-button");
-    closeButtonElement.textContent = 'X';
-    closeButtonElement.addEventListener('click', () => {
-      // Remove the popup from the DOM.
-      document.getElementById("organization-popup-area").classList.add("hide-popup");
-      document.getElementById("organization-popup-area").classList.remove("show-popup");
-      popupElement.remove();
-    });
+    this.createCloseButton()
 
-    popupElement.appendChild(closeButtonElement);
-    popupElement.appendChild(popupNameElement);
-    popupElement.appendChild(popupPhoneElement);
-    popupElement.appendChild(popupAddressElement);
-    popupElement.appendChild(popupEditElement);
-    return popupElement;
+    this.popupElement.appendChild(this.closeButtonElement);
+    this.popupElement.appendChild(popupNameElement);
+    this.popupElement.appendChild(popupPhoneElement);
+    this.popupElement.appendChild(popupAddressElement);
+    this.popupElement.appendChild(popupEditElement);
+    return this.popupElement;
   }
 }

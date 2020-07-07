@@ -81,26 +81,30 @@ class SearchArea {
     this.organizationList = document.createElement("div");
     this.organizationList.setAttribute("id", "organization-list");
     
+    this.organizationPopupArea = document.createElement("div");
+    this.organizationPopupArea.setAttribute("id", "organization-popup-area");
+    this.organizationPopupArea.classList.add("hide-popup");
+
     organizations.forEach((organization) => {
       const newOrganization = new Organization(organization, isMaintainer);
 
-      newOrganization.organizationElement.addEventListener('click', () => {
-        var event = new CustomEvent('organization-selected');
-        newOrganization.organizationElement.dispatchEvent(event);
-      })
-
-      newOrganization.organizationElement.addEventListener('organization-selected', (organizationElement) => {
+      newOrganization.organizationElement.addEventListener('organization-selected', () => {
         const organizationPopupArea = document.getElementById("organization-popup-area");
         organizationPopupArea.textContent = "";
         organizationPopupArea.appendChild(newOrganization.createOrganizationPopup());
         organizationPopupArea.classList.add("show-popup");
         organizationPopupArea.classList.remove("hide-popup");
       });
+
+      newOrganization.closeButtonElement.addEventListener('organization-close', () => {
+      //  Remove the popup from the DOM.
+        document.getElementById("organization-popup-area").classList.add("hide-popup");
+        document.getElementById("organization-popup-area").classList.remove("show-popup");
+        newOrganization.popupElement.remove();
+      });
+
       this.organizationList.appendChild(newOrganization.getOrganization());
     });
-
-    this.organizationPopupArea = document.createElement("div");
-    this.organizationPopupArea.setAttribute("id", "organization-popup-area");
 
     this.organizationSearchArea.appendChild(this.organizationList);
     this.searchArea.appendChild(this.organizationSearchArea);
