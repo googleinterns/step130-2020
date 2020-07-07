@@ -48,8 +48,10 @@ public class ListOrganizationsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
+
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
+
 
     Query query = getQueryFromParams(request, userService);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -58,21 +60,17 @@ public class ListOrganizationsServlet extends HttpServlet {
     QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
     ArrayList<Organization> requestedOrganizations = new ArrayList<Organization>();
 
-    /* Fills requestedOrganizations array with 4 fields of each org- name, phone, addres, and desc. */
+    /* Fills requestedOrganizations array*/
     for (Entity entity : results) {
-
-      Organization newOrg = new Organization((String) entity.getProperty("orgName"),
-                                             (String) entity.getProperty("orgEmail"),
-                                             (String) entity.getProperty("orgStreetAddress"),
-                                             (String) entity.getProperty("orgPhoneNum"),
-                                             (String) entity.getProperty("orgDescription"));
+      
+      // TODO(): Implement better schema to represent opening and closing hours for different days
+      Organization newOrg = new Organization(entity);
       requestedOrganizations.add(newOrg);
     }
     Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(requestedOrganizations));
   }
-
   /* Given a user id, this function checks if that user has a maintainer role in the datastore */
   public boolean userIsMaintainer(String userId) {
     //TODO(): Check if given user ID has maintainer role in the datastore
@@ -101,6 +99,7 @@ public class ListOrganizationsServlet extends HttpServlet {
     }
 
     // TODO(): Read through request parameters and for all valid parameters and use them to modify query (filtering)
+
     return query;
   }
 
