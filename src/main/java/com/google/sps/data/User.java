@@ -14,6 +14,19 @@
 
 package com.google.sps.data;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.QueryResultList;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.PreparedQuery;
+
 public final class User {
   private String id;
   private boolean isMaintainer = false;
@@ -27,5 +40,36 @@ public final class User {
 
   public boolean getMaintainerStatus() {
     return this.isMaintainer;
+  }
+
+  public static User getUserFromDatastore(String userId) {
+    User user = null;
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
+    Query query = new Query("User").setFilter(queryFilter);
+      
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
+    PreparedQuery preparedQuery = datastore.prepare(query);
+    QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
+
+    boolean isMaintainer = false;
+    String userEmail = "";
+    for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
+      isMaintainer = (boolean) entity.getProperty("isMaintainer");
+      userEmail = (String) entity.getProperty("userEmail");
+    }
+    user = new User(userId, isMaintainer, userEmail);
+    return user;
+  }
+
+  public static User getLoggedInUser() {
+    UserService userService = UserServiceFactory.getUserService();
+    boolean isUserLoggedIn = userService.isUserLoggedIn();
+    
+    if (isUserLoggedIn) {
+      return getUserFromDatastore(userService.getCurrentUser().getUserId());
+    } else {
+      return null;
+    }
   }
 }
