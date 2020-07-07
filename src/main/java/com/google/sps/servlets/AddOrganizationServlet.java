@@ -73,7 +73,7 @@ public class AddOrganizationServlet extends HttpServlet {
     changeHistory.add(history.recordHistory("Organization was registered", millisecondSinceEpoch));
     newOrganization.setProperty("changeHistory", changeHistory);
 
-
+    //TODO use UserId's here
     ArrayList<String> moderatorList = new ArrayList<String>();
     moderatorList.add(username);
 
