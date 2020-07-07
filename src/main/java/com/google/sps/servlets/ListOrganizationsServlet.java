@@ -47,9 +47,7 @@ public class ListOrganizationsServlet extends HttpServlet {
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     /* All get requests will return a maximum of 5 organization entities */
-    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
-    
-    /* TODO: Implement using pagination cursors- first implementation will just return 5 first entries */
+    FetchOptions fetchOptions = getFetchOptionsFromParams(request);
 
     /* This parameter is used to tell the servlet whether the user is requesting to see just the orgs they moderate*/
     String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
@@ -62,16 +60,15 @@ public class ListOrganizationsServlet extends HttpServlet {
 
     UserService userService = UserServiceFactory.getUserService();
     boolean isUserLoggedIn = userService.isUserLoggedIn();
-
+    String userId = userService.getCurrentUser().getUserId();
+    boolean userIsMaintainer = userIsMaintainer(userId);
     Query query;
 
     if (isUserLoggedIn && displayUserOrgs) {
       /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
-      String userId = userService.getCurrentUser().getUserId();
       query = ConstructQueryForUserInfo(userId);
     } else {
       /* If no username was included, it just returns all orgs */
-        // TODO: make this only return approved orgs
       query = new Query("Distributor").addSort("creationTimeStamp", SortDirection.DESCENDING);
     }
 
@@ -100,5 +97,18 @@ public class ListOrganizationsServlet extends HttpServlet {
     Query query = new Query("Distributor").setFilter(new FilterPredicate("moderatorList",
                     FilterOperator.EQUAL, userID)).addSort("creationTimeStamp", SortDirection.DESCENDING);
     return query;
+  }
+
+  /* Given a user id, this function checks if that user has a maintainer role in the datastore */
+  public boolean userIsMaintainer(String userId) {
+    //TODO(): Check if given user ID has maintainer role in the datastore
+    return true;
+  }
+
+  /* Given the servlet request, create a fetchOptions object that can be used to query/filter the correct data */
+  public FetchOptions getFetchOptionsFromParams(HttpServletRequest request) {
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
+    // TODO(): Read through request parameters and for all valid parameters, add it to the fetchOptions
+    return fetchOptions;
   }
 }
