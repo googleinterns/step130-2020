@@ -12,20 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.data;
+document.addEventListener('DOMContentLoaded', () => {
+  getMaintainerStatus("text1@example.com");
+});
 
-public final class User {
-  private String id;
-  private boolean isMaintainer = false;
-  private String userEmail;
+async function getMaintainerStatus(email) {
+  const response = await fetch(`/add-maintainer?user-email=${email}`);
+  console.log(response);
+  const responseData = await response.json();
 
-  public User(String id, boolean isMaintainer, String userEmail) {
-    this.id = id;
-    this.isMaintainer = isMaintainer;
-    this.userEmail = userEmail;
-  }
-
-  public boolean getMaintainerStatus() {
-    return this.isMaintainer;
+  if (response.status !== 200) {
+    throw new Error('Could not successfully add new maintainer.');
+    return;
   }
 }
