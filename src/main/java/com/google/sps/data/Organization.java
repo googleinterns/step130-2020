@@ -25,8 +25,6 @@ public final class Organization {
   private String address;
   private String description;
   private String phoneNum;
-  private long openingHour;
-  private long closingHour;
   private long creationTimeStamp;
   private long lastEditedTimeStamp;
   private boolean isApproved;
@@ -43,8 +41,6 @@ public final class Organization {
      this.address = (String) entity.getProperty("orgStreetAddress");
      this.description = (String) entity.getProperty("orgDescription");
      this.phoneNum = (String) entity.getProperty("orgPhoneNum");
-     this.openingHour = (long) ((ArrayList)entity.getProperty("openHours")).get(0);
-     this.closingHour = (long) ((ArrayList)entity.getProperty("openHours")).get(1);
      this.creationTimeStamp = (long) entity.getProperty("creationTimeStamp");
      this.lastEditedTimeStamp = (long) entity.getProperty("lastEditTimeStamp");
      this.isApproved = (boolean) entity.getProperty("isApproved");
