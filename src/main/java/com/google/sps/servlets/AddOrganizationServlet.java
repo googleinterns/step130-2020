@@ -22,7 +22,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import java.util.ArrayList;
-import com.google.sps.data.User;
+import com.google.sps.data.GivrUser;
 import java.io.IOException;
 
 @WebServlet("/add-organization")

@@ -35,7 +35,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.data.Organization;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.sps.data.User;
+import com.google.sps.data.GivrUser;
 import java.io.IOException;
 
 @WebServlet("/list-organizations")

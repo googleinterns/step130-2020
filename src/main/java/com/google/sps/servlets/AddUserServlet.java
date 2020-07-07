@@ -18,7 +18,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.sps.data.User;
+import com.google.sps.data.GivrUser;
 import com.google.sps.data.UserLoginInfo;
 import java.io.IOException;
 import com.google.gson.Gson;
@@ -52,7 +52,7 @@ public class AddUserServlet extends HttpServlet {
     if (isUserLoggedIn) {
       String userEmail = userService.getCurrentUser().getEmail();
       String userId = userService.getCurrentUser().getUserId();
-      User currentUser = null;
+      GivrUser currentUser = null;
 
       boolean doesUserExist = false;
       boolean isUserMaintainer = false;
@@ -66,19 +66,18 @@ public class AddUserServlet extends HttpServlet {
       QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
       if (userResult.size() < 1) {
-        User newUser = new User(userId, isUserMaintainer, userEmail);
+        GivrUser newUser = new GivrUser(userId, isUserMaintainer);
         currentUser = newUser;
       
         Entity userEntity = new Entity("User");
         userEntity.setProperty("userId", userId);
         userEntity.setProperty("isMaintainer", isUserMaintainer);
-        userEntity.setProperty("userEmail", userEmail);
         datastore.put(userEntity);
       } else {
         for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
           isUserMaintainer = (boolean) entity.getProperty("isMaintainer");
         }
-        currentUser = new User(userId, isUserMaintainer, userEmail);
+        currentUser = new GivrUser(userId, isUserMaintainer);
       }
      
       String urlToRedirectAfterUserLogsOut = "/";

@@ -14,6 +14,7 @@
 
 package com.google.sps.data;
 
+import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -27,22 +28,20 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 
-public final class User {
+public final class GivrUser {
   private String id;
   private boolean isMaintainer = false;
-  private String userEmail;
 
-  public User(String id, boolean isMaintainer, String userEmail) {
+  public GivrUser(String id, boolean isMaintainer) {
     this.id = id;
     this.isMaintainer = isMaintainer;
-    this.userEmail = userEmail;
   }
 
-  public boolean getMaintainerStatus() {
+  public boolean isMaintainer() {
     return this.isMaintainer;
   }
 
-  public static User getUserFromDatastore(String userId) {
+  public static GivrUser getUserByIdFromDatastore(String userId) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
     Query query = new Query("User").setFilter(queryFilter);
@@ -52,7 +51,6 @@ public final class User {
     QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
     boolean isMaintainer = false;
-    String userEmail = "";
 
     if (userResult.size() < 1) {
       return null;
@@ -60,20 +58,26 @@ public final class User {
     
     for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
       isMaintainer = (boolean) entity.getProperty("isMaintainer");
-      userEmail = (String) entity.getProperty("userEmail");
     }
-    User user = new User(userId, isMaintainer, userEmail);
+    GivrUser user = new GivrUser(userId, isMaintainer);
     return user;
   }
 
-  public static User getLoggedInUser() {
+  public static GivrUser getUserByEmail(String email) {
+    String authDomain = "gmail.com";
+    User user = new User(email, authDomain);
+    String userId = user.getUserId();
+
+    return getUserByIdFromDatastore(userId);
+  }
+
+  public static GivrUser getLoggedInUser() {
     UserService userService = UserServiceFactory.getUserService();
     boolean isUserLoggedIn = userService.isUserLoggedIn();
     
     if (isUserLoggedIn) {
-      return getUserFromDatastore(userService.getCurrentUser().getUserId());
-    } else {
-      return null;
+      return getUserByIdFromDatastore(userService.getCurrentUser().getUserId());
     }
+    return null;
   }
 }
