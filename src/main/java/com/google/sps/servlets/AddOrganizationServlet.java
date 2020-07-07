@@ -77,6 +77,7 @@ public class AddOrganizationServlet extends HttpServlet {
     ArrayList<String> moderatorList = new ArrayList<String>();
     moderatorList.add(username);
 
+    //TODO: Use sarah's code to get these fields directly from the request
     newOrganization.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
     newOrganization.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
     newOrganization.setProperty("orgName", orgName);

@@ -28,7 +28,7 @@ public final class HistoryManager {
 
     historyEntry.setProperty("changeAuthorId", userId);
     historyEntry.setProperty("changeMessage", historyMessage);
-    historyEntry.setProperty("changeTimeStamp", millisecondSinceEpoch);
+    historyEntry.setProperty("changeTimeStampMillis", millisecondSinceEpoch);
 
     return historyEntry;
   }
