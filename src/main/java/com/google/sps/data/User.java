@@ -43,7 +43,6 @@ public final class User {
   }
 
   public static User getUserFromDatastore(String userId) {
-    User user = null;
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
     Query query = new Query("User").setFilter(queryFilter);
@@ -54,11 +53,16 @@ public final class User {
 
     boolean isMaintainer = false;
     String userEmail = "";
+
+    if (userResult.size() < 1) {
+      return null;
+    }
+    
     for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
       isMaintainer = (boolean) entity.getProperty("isMaintainer");
       userEmail = (String) entity.getProperty("userEmail");
     }
-    user = new User(userId, isMaintainer, userEmail);
+    User user = new User(userId, isMaintainer, userEmail);
     return user;
   }
 
