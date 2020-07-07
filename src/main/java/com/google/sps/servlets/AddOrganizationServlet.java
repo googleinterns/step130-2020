@@ -28,6 +28,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import com.google.sps.data.User;
+import com.google.sps.data.HistoryManager;
 import java.time.Instant;
 import java.io.IOException;
 
@@ -76,19 +77,16 @@ public class AddOrganizationServlet extends HttpServlet {
      * because it is much simpler that way */
     ArrayList changeHistory = new ArrayList<>();
     
-    EmbeddedEntity historyEntry = new EmbeddedEntity();
+    HistoryManager history = new HistoryManager();
 
-    historyEntry.setProperty("changeAuthorEmail", username);
-    historyEntry.setProperty("changeAuthorId", userId);
-    historyEntry.setProperty("changeMessage", "Organization was registered");
-    historyEntry.setProperty("changeTimeStamp", millisecondSinceEpoch);
-    changeHistory.add(historyEntry);
+    changeHistory.add(history.recordHistory(userId, "Organization was registered", millisecondSinceEpoch));
+    newOrganization.setProperty("changeHistory", changeHistory);
 
     ArrayList<String> moderatorList = new ArrayList<String>();
     moderatorList.add(username);
 
-    newOrganization.setProperty("creationTimeStamp", millisecondSinceEpoch);
-    newOrganization.setProperty("lastEditTimeStamp", millisecondSinceEpoch);
+    newOrganization.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
+    newOrganization.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
     newOrganization.setProperty("orgName", orgName);
     newOrganization.setProperty("orgEmail", orgEmail);
     newOrganization.setProperty("orgPhoneNum", orgPhoneNum);
