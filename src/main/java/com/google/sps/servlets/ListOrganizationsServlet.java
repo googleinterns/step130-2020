@@ -81,14 +81,11 @@ public class ListOrganizationsServlet extends HttpServlet {
     QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
     ArrayList<Organization> requestedOrganizations = new ArrayList<Organization>();
 
-    /* Fills requestedOrganizations array with 4 fields of each org- name, phone, addres, and desc. */
+    /* Fills requestedOrganizations array*/
     for (Entity entity : results) {
-
-      Organization newOrg = new Organization((String) entity.getProperty("orgName"),
-                                             (String) entity.getProperty("orgEmail"),
-                                             (String) entity.getProperty("orgStreetAddress"),
-                                             (String) entity.getProperty("orgPhoneNum"),
-                                             (String) entity.getProperty("orgDescription"));
+      
+      // TODO(): Implement better schema to represent opening and closing hours for different days
+      Organization newOrg = new Organization(entity);
       requestedOrganizations.add(newOrg);
     }
     Gson gson = new Gson();
