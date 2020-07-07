@@ -28,20 +28,49 @@ class User {
 
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.user.isMaintainer;
-      document.getElementById('login-url').innerText = "Log Out";
-      document.getElementById('login-url').href = loginData.url;
 
+      // TODO(): set maintainer status correctly, manually doing this for testing purposes
+      this.isMaintainer = true;
+
+      // TODO(): add isModerator check
       if (!this.isMaintainer) {
-        const newAnchorItem = document.createElement('a');
-        newAnchorItem.innerText = 'Organizations';
-        newAnchorItem.href = 'edit.html';
-        document.getElementById('nav-bar').appendChild(newAnchorItem);
+        this.rebuildNavBar(/*isMaintainer*/ false, /*isModerator*/ false);
       }
-      
-      
-    } else {
-      document.getElementById('login-url').innerText = "Log In";
-      document.getElementById('login-url').href = loginData.url;
+      else {
+        this.rebuildNavBar(/*isMaintainer*/ true, /*isModerator*/ false);
+      }
+    }  else {
+      const loginLink = document.getElementById("login-url");
+      loginLink.textContent = "Log In";
+      loginLink.setAttribute("href", loginData.url);
+    }
+  }
+
+
+  rebuildNavBar(isMaintainer, isModerator) {
+    const navBar = document.getElementById("nav-bar");
+    navBar.textContent = "";
+
+    const helpNearMeLink = document.createElement("a");
+    helpNearMeLink.setAttribute("href", "index.html");
+    helpNearMeLink.textContent = "Help Near Me";
+    navBar.appendChild(helpNearMeLink);
+
+    const registrationLink = document.createElement("a");
+    registrationLink.setAttribute("href", "registration.html");
+    registrationLink.textContent = "Register Organization";
+    navBar.appendChild(registrationLink);
+
+    if(isMaintainer) {
+      const organizationsLink = document.createElement("a");
+      organizationsLink.setAttribute("href", "organizations.html");
+      organizationsLink.textContent = "Organizations";
+      navBar.appendChild(organizationsLink);
+    } else if (isModerator) {
+      const organizationsLink = document.createElement("a");
+      organizationsLink.setAttribute("href", "organizations.html");
+      organizationsLink.textContent = "My Organizations";
+      navBar.appendChild(organizationsLink);
     }
   }
 }

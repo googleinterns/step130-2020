@@ -24,8 +24,6 @@ public final class Organization {
   private String address;
   private String description;
   private String phoneNum;
-  private int openHour;
-  private int closingHour;
   private long creationTimeStamp;
   private long lastEditedTimeStamp;
   private boolean isApproved;
