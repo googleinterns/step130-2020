@@ -75,7 +75,6 @@ public class AddOrganizationServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(newOrganization);
 
-    System.out.println("Added to datastore");
     response.sendRedirect("/index.html");
   }
 }

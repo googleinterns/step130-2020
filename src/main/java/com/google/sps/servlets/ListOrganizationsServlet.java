@@ -85,12 +85,7 @@ public class ListOrganizationsServlet extends HttpServlet {
 
     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
     String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
-    boolean displayUserOrgs = false;
-    if ((displayUserOrgsParameter != null) && (displayUserOrgsParameter.equals("true"))) {
-      /* If a parameter was sent & is set to 'true', then the displayUserOrgs boolean changes to true */
-      displayUserOrgs = true;
-    }
-
+    boolean displayUserOrgs = userOrgsParameterHelper(request);
     boolean isUserLoggedIn = userService.isUserLoggedIn();
     String userId = userService.getCurrentUser().getUserId();
     boolean userIsMaintainer = userIsMaintainer(userId);
@@ -107,5 +102,17 @@ public class ListOrganizationsServlet extends HttpServlet {
 
     // TODO(): Read through request parameters and for all valid parameters and use them to modify query (filtering)
     return query;
+  }
+
+  public boolean userOrgsParameterHelper(HttpServletRequest request) {
+     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
+    String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
+
+    if ((displayUserOrgsParameter != null) && (displayUserOrgsParameter.equals("true"))) {
+      /* If a parameter was sent & is set to 'true', then the displayUserOrgs boolean changes to true */
+      return true;
+    } else {
+      return false;
+    }
   }
 }

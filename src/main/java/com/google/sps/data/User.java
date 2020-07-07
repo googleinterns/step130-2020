@@ -14,6 +14,11 @@
 
 package com.google.sps.data;
 
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+
+
 public final class User {
   private String id;
   private boolean isMaintainer = false;
@@ -21,5 +26,13 @@ public final class User {
   public User(String id, boolean isMaintainer) {
     this.id = id;
     this.isMaintainer = isMaintainer;
+  }
+
+  public Filter getUserFilter() {
+    Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, this.id);
+    
+    //TODO Change this function to reflect all user-based filtering done from listOrg servlet
+    
+    return queryFilter;
   }
 }
