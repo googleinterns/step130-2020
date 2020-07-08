@@ -35,6 +35,7 @@ public final class GivrUser {
   public GivrUser(String id, boolean isMaintainer) {
     this.id = id;
     this.isMaintainer = isMaintainer;
+    // TODO: Add email attribute, but do not add to the Datastore.
   }
 
   public boolean isMaintainer() {
