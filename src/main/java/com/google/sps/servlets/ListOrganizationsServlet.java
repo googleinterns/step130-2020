@@ -46,35 +46,12 @@ public class ListOrganizationsServlet extends HttpServlet {
    * If no parameters are included, it will return a default list of organizations
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
+
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
-    
-    /* TODO: Implement using pagination cursors- first implementation will just return 5 first entries */
 
-    /* This parameter is used to tell the servlet whether the user is requesting to see just the orgs they moderate*/
-    String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
-    boolean displayUserOrgs = false;
-
-    /* If a parameter was sent & is set to 'true', then the displayUserOrgs boolean changes to true */
-    if ((displayUserOrgsParameter != null) && (displayUserOrgsParameter.equals("true"))) {
-      displayUserOrgs = true;
-    }
-
-    UserService userService = UserServiceFactory.getUserService();
-    boolean isUserLoggedIn = userService.isUserLoggedIn();
-
-    Query query;
-
-    if (isUserLoggedIn && displayUserOrgs) {
-      /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
-      String userId = userService.getCurrentUser().getUserId();
-      query = ConstructQueryForUserInfo(userId);
-    } else {
-      /* If no username was included, it just returns all orgs */
-        // TODO: make this only return approved orgs
-      query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
-    }
-
+    Query query = getQueryFromParams(request, userService);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
@@ -92,10 +69,40 @@ public class ListOrganizationsServlet extends HttpServlet {
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(requestedOrganizations));
   }
+  /* Given a user id, this function checks if that user has a maintainer role in the datastore */
+  public boolean userIsMaintainer(String userId) {
+    //TODO(): Check if given user ID has maintainer role in the datastore
+    return true;
+  }
 
-  public Query ConstructQueryForUserInfo(String userID) {
-    Query query = new Query("Distributor").setFilter(new FilterPredicate("moderatorList",
-                    FilterOperator.EQUAL, userID)).addSort("creationTimeStampMillis", SortDirection.DESCENDING);
+  /* This function constructs a query based on the request parameters & user's role */
+  public Query getQueryFromParams(HttpServletRequest request, UserService userService) {
+    Query query = new Query("Distributor").addSort("creationTimeStamp", SortDirection.DESCENDING);;
+
+    /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
+    String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
+    boolean displayUserOrgs = coerceParameterToBoolean(request, displayUserOrgsParameter);
+    boolean isUserLoggedIn = userService.isUserLoggedIn();
+    String userId = userService.getCurrentUser().getUserId();
+    boolean userIsMaintainer = userIsMaintainer(userId);
+
+    if (isUserLoggedIn && displayUserOrgs) {
+      /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
+      query.setFilter(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
+    }
+
+    if (!userIsMaintainer) {
+      /* If the user is not a maintainer, only allow them to see approved orgs */
+      query.setFilter(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
+    }
+
+    // TODO(): Read through request parameters and for all valid parameters and use them to modify query (filtering)
+
     return query;
+  }
+
+  public boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
+    String requestParameter = request.getParameter(key);
+    return (requestParameter != null) && (requestParameter.equals("true"));
   }
 }
