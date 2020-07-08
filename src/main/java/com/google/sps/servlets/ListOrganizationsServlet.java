@@ -78,6 +78,7 @@ public class ListOrganizationsServlet extends HttpServlet {
     String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
     boolean displayUserOrgs = coerceParameterToBoolean(request, displayUserOrgsParameter);
     boolean isUserLoggedIn = (currentUser != null);
+    // Ternary operator is used to check if userIsMaintainer to protect against null currentUser
     boolean userIsMaintainer = isUserLoggedIn ? currentUser.isMaintainer() : false;
 
     if (isUserLoggedIn && displayUserOrgs) {
