@@ -15,31 +15,36 @@
 package com.google.sps.data;
 
 import java.util.ArrayList;
+import com.google.appengine.api.datastore.Entity;
 
 public final class Organization {
 
-  private int id;
+  private long id;
   private String name;
   private String email;
   private String address;
   private String description;
   private String phoneNum;
-  private int openHour;
-  private int closingHour;
   private long creationTimeStamp;
   private long lastEditedTimeStamp;
   private boolean isApproved;
-  private String orgUrl;
+  private String urlLink;
   private ArrayList<String> moderators;
 
-  /* To construct the organization object, we are only worrying about these parameters
-   * so it can be created in ListOrganizationServlet & sent back to be displayed in a
-   *  popup. GetOrganizationServlet will fill in the rest of these fields w/ setters */
-  public Organization(String name, String email, String address, String phoneNum, String description) {
-    this.name = name;
-    this.email = email;
-    this.address = address;
-    this.phoneNum = phoneNum;
-    this.description = description;
+  /* An Organization Object takes in an entity and assigns all of its fields based on the entity's
+   * properties */
+
+  public Organization(Entity entity) {
+     this.id = (long) entity.getKey().getId();
+     this.name = (String) entity.getProperty("orgName");
+     this.email = (String) entity.getProperty("orgEmail");
+     this.address = (String) entity.getProperty("orgStreetAddress");
+     this.description = (String) entity.getProperty("orgDescription");
+     this.phoneNum = (String) entity.getProperty("orgPhoneNum");
+     this.creationTimeStamp = (long) entity.getProperty("creationTimeStamp");
+     this.lastEditedTimeStamp = (long) entity.getProperty("lastEditTimeStamp");
+     this.isApproved = (boolean) entity.getProperty("isApproved");
+     this.urlLink = (String) entity.getProperty("orgUrl");
+     this.moderators = (ArrayList) entity.getProperty("moderatorList");
   }
 }
