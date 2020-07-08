@@ -117,25 +117,25 @@ public final class Organization {
 
   private void setOrganizationProperty(String propertyKey, String formValue) {
     if(propertyKey.equals("moderatorList")) {
-      moderators = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
+      this.moderators = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
     } else if(propertyKey.equals("isApproved")) {
       if(formValue.equals("approved")) {
-        isApproved = true;
+        this.isApproved = true;
       } else if(formValue.equals("notApproved")) {
-          isApproved = false;
+          this.isApproved = false;
         }
     } else if(propertyKey.equals("orgName")) {
-      name = formValue;
+      this.name = formValue;
     } else if(propertyKey.equals("orgEmail")) {
-      email = formValue;
+      this.email = formValue;
     } else if(propertyKey.equals("orgStreetAddress")) {
-      address = formValue;
+      this.address = formValue;
     } else if(propertyKey.equals("orgDescription")) {
-      description = formValue;
+      this.description = formValue;
     } else if(propertyKey.equals("orgPhoneNum")) {
-      phoneNum = formValue;
+      this.phoneNum = formValue;
     } else if(propertyKey.equals("orgUrl")) {
-      urlLink = formValue;
+      this.urlLink = formValue;
     }
   }
 }
