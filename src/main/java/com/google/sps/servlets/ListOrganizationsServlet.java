@@ -72,7 +72,7 @@ public class ListOrganizationsServlet extends HttpServlet {
     } else {
       /* If no username was included, it just returns all orgs */
         // TODO: make this only return approved orgs
-      query = new Query("Distributor").addSort("creationTimeStamp", SortDirection.DESCENDING);
+      query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
     }
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -81,14 +81,11 @@ public class ListOrganizationsServlet extends HttpServlet {
     QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
     ArrayList<Organization> requestedOrganizations = new ArrayList<Organization>();
 
-    /* Fills requestedOrganizations array with 4 fields of each org- name, phone, addres, and desc. */
+    /* Fills requestedOrganizations array*/
     for (Entity entity : results) {
-
-      Organization newOrg = new Organization((String) entity.getProperty("orgName"),
-                                             (String) entity.getProperty("orgEmail"),
-                                             (String) entity.getProperty("orgStreetAddress"),
-                                             (String) entity.getProperty("orgPhoneNum"),
-                                             (String) entity.getProperty("orgDescription"));
+      
+      // TODO(): Implement better schema to represent opening and closing hours for different days
+      Organization newOrg = new Organization(entity);
       requestedOrganizations.add(newOrg);
     }
     Gson gson = new Gson();
@@ -98,7 +95,7 @@ public class ListOrganizationsServlet extends HttpServlet {
 
   public Query ConstructQueryForUserInfo(String userID) {
     Query query = new Query("Distributor").setFilter(new FilterPredicate("moderatorList",
-                    FilterOperator.EQUAL, userID)).addSort("creationTimeStamp", SortDirection.DESCENDING);
+                    FilterOperator.EQUAL, userID)).addSort("creationTimeStampMillis", SortDirection.DESCENDING);
     return query;
   }
 }
