@@ -46,6 +46,14 @@ public final class GivrUser {
     return this.isMaintainer;
   }
 
+  public static void addNewUserToDatastore(String userId, boolean isMaintainer) {
+    Entity userEntity = new Entity("User");
+    userEntity.setProperty("userId", userId);
+    userEntity.setProperty("isMaintainer", isMaintainer);
+
+    datastore.put(userEntity);
+  }
+
   public static GivrUser getUserByIdFromDatastore(String userId) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
@@ -57,11 +65,13 @@ public final class GivrUser {
 
     boolean isMaintainer = false;
 
-    if (userResult.size() == 1) {
+    if (userResult.size() < 1) {
+      addNewUserToDatastore(userId, isMaintainer);
+    } else if (userResult.size() == 1) {
       for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
         isMaintainer = (boolean) entity.getProperty("isMaintainer");
       }
-    } else if (userResult.size() > 1) {
+    } else
       throw new IllegalArgumentException("More than one user with the userId was found.");
     }
 
