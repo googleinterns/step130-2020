@@ -52,12 +52,10 @@ public final class GivrUser {
 
     boolean isMaintainer = false;
 
-    if (userResult.size() < 1) {
-      return null;
-    }
-    
-    for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
-      isMaintainer = (boolean) entity.getProperty("isMaintainer");
+    if (userResult.size() == 1) {
+      for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
+        isMaintainer = (boolean) entity.getProperty("isMaintainer");
+      }
     }
     GivrUser user = new GivrUser(userId, isMaintainer);
     return user;
