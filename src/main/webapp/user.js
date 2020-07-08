@@ -18,8 +18,10 @@ class User {
   }
 
   async renderLoginStatus() {
-    const response = await fetch('/add-user');
+    const response = await fetch('/authenticate');
     const loginData = await response.json();
+
+    console.log(loginData);
 
     if (response.status !== 200) {
       throw new Error('Did not successfully authenticate user.');
