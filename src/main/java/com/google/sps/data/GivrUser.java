@@ -38,6 +38,10 @@ public final class GivrUser {
     // TODO: Add email attribute, but do not add to the Datastore.
   }
 
+  public String getUserId() {
+    return this.id;
+  }
+
   public boolean isMaintainer() {
     return this.isMaintainer;
   }
