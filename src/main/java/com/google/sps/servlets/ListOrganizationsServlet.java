@@ -46,12 +46,12 @@ public class ListOrganizationsServlet extends HttpServlet {
    * If no parameters are included, it will return a default list of organizations
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserService userService = UserServiceFactory.getUserService();
+    GivrUser currentUser = GivrUser.getLoggedInUser();
 
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
 
-    Query query = getQueryFromParams(request, userService);
+    Query query = getQueryFromParams(request, currentUser);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
@@ -69,25 +69,21 @@ public class ListOrganizationsServlet extends HttpServlet {
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(requestedOrganizations));
   }
-  /* Given a user id, this function checks if that user has a maintainer role in the datastore */
-  public boolean userIsMaintainer(String userId) {
-    //TODO(): Check if given user ID has maintainer role in the datastore
-    return true;
-  }
 
   /* This function constructs a query based on the request parameters & user's role */
-  public Query getQueryFromParams(HttpServletRequest request, UserService userService) {
+  public Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
     Query query = new Query("Distributor").addSort("creationTimeStamp", SortDirection.DESCENDING);;
 
     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
     String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
     boolean displayUserOrgs = coerceParameterToBoolean(request, displayUserOrgsParameter);
-    boolean isUserLoggedIn = userService.isUserLoggedIn();
-    String userId = userService.getCurrentUser().getUserId();
-    boolean userIsMaintainer = userIsMaintainer(userId);
+    boolean isUserLoggedIn = (currentUser != null);
+    // Ternary operator is used to check if userIsMaintainer to protect against null currentUser
+    boolean userIsMaintainer = isUserLoggedIn ? currentUser.isMaintainer() : false;
 
     if (isUserLoggedIn && displayUserOrgs) {
       /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
+      String userId = currentUser.getUserId();
       query.setFilter(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
     }
 
