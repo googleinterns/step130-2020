@@ -59,12 +59,13 @@ public final class GivrUser {
     } else if (userResult.size() > 1) {
       throw new IllegalArgumentException("More than one user with the userId was found.");
     }
-    
+
     GivrUser user = new GivrUser(userId, isMaintainer);
     return user;
   }
 
   public static GivrUser getUserByEmail(String email) {
+    // TODO: Support OAuth.
     String authDomain = "gmail.com";
     User user = new User(email, authDomain);
     String userId = user.getUserId();
