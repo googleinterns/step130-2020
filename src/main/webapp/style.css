@@ -6,7 +6,7 @@
   flex-direction: column;
 }
 
-#help-near-me-content,
+#help-near-me-content a,
 #organizations-content a {
   color: #666666;
   text-decoration: none;
@@ -14,7 +14,7 @@
   margin: 0 20px;
 }
 
-#help-near-me-content,
+#help-near-me-content a:hover,
 #organizations-content a:hover {
   border-bottom: 3px solid #666666;
 }

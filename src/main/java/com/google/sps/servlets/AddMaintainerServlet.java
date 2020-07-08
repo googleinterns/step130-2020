@@ -41,13 +41,9 @@ import com.google.appengine.api.datastore.Transaction;
 public class AddMaintainerServlet extends HttpServlet {
 
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-    UserService userService = UserServiceFactory.getUserService();
-    boolean isUserLoggedIn = userService.isUserLoggedIn();
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     response.setContentType("application/json;");
 
-    User currUser = User.getLoggedInUser();
+    GivrUser currUser = GivrUser.getLoggedInUser();
 
     if (currUser != null && currUser.getMaintainerStatus()) {
       String newMaintainerEmail = request.getParameter("user-email");

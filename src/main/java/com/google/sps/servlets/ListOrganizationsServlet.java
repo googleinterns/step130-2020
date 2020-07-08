@@ -35,7 +35,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.data.Organization;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.sps.data.User;
+import com.google.sps.data.GivrUser;
 import java.io.IOException;
 
 @WebServlet("/list-organizations")
@@ -46,35 +46,12 @@ public class ListOrganizationsServlet extends HttpServlet {
    * If no parameters are included, it will return a default list of organizations
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    GivrUser currentUser = GivrUser.getLoggedInUser();
+
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
-    
-    /* TODO: Implement using pagination cursors- first implementation will just return 5 first entries */
 
-    /* This parameter is used to tell the servlet whether the user is requesting to see just the orgs they moderate*/
-    String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
-    boolean displayUserOrgs = false;
-
-    /* If a parameter was sent & is set to 'true', then the displayUserOrgs boolean changes to true */
-    if ((displayUserOrgsParameter != null) && (displayUserOrgsParameter.equals("true"))) {
-      displayUserOrgs = true;
-    }
-
-    UserService userService = UserServiceFactory.getUserService();
-    boolean isUserLoggedIn = userService.isUserLoggedIn();
-
-    Query query;
-
-    if (isUserLoggedIn && displayUserOrgs) {
-      /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
-      String userId = userService.getCurrentUser().getUserId();
-      query = ConstructQueryForUserInfo(userId);
-    } else {
-      /* If no username was included, it just returns all orgs */
-        // TODO: make this only return approved orgs
-      query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
-    }
-
+    Query query = getQueryFromParams(request, currentUser);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
@@ -93,9 +70,36 @@ public class ListOrganizationsServlet extends HttpServlet {
     response.getWriter().println(gson.toJson(requestedOrganizations));
   }
 
-  public Query ConstructQueryForUserInfo(String userID) {
-    Query query = new Query("Distributor").setFilter(new FilterPredicate("moderatorList",
-                    FilterOperator.EQUAL, userID)).addSort("creationTimeStampMillis", SortDirection.DESCENDING);
+  /* This function constructs a query based on the request parameters & user's role */
+  public Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
+    Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);;
+
+    /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
+    String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
+    boolean displayUserOrgs = coerceParameterToBoolean(request, displayUserOrgsParameter);
+    boolean isUserLoggedIn = (currentUser != null);
+    // Ternary operator is used to check if userIsMaintainer to protect against null currentUser
+    boolean userIsMaintainer = isUserLoggedIn ? currentUser.isMaintainer() : false;
+
+    if (isUserLoggedIn && displayUserOrgs) {
+      /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
+      String userId = currentUser.getUserId();
+      query.setFilter(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
+    }
+
+    // TODO(): fix showing approved orgs
+    // if (!userIsMaintainer) {
+    //   /* If the user is not a maintainer, only allow them to see approved orgs */
+    //   query.setFilter(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
+    // }
+
+    // TODO(): Read through request parameters and for all valid parameters and use them to modify query (filtering)
+
     return query;
+  }
+
+  public boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
+    String requestParameter = request.getParameter(key);
+    return (requestParameter != null) && (requestParameter.equals("true"));
   }
 }

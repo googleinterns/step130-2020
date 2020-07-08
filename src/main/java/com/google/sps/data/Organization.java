@@ -35,16 +35,16 @@ public final class Organization {
    * properties */
 
   public Organization(Entity entity) {
-     this.id = (long) entity.getKey().getId();
-     this.name = (String) entity.getProperty("orgName");
-     this.email = (String) entity.getProperty("orgEmail");
-     this.address = (String) entity.getProperty("orgStreetAddress");
-     this.description = (String) entity.getProperty("orgDescription");
-     this.phoneNum = (String) entity.getProperty("orgPhoneNum");
-     this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");
-     this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
-     this.isApproved = (boolean) entity.getProperty("isApproved");
-     this.urlLink = (String) entity.getProperty("orgUrl");
-     this.moderators = (ArrayList) entity.getProperty("moderatorList");
+    this.id = (long) entity.getKey().getId();
+    this.name = (String) entity.getProperty("orgName");
+    this.email = (String) entity.getProperty("orgEmail");
+    this.address = (String) entity.getProperty("orgStreetAddress");
+    this.description = (String) entity.getProperty("orgDescription");
+    this.phoneNum = (String) entity.getProperty("orgPhoneNum");
+    this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");
+    this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
+    this.isApproved = (boolean) entity.getProperty("isApproved");
+    this.urlLink = (String) entity.getProperty("orgUrl");
+    this.moderators = (ArrayList) entity.getProperty("moderatorList");
   }
 }
