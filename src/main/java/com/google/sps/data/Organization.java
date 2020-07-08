@@ -25,8 +25,8 @@ public final class Organization {
   private String address;
   private String description;
   private String phoneNum;
-  private long creationTimeStamp;
-  private long lastEditedTimeStamp;
+  private long creationTimeStampMillis;
+  private long lastEditedTimeStampMillis;
   private boolean isApproved;
   private String urlLink;
   private ArrayList<String> moderators;
@@ -41,8 +41,8 @@ public final class Organization {
      this.address = (String) entity.getProperty("orgStreetAddress");
      this.description = (String) entity.getProperty("orgDescription");
      this.phoneNum = (String) entity.getProperty("orgPhoneNum");
-     this.creationTimeStamp = (long) entity.getProperty("creationTimeStamp");
-     this.lastEditedTimeStamp = (long) entity.getProperty("lastEditTimeStamp");
+     this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");
+     this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
      this.isApproved = (boolean) entity.getProperty("isApproved");
      this.urlLink = (String) entity.getProperty("orgUrl");
      this.moderators = (ArrayList) entity.getProperty("moderatorList");
