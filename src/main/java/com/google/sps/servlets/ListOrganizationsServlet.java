@@ -48,10 +48,8 @@ public class ListOrganizationsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
-
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
-
 
     Query query = getQueryFromParams(request, userService);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -83,7 +81,7 @@ public class ListOrganizationsServlet extends HttpServlet {
 
     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
     String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
-    boolean displayUserOrgs = userOrgsParameterHelper(request);
+    boolean displayUserOrgs = coerceParameterToBoolean(request, displayUserOrgsParameter);
     boolean isUserLoggedIn = userService.isUserLoggedIn();
     String userId = userService.getCurrentUser().getUserId();
     boolean userIsMaintainer = userIsMaintainer(userId);
@@ -103,15 +101,8 @@ public class ListOrganizationsServlet extends HttpServlet {
     return query;
   }
 
-  public boolean userOrgsParameterHelper(HttpServletRequest request) {
-     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
-    String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
-
-    if ((displayUserOrgsParameter != null) && (displayUserOrgsParameter.equals("true"))) {
-      /* If a parameter was sent & is set to 'true', then the displayUserOrgs boolean changes to true */
-      return true;
-    } else {
-      return false;
-    }
+  public boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
+    String requestParameter = request.getParameter(key);
+    return (requestParameter != null) && (requestParameter.equals("true"));
   }
 }
