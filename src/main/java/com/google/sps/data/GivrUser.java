@@ -42,14 +42,6 @@ public final class GivrUser {
     return this.isMaintainer;
   }
 
-  public Filter getFilterForUserOrganizations() {
-    Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, this.id);
-
-    //TODO Change this function to reflect all user-based filtering done from listOrg servlet
-
-    return queryFilter;
-  }
-
   public static GivrUser getUserByIdFromDatastore(String userId) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
