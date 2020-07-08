@@ -34,6 +34,8 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 @WebServlet("/add-user")
 public class AddUserServlet extends HttpServlet {
@@ -62,6 +64,7 @@ public class AddUserServlet extends HttpServlet {
       FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
       PreparedQuery preparedQuery = datastore.prepare(query);
       QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
+
       if (userResult.size() < 1) {
         GivrUser newUser = new GivrUser(userId, isUserMaintainer);
         currentUser = newUser;
