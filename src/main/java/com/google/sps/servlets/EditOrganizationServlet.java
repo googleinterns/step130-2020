@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.text.SimpleDateFormat;
 import com.google.sps.data.User;
 import com.google.sps.data.HistoryManager;
-import com.google.sps.data.Organization;
+import com.google.sps.data.OrganizationUpdater;
 import java.time.Instant;
 import java.io.IOException;
 import com.google.gson.Gson;
@@ -55,18 +55,18 @@ public class EditOrganizationServlet extends HttpServlet {
         return;
     }
 
-    Organization organization = new Organization(organizationEntity);
+    OrganizationUpdater organizationUpdater = new OrganizationUpdater(organizationEntity);
     
     if(isMaintainer) {
       try {
-        organization.updateOrganization(request, /*isMaintainer*/ true, /*isModerator*/ false);
+        organizationUpdater.updateOrganization(request, /*isMaintainer*/ true, /*isModerator*/ false);
       } catch(IllegalArgumentException err) {
           response.sendError(HttpServletResponse.SC_NOT_FOUND);
           return;
       }
     } else {
         try {
-          organization.updateOrganization(request, /*isMaintainer*/ false, /*isModerator*/ true);
+          organizationUpdater.updateOrganization(request, /*isMaintainer*/ false, /*isModerator*/ true);
         } catch(IllegalArgumentException err) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -74,7 +74,7 @@ public class EditOrganizationServlet extends HttpServlet {
     }
 
     // updates entity with changed properties from the form
-    organization.commitOrganization(organizationEntity);
+    organizationEntity = organizationUpdater.getEntity();
 
     //TODO: get timestamp with transactions instead
     long millisecondSinceEpoch = Instant.now().toEpochMilli();
