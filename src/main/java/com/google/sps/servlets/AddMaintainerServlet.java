@@ -41,24 +41,23 @@ import com.google.appengine.api.datastore.Transaction;
 public class AddMaintainerServlet extends HttpServlet {
 
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
     UserService userService = UserServiceFactory.getUserService();
     boolean isUserLoggedIn = userService.isUserLoggedIn();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     response.setContentType("application/json;");
 
-    if (isUserLoggedIn) {
-      String userId = userService.getCurrentUser().getUserId();
-      User currUser = getUser(userId);
+    User currUser = User.getLoggedInUser();
 
-      if (currUser.getMaintainerStatus()) {
-        String newMaintainerEmail = request.getParameter("user-email");
-        // TODO: Check if the newMaintainer already has an account. Do we limit to only accounts that exist within our Datastore?
-        changeMaintainerStatus(newMaintainerEmail);
-      } else {
-        // User is not maintainer, therefore cannot perform this action.
-        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-      }
+    if (currUser != null && currUser.getMaintainerStatus()) {
+      String newMaintainerEmail = request.getParameter("user-email");
+      // TODO: Check if the newMaintainer already has an account. Do we limit to only accounts that exist within our Datastore?
+      changeMaintainerStatus(newMaintainerEmail);
+      
+      response.setStatus(HttpServletResponse.SC_OK);
+      return;
     }
+    response.sendError(HttpServletResponse.SC_NOT_FOUND);
   }
 
   public void changeMaintainerStatus(String email) {
@@ -88,25 +87,5 @@ public class AddMaintainerServlet extends HttpServlet {
         }
       }
     }
-  }
-
-  public User getUser(String userId) {
-    User user = null;
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
-    Query query = new Query("User").setFilter(queryFilter);
-      
-    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
-    PreparedQuery preparedQuery = datastore.prepare(query);
-    QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
-
-    boolean isMaintainer = false;
-    String userEmail = "";
-    for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
-      isMaintainer = (boolean) entity.getProperty("isMaintainer");
-      userEmail = (String) entity.getProperty("userEmail");
-    }
-    user = new User(userId, isMaintainer, userEmail);
-    return user;
   }
 }
