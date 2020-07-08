@@ -56,7 +56,10 @@ public final class GivrUser {
       for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
         isMaintainer = (boolean) entity.getProperty("isMaintainer");
       }
+    } else if (userResult.size() > 1) {
+      throw new IllegalArgumentException("More than one user with the userId was found.");
     }
+    
     GivrUser user = new GivrUser(userId, isMaintainer);
     return user;
   }
