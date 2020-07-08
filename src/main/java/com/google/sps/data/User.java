@@ -28,7 +28,7 @@ public final class User {
     this.isMaintainer = isMaintainer;
   }
 
-  public Filter getUserFilter() {
+  public Filter getFilterForUserOrganizations() {
     Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, this.id);
     
     //TODO Change this function to reflect all user-based filtering done from listOrg servlet
