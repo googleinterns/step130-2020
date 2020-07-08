@@ -14,14 +14,14 @@
 
 package com.google.sps.data;
 
-import com.google.sps.data.User;
+import com.google.sps.data.GivrUser;
 
 public final class UserLoginInfo {
-  private User user;
+  private GivrUser user;
   private boolean isLoggedIn;
   private String url;
 
-  public UserLoginInfo(User user, boolean isLoggedIn, String url) {
+  public UserLoginInfo(GivrUser user, boolean isLoggedIn, String url) {
     this.user = user;
     this.isLoggedIn = isLoggedIn;
     this.url = url;

@@ -1,18 +1,21 @@
-#help-near-me-content {
+#help-near-me-content,
+#organizations-content {
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
   display: flex;
   flex-direction: column;
 }
 
-#help-near-me-content a {
+#help-near-me-content,
+#organizations-content a {
   color: #666666;
   text-decoration: none;
   border-bottom: 3px solid transparent;
   margin: 0 20px;
 }
 
-#help-near-me-content a:hover {
+#help-near-me-content,
+#organizations-content a:hover {
   border-bottom: 3px solid #666666;
 }
  
