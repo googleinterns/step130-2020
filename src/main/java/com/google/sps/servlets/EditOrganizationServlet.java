@@ -24,8 +24,11 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Entity;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Arrays;
 import com.google.sps.data.User;
+import com.google.sps.data.Organization;
 import java.io.IOException;
 import com.google.gson.Gson;
 
@@ -36,66 +39,49 @@ public class EditOrganizationServlet extends HttpServlet {
     //Get the proper organization entity for updating
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     long id = Long.parseLong(request.getParameter("id"));
+    Boolean isMaintainer = Boolean.parseBoolean(request.getParameter("isMaintainer"));
     Key organizationKey = KeyFactory.createKey("Distributor", id);
-    Entity organization = new Entity("Distributor");
+    Entity organizationEntity = new Entity("Distributor");
 
     // try catch for compliation purposes, servlet will not be called without a valid id param
     try {
-      organization = datastore.get(organizationKey);
+      organizationEntity = datastore.get(organizationKey);
     } catch(com.google.appengine.api.datastore.EntityNotFoundException err) {
-        System.out.println("Entity Not Found");
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
     }
 
-    // Get all information from form
-    String newOrgName = request.getParameter("org-name");
-    String newOrgEmail = request.getParameter("email");
-    String newOrgStreetAddress = request.getParameter("address");
-    String newOrgPhoneNum = request.getParameter("phone-number");
-    String newOrgUrl = request.getParameter("url-link");
-    String newOrgDescription = request.getParameter("description");
-    String newHourOpen = request.getParameter("hour-open");
-    String newHourClosed = request.getParameter("hour-closed");
-    String newApproval = request.getParameter("approval");
-    String newModeratorList = request.getParameter("moderator-list");
+    Organization organization = new Organization(organizationEntity);
+    
+    if(isMaintainer) {
+      try {
+        organization.updateOrganization(request, /*isMaintainer*/ true, /*isModerator*/ false);
+      } catch(IllegalArgumentException err) {
+          response.sendError(HttpServletResponse.SC_NOT_FOUND);
+          return;
+      }
+    } else {
+        try {
+          organization.updateOrganization(request, /*isMaintainer*/ false, /*isModerator*/ true);
+        } catch(IllegalArgumentException err) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }    
+    }
+
+    // updates entity with changed properties from the form
+    organization.commitOrganization(organizationEntity);
 
     //TODO: get timestamp with transactions instead
     long timestampMillis = System.currentTimeMillis();
-
-    // Set organization properties with inputted form information
-    organization.setProperty("orgName", newOrgName);
-    organization.setProperty("orgEmail", newOrgEmail);
-    organization.setProperty("orgStreetAddress", newOrgStreetAddress);
-    organization.setProperty("orgPhoneNum", newOrgPhoneNum);
-    organization.setProperty("orgUrl", newOrgUrl);
-    organization.setProperty("orgDescription", newOrgDescription);
-    organization.setProperty("lastEditTimeStamp", timestampMillis);
-
-    // Will only be changed by maintainers
-    if(newApproval.equals("approved")) {
-        organization.setProperty("isApproved", true);
-    } else if(newApproval.equals("notApproved")) {
-        organization.setProperty("isApproved", false);
-    }
-
-
-    // TODO: make a better way or storing this data (class?)
-    ArrayList<Integer> openHours = new ArrayList<Integer>();
-    openHours.add(Integer.parseInt(newHourOpen));
-    openHours.add(Integer.parseInt(newHourClosed));
-    organization.setProperty("openHours", openHours);
-
-    // Will split the list using the delimitter zero or more whitespace, comma, zero or more whitespace
-    ArrayList<String> moderatorList = new ArrayList<String>(Arrays.asList(newModeratorList.split("\\s*,\\s*")));
-    organization.setProperty("moderatorList", moderatorList);
+    organizationEntity.setProperty("lastEditTimeStampMillis", timestampMillis);
 
     // // TODO: change this to our History object- for prototyping just using strings
-    ArrayList<String> changeHistory = (ArrayList) organization.getProperty("changeHistory");
+    ArrayList<String> changeHistory = (ArrayList) organizationEntity.getProperty("changeHistory");
     changeHistory.add("Organization was was edited at " + timestampMillis);
-    organization.setProperty("changeHistory", changeHistory);
+    organizationEntity.setProperty("changeHistory", changeHistory);
 
-  
-    datastore.put(organization);
-
+    datastore.put(organizationEntity);
     System.out.println("Edited Organization");
     response.sendRedirect("/index.html");
   }

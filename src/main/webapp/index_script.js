@@ -74,15 +74,16 @@ class SearchArea {
     this.searchArea.appendChild(this.organizationPopupArea);
   }
 
-   /* 
-     * This async function gets a default list of organization names to display when the dom content
-     * loads by not passing any parameters to /list-organizations
-     */
+  /* 
+    * This async function gets a default list of organization names to display when the dom content
+    * loads by not passing any parameters to /list-organizations
+    */
   async requestAndDisplayOrganizations() {
+    //TODO: fetch organizations with param
     const response = await fetch(`/list-organizations`);
-    const organizationNames = await response.json();
-    for (let i = 0; i < organizationNames.length; i++) {
-      this.organizationList.appendChild(this.createOrganization(organizationNames[i]));
+    const organizations = await response.json();
+    for (let i = 0; i < organizations.length; i++) {
+      this.organizationList.appendChild(this.createOrganization(organizations[i]));
     }
   }
 
@@ -114,9 +115,9 @@ class SearchArea {
     popupNameElement.classList.add("organization-name");
     popupNameElement.textContent = organization.name;
 
-    const popupPhoneElement = document.createElement('div');
-    popupPhoneElement.classList.add("organization-popup-phone");
-    popupPhoneElement.textContent = organization.phone;
+    const popupPhoneNumElement = document.createElement('div');
+    popupPhoneNumElement.classList.add("organization-popup-phoneNum");
+    popupPhoneNumElement.textContent = organization.phoneNum;
 
     const popupAddressElement = document.createElement('div');
     popupAddressElement.classList.add("organization-popup-address");
@@ -145,7 +146,7 @@ class SearchArea {
 
     popupElement.appendChild(closeButtonElement);
     popupElement.appendChild(popupNameElement);
-    popupElement.appendChild(popupPhoneElement);
+    popupElement.appendChild(popupPhoneNumElement);
     popupElement.appendChild(popupAddressElement);
     popupElement.appendChild(popupEditElement);
     return popupElement;
@@ -163,6 +164,7 @@ class SearchArea {
     //use param list to pass in id to servlet
     const params = new URLSearchParams();
     params.append("id", organization.id);
+    params.append("isMaintainer", isMaintainer);
 
     const editFormAreaContent = document.createElement("div");
     editFormAreaContent.setAttribute("id", "edit-form-area-content");
@@ -210,7 +212,7 @@ class SearchArea {
     orgEmailEntry.setAttribute("type", "text");
     orgEmailEntry.setAttribute("id", "email");
     orgEmailEntry.setAttribute("value", `${organization.email}`);
-    orgEmailEntry.setAttribute("name", "email");
+    orgEmailEntry.setAttribute("name", "org-email");
     orgEmailEntry.classList.add("edit-entry");
     editForm.appendChild(orgEmailEntry);
 
@@ -225,7 +227,7 @@ class SearchArea {
     orgAddressEntry.setAttribute("type", "text");
     orgAddressEntry.setAttribute("id", "address");
     orgAddressEntry.setAttribute("value", `${organization.address}`);
-    orgAddressEntry.setAttribute("name", "address");
+    orgAddressEntry.setAttribute("name", "org-street-address");
     orgAddressEntry.classList.add("edit-entry");
     editForm.appendChild(orgAddressEntry);
 
@@ -238,46 +240,12 @@ class SearchArea {
 
     const orgPhoneEntry = document.createElement("input");
     orgPhoneEntry.setAttribute("type", "text");
-    orgPhoneEntry.setAttribute("id", "phone-number");
+    orgPhoneEntry.setAttribute("id", "phone-num");
     orgPhoneEntry.setAttribute("pattern", "[0-9]{10}");
     orgPhoneEntry.setAttribute("value", `${organization.phoneNum}`);
-    orgPhoneEntry.setAttribute("name", "phone-number");
+    orgPhoneEntry.setAttribute("name", "org-phone-num");
     orgPhoneEntry.classList.add("edit-entry");
     editForm.appendChild(orgPhoneEntry);
-
-    // label and entry area for organization hour open
-    const orgHourOpenLabel = document.createElement("label");
-    orgHourOpenLabel.setAttribute("for", "hour-open");
-    orgHourOpenLabel.setAttribute("id", "hour-open-label");
-    orgHourOpenLabel.textContent = "Hour Open: ";
-    editForm.appendChild(orgHourOpenLabel);
-
-    const orgHourOpenEntry = document.createElement("input");
-    orgHourOpenEntry.setAttribute("type", "number");
-    orgHourOpenEntry.setAttribute("min", "0");
-    orgHourOpenEntry.setAttribute("max", "23");
-    orgHourOpenEntry.setAttribute("id", "hour-open");
-    orgHourOpenEntry.setAttribute("value", `${organization.openingHour}`);
-    orgHourOpenEntry.setAttribute("name", "hour-open");
-    orgHourOpenEntry.classList.add("edit-entry");
-    editForm.appendChild(orgHourOpenEntry);
-
-    // label and entry area for organization hour closed
-    const orgHourClosedLabel = document.createElement("label");
-    orgHourClosedLabel.setAttribute("for", "hour-closed");
-    orgHourClosedLabel.setAttribute("id", "hour-closed-label");
-    orgHourClosedLabel.textContent = "Hour Closed: ";
-    editForm.appendChild(orgHourClosedLabel);
-
-    const orgHourClosedEntry = document.createElement("input");
-    orgHourClosedEntry.setAttribute("type", "number");
-    orgHourClosedEntry.setAttribute("min", "0");
-    orgHourClosedEntry.setAttribute("max", "23");
-    orgHourClosedEntry.setAttribute("id", "hour-closed");
-    orgHourClosedEntry.setAttribute("value", `${organization.closingHour}`);
-    orgHourClosedEntry.setAttribute("name", "hour-closed");
-    orgHourClosedEntry.classList.add("edit-entry");
-    editForm.appendChild(orgHourClosedEntry);
 
     // label and entry area for organization url-link
     const orgUrlLinkLabel = document.createElement("label");
@@ -290,7 +258,7 @@ class SearchArea {
     orgUrlLinkEntry.setAttribute("type", "text");
     orgUrlLinkEntry.setAttribute("id", "url-link");
     orgUrlLinkEntry.setAttribute("value", `${organization.urlLink}`);
-    orgUrlLinkEntry.setAttribute("name", "url-link");
+    orgUrlLinkEntry.setAttribute("name", "org-url");
     orgUrlLinkEntry.classList.add("edit-entry");
     editForm.appendChild(orgUrlLinkEntry);
 
@@ -304,7 +272,7 @@ class SearchArea {
     const orgDescriptionEntry = document.createElement("textarea");
     orgDescriptionEntry.setAttribute("type", "text");
     orgDescriptionEntry.setAttribute("id", "description");
-    orgDescriptionEntry.setAttribute("name", "description");
+    orgDescriptionEntry.setAttribute("name", "org-description");
     orgDescriptionEntry.classList.add("edit-entry");
     orgDescriptionEntry.textContent = organization.description;
     editForm.appendChild(orgDescriptionEntry);
