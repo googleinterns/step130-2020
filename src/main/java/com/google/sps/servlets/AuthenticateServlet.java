@@ -37,61 +37,63 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
-@WebServlet("/add-user")
-public class AddUserServlet extends HttpServlet {
+@WebServlet("/authenticate")
+public class AuthenticateServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse  response) throws IOException {
     response.setContentType("application/json;");
     Gson gson = new Gson();
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    UserService userService = UserServiceFactory.getUserService();
-    boolean isUserLoggedIn = userService.isUserLoggedIn();
 
-    if (isUserLoggedIn) {
-      String userEmail = userService.getCurrentUser().getEmail();
-      String userId = userService.getCurrentUser().getUserId();
-      GivrUser currentUser = null;
-
-      boolean doesUserExist = false;
-      boolean isUserMaintainer = false;
-      boolean isLoggedIn = true;
-
-      Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
-      Query query = new Query("User").setFilter(queryFilter);
-      
-      FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
-      PreparedQuery preparedQuery = datastore.prepare(query);
-      QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
-
-      if (userResult.size() < 1) {
-        GivrUser newUser = new GivrUser(userId, isUserMaintainer);
-        currentUser = newUser;
-      
-        Entity userEntity = new Entity("User");
-        userEntity.setProperty("userId", userId);
-        userEntity.setProperty("isMaintainer", isUserMaintainer);
-        datastore.put(userEntity);
-      } else {
-        for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
-          isUserMaintainer = (boolean) entity.getProperty("isMaintainer");
-        }
-        currentUser = new GivrUser(userId, isUserMaintainer);
-      }
-     
-      String urlToRedirectAfterUserLogsOut = "/";
-      String logoutUrl = userService.createLogoutURL(urlToRedirectAfterUserLogsOut);
-      UserLoginInfo loginInfo = new UserLoginInfo(currentUser, isLoggedIn, logoutUrl);
-      String json = gson.toJson(loginInfo);
-      response.getWriter().println(json);
-    } else {
+    GivrUser user = GivrUser.getLoggedInUser();
+    if (user == null) {
       String urlToRedirectAfterUserLogsIn = "/";
       String loginUrl = userService.createLoginURL(urlToRedirectAfterUserLogsIn);
       boolean isLoggedIn = false;
-      UserLoginInfo loginInfo = new UserLoginInfo(null, isLoggedIn, loginUrl);
+      UserLoginInfo loginInfo = new UserLoginInfo(user, isLoggedIn, loginUrl);
+
       String json = gson.toJson(loginInfo);
       response.getWriter().println(json);
+    } else {
+      
     }
+
+    // if (isUserLoggedIn) {
+    //   String userEmail = userService.getCurrentUser().getEmail();
+    //   String userId = userService.getCurrentUser().getUserId();
+    //   GivrUser currentUser = null;
+
+    //   boolean doesUserExist = false;
+    //   boolean isUserMaintainer = false;
+    //   boolean isLoggedIn = true;
+
+    //   Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
+    //   Query query = new Query("User").setFilter(queryFilter);
+      
+    //   FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
+    //   PreparedQuery preparedQuery = datastore.prepare(query);
+    //   QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
+
+    //   if (userResult.size() < 1) {
+    //     GivrUser newUser = new GivrUser(userId, isUserMaintainer);
+    //     currentUser = newUser;
+      
+    //     Entity userEntity = new Entity("User");
+    //     userEntity.setProperty("userId", userId);
+    //     userEntity.setProperty("isMaintainer", isUserMaintainer);
+    //     datastore.put(userEntity);
+    //   } else {
+    //     for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
+    //       isUserMaintainer = (boolean) entity.getProperty("isMaintainer");
+    //     }
+    //     currentUser = new GivrUser(userId, isUserMaintainer);
+    //   }
+     
+    //   String urlToRedirectAfterUserLogsOut = "/";
+    //   String logoutUrl = userService.createLogoutURL(urlToRedirectAfterUserLogsOut);
+    //   UserLoginInfo loginInfo = new UserLoginInfo(currentUser, isLoggedIn, logoutUrl);
+    //   String json = gson.toJson(loginInfo);
+    //   response.getWriter().println(json);
   }
 }
