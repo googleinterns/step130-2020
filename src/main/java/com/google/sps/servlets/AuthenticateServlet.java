@@ -45,18 +45,24 @@ public class AuthenticateServlet extends HttpServlet {
     response.setContentType("application/json;");
     Gson gson = new Gson();
 
+    UserService userService = UserServiceFactory.getUserService();
     GivrUser user = GivrUser.getLoggedInUser();
+    boolean isLoggedIn;
+    String url;
     // User is null when they are not logged in.
     if (user == null) {
       String urlToRedirectAfterUserLogsIn = "/";
       String loginUrl = userService.createLoginURL(urlToRedirectAfterUserLogsIn);
-      boolean isLoggedIn = false;
-      UserLoginInfo loginInfo = new UserLoginInfo(user, isLoggedIn, loginUrl);
+      isLoggedIn = false;
+      url = loginUrl;
+     
     } else {
       String urlToRedirectAfterUserLogsOut = "/";
       String logoutUrl = userService.createLogoutURL(urlToRedirectAfterUserLogsOut);
-      UserLoginInfo loginInfo = new UserLoginInfo(currentUser, isLoggedIn, logoutUrl);
+      isLoggedIn = true;
+      url = logoutUrl;
     }
+    UserLoginInfo loginInfo = new UserLoginInfo(user, isLoggedIn, url);
     String json = gson.toJson(loginInfo);
     response.getWriter().println(json);
   }

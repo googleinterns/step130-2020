@@ -47,6 +47,7 @@ public final class GivrUser {
   }
 
   public static void addNewUserToDatastore(String userId, boolean isMaintainer) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity userEntity = new Entity("User");
     userEntity.setProperty("userId", userId);
     userEntity.setProperty("isMaintainer", isMaintainer);
@@ -71,7 +72,7 @@ public final class GivrUser {
       for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
         isMaintainer = (boolean) entity.getProperty("isMaintainer");
       }
-    } else
+    } else {
       throw new IllegalArgumentException("More than one user with the userId was found.");
     }
 
