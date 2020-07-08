@@ -21,8 +21,6 @@ class User {
     const response = await fetch('/authenticate');
     const loginData = await response.json();
 
-    console.log(loginData);
-
     if (response.status !== 200) {
       throw new Error('Did not successfully authenticate user.');
       return;
