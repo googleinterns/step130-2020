@@ -37,10 +37,12 @@ public final class OrganizationUpdater {
     return this.entity;
   }
 
-  public void updateOrganization(HttpServletRequest request, boolean isMaintainer, boolean isModerator) throws IllegalArgumentException{
+  public void updateOrganization(HttpServletRequest request, GivrUser user, boolean forRegistration) throws IllegalArgumentException{
     Set<String> requiresMaintainer = new HashSet<String>();
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
+    boolean isMaintainer = user.isMaintainer();
+    boolean isModerator = user.isModerator();
 
     requiresMaintainer.add("isApproved");
     requiresModerator.add("moderatorList");
@@ -58,6 +60,10 @@ public final class OrganizationUpdater {
     for(Map.Entry<String, String> entry : properties.entrySet()) {
       String propertyKey = entry.getValue();
 
+      // if updating for registering an organization then do not want to consider fields that require maintainer or moderator permissions
+      if(forRegistration && (requiresModerator.contains(propertyKey) || requiresMaintainer.contains(propertyKey))) {
+          continue;
+      }
       // will only get approval param is a maintainer sent the request
       if(requiresMaintainer.contains(propertyKey) && !isMaintainer) {
         continue;
