@@ -29,12 +29,17 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 
 public final class GivrUser {
-  private String id;
-  private boolean isMaintainer = false;
 
-  public GivrUser(String id, boolean isMaintainer) {
+  private String id;
+  private boolean isMaintainer;
+  private boolean isLoggedIn;
+  private String url;
+
+  public GivrUser(String id, boolean isMaintainer, boolean isLoggedIn, String url) {
     this.id = id;
     this.isMaintainer = isMaintainer;
+    this.isLoggedIn = isLoggedIn;
+    this.url = url;
     // TODO: Add email attribute, but do not add to the Datastore.
   }
 
@@ -65,6 +70,7 @@ public final class GivrUser {
     QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
     boolean isMaintainer = false;
+    boolean isLoggedIn = true;
 
     if (userResult.size() < 1) {
       addNewUserToDatastore(userId, isMaintainer);
@@ -76,7 +82,8 @@ public final class GivrUser {
       throw new IllegalArgumentException("More than one user with the userId was found.");
     }
 
-    GivrUser user = new GivrUser(userId, isMaintainer);
+
+    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */);
     return user;
   }
 
@@ -92,10 +99,11 @@ public final class GivrUser {
   public static GivrUser getLoggedInUser() {
     UserService userService = UserServiceFactory.getUserService();
     boolean isUserLoggedIn = userService.isUserLoggedIn();
+    String url = userService.createLoginURL("/");
     
     if (isUserLoggedIn) {
       return getUserByIdFromDatastore(userService.getCurrentUser().getUserId());
     }
-    return null;
+    return new GivrUser("", false, false, url);
   }
 }
