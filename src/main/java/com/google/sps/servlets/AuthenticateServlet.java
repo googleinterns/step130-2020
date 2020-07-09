@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.GivrUser;
-import com.google.sps.data.UserLoginInfo;
 import java.io.IOException;
 import com.google.gson.Gson;
 import com.google.appengine.api.users.UserService;
@@ -45,25 +44,8 @@ public class AuthenticateServlet extends HttpServlet {
     response.setContentType("application/json;");
     Gson gson = new Gson();
 
-    UserService userService = UserServiceFactory.getUserService();
     GivrUser user = GivrUser.getLoggedInUser();
-    boolean isLoggedIn;
-    String url;
-    // User is null when they are not logged in.
-    if (user == null) {
-      String urlToRedirectAfterUserLogsIn = "/";
-      String loginUrl = userService.createLoginURL(urlToRedirectAfterUserLogsIn);
-      isLoggedIn = false;
-      url = loginUrl;
-     
-    } else {
-      String urlToRedirectAfterUserLogsOut = "/";
-      String logoutUrl = userService.createLogoutURL(urlToRedirectAfterUserLogsOut);
-      isLoggedIn = true;
-      url = logoutUrl;
-    }
-    UserLoginInfo loginInfo = new UserLoginInfo(user, isLoggedIn, url);
-    String json = gson.toJson(loginInfo);
+    String json = gson.toJson(user);
     response.getWriter().println(json);
   }
 }
