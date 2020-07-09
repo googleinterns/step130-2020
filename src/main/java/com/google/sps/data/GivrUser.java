@@ -72,7 +72,7 @@ public final class GivrUser {
     }
 
 
-    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL will be set in AuthenticateServlet */);
+    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */);
     return user;
   }
 

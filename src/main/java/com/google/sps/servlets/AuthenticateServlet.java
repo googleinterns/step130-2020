@@ -44,7 +44,6 @@ public class AuthenticateServlet extends HttpServlet {
     response.setContentType("application/json;");
     Gson gson = new Gson();
 
-    UserService userService = UserServiceFactory.getUserService();
     GivrUser user = GivrUser.getLoggedInUser();
 
     String json = gson.toJson(user);
