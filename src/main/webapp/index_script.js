@@ -41,7 +41,7 @@ class SearchArea {
 
     this.zipcodeSubmit = document.createElement("input");
     this.zipcodeSubmit.setAttribute("type", "submit");
-    this.zipcodeSubmit.setAttribute("class", "enter-button");
+    this.zipcodeSubmit.setAttribute("class", "gray-button");
     this.zipcodeForm.appendChild(this.zipcodeSubmit);
 
     this.zipcodeFormArea.appendChild(this.zipcodeForm);
@@ -52,7 +52,7 @@ class SearchArea {
 
     this.filterButton = document.createElement("button");
     this.filterButton.setAttribute("type", "button");
-    this.filterButton.setAttribute("class", "enter-button");
+    this.filterButton.setAttribute("class", "gray-button");
     this.filterButton.setAttribute("id", "filter-button");
     this.filterButton.textContent = "Filter";
     this.filterButtonArea.appendChild(this.filterButton);
