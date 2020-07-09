@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import com.google.sps.data.User;
 import com.google.sps.data.HistoryManager;
 import com.google.sps.data.OrganizationUpdater;
+import com.google.sps.data.GivrUser;
 import java.time.Instant;
 import java.io.IOException;
 
@@ -37,15 +38,9 @@ import java.io.IOException;
 public class AddOrganizationServlet extends HttpServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserService userService = UserServiceFactory.getUserService();
-    boolean isUserLoggedIn = userService.isUserLoggedIn();
-    String username;
-    String userId;
-    if (isUserLoggedIn) {
-      /* Currently uses user email to be consistent w other parts of codebase, subject to change */
-      username = userService.getCurrentUser().getEmail();
-      userId = userService.getCurrentUser().getUserId();
-    } else {
+    GivrUser user = GivrUser.getLoggedInUser();
+
+    if (user.getUserId().equals("")) {
       throw new IllegalArgumentException("Error: unable to register organization if user is not logged in.");
     }
     
@@ -69,7 +64,7 @@ public class AddOrganizationServlet extends HttpServlet {
 
     //TODO use UserId's here
     ArrayList<String> moderatorList = new ArrayList<String>();
-    moderatorList.add(username);
+    moderatorList.add(user.getUserId());
 
     newOrganizationEntity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
     newOrganizationEntity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
@@ -81,7 +76,7 @@ public class AddOrganizationServlet extends HttpServlet {
 
     // update rest of organization properties from inputted form
     try {
-      organizationUpdater.updateOrganization(request, /*isMaintainer*/ false, /*isModerator*/ false);
+      organizationUpdater.updateOrganization(request, user, /*forRegistration*/ true);
     } catch(IllegalArgumentException err) {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
