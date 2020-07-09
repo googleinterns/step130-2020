@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import com.google.sps.data.User;
 import com.google.sps.data.HistoryManager;
-import com.google.sps.data.Organization;
+import com.google.sps.data.OrganizationUpdater;
 import java.time.Instant;
 import java.io.IOException;
 
@@ -77,17 +77,17 @@ public class AddOrganizationServlet extends HttpServlet {
     newOrganizationEntity.setProperty("moderatorList", moderatorList);
     newOrganizationEntity.setProperty("changeHistory", changeHistory);
 
-    Organization newOrganization = new Organization(newOrganizationEntity);
+    OrganizationUpdater organizationUpdater = new OrganizationUpdater(newOrganizationEntity);
 
     // update rest of organization properties from inputted form
     try {
-      newOrganization.updateOrganization(request, /*isMaintainer*/ false, /*isModerator*/ false);
+      organizationUpdater.updateOrganization(request, /*isMaintainer*/ false, /*isModerator*/ false);
     } catch(IllegalArgumentException err) {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
     }
 
-    newOrganization.commitOrganization(newOrganizationEntity);
+    newOrganizationEntity = organizationUpdater.getEntity();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(newOrganizationEntity);
