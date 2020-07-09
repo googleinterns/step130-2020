@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import com.google.sps.data.User;
 import com.google.sps.data.HistoryManager;
 import com.google.sps.data.OrganizationUpdater;
+import com.google.sps.data.GivrUser;
 import java.time.Instant;
 import java.io.IOException;
 import com.google.gson.Gson;
@@ -54,23 +55,16 @@ public class EditOrganizationServlet extends HttpServlet {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
     }
-
+    
+    GivrUser user = GivrUser.getLoggedInUser();
     OrganizationUpdater organizationUpdater = new OrganizationUpdater(organizationEntity);
     
-    if(isMaintainer) {
-      try {
-        organizationUpdater.updateOrganization(request, /*isMaintainer*/ true, /*isModerator*/ false);
-      } catch(IllegalArgumentException err) {
-          response.sendError(HttpServletResponse.SC_NOT_FOUND);
-          return;
+    try {
+      organizationUpdater.updateOrganization(request, user, /*forRegistration*/ false);
+    } catch(IllegalArgumentException err) {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
       }
-    } else {
-        try {
-          organizationUpdater.updateOrganization(request, /*isMaintainer*/ false, /*isModerator*/ true);
-        } catch(IllegalArgumentException err) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }    
     }
 
     // updates entity with changed properties from the form
