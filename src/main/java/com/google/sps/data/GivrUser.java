@@ -47,10 +47,6 @@ public final class GivrUser {
     return this.id;
   }
 
-  public void setLoginUrl(String url) {
-    this.url = url;
-  }
-
   public boolean isMaintainer() {
     return this.isMaintainer;
   }
@@ -97,6 +93,6 @@ public final class GivrUser {
     if (isUserLoggedIn) {
       return getUserByIdFromDatastore(userService.getCurrentUser().getUserId());
     }
-    return new GivrUser("", false, false, "");
+    return new GivrUser("", false, false, url);
   }
 }

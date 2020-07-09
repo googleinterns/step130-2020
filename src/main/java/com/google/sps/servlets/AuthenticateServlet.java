@@ -47,10 +47,6 @@ public class AuthenticateServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     GivrUser user = GivrUser.getLoggedInUser();
 
-    String urlToRedirectAfterUserLogsIn = "/";
-    String loginUrl = userService.createLoginURL(urlToRedirectAfterUserLogsIn);
-    user.setLoginUrl(loginUrl);
-
     String json = gson.toJson(user);
     response.getWriter().println(json);
   }
