@@ -72,7 +72,7 @@ public class ListOrganizationsServlet extends HttpServlet {
 
   /* This function constructs a query based on the request parameters & user's role */
   public Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
-    Query query = new Query("Distributor").addSort("creationTimeStamp", SortDirection.DESCENDING);;
+    Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);;
 
     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
     String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
@@ -87,10 +87,11 @@ public class ListOrganizationsServlet extends HttpServlet {
       query.setFilter(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
     }
 
-    if (!userIsMaintainer) {
-      /* If the user is not a maintainer, only allow them to see approved orgs */
-      query.setFilter(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
-    }
+    // TODO(): fix showing approved orgs
+    // if (!userIsMaintainer) {
+    //   /* If the user is not a maintainer, only allow them to see approved orgs */
+    //   query.setFilter(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
+    // }
 
     // TODO(): Read through request parameters and for all valid parameters and use them to modify query (filtering)
 
