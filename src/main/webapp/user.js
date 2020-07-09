@@ -29,15 +29,12 @@ class User {
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.user.isMaintainer;
 
-      // TODO(): set maintainer status correctly, manually doing this for testing purposes
-      this.isMaintainer = true;
-
       // TODO(): add isModerator check
       if (!this.isMaintainer) {
-        this.rebuildNavBar(/*isMaintainer*/ false, /*isModerator*/ false);
+        this.rebuildNavBar(/*isModerator*/ false);
       }
       else {
-        this.rebuildNavBar(/*isMaintainer*/ true, /*isModerator*/ false);
+        this.rebuildNavBar(/*isModerator*/ false);
       }
     }  else {
       const loginLink = document.getElementById("login-url");
@@ -47,7 +44,7 @@ class User {
   }
 
 
-  rebuildNavBar(isMaintainer, isModerator) {
+  rebuildNavBar(isModerator) {
     const navBar = document.getElementById("nav-bar");
     navBar.textContent = "";
 
@@ -61,7 +58,7 @@ class User {
     registrationLink.textContent = "Register Organization";
     navBar.appendChild(registrationLink);
 
-    if(isMaintainer) {
+    if(this.isMaintainer) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "Organizations";
