@@ -30,13 +30,11 @@ import com.google.appengine.api.datastore.PreparedQuery;
 
 public final class GivrUser {
   private String id;
-  private boolean isLoggedIn;
-  private String url;
+  private boolean isMaintainer = false;
 
-  public GivrUser(String id, boolean isLoggedIn, String url) {
+  public GivrUser(String id, boolean isMaintainer) {
     this.id = id;
-    this.isLoggedIn = isLoggedIn;
-    this.url = url;
+    this.isMaintainer = isMaintainer;
     // TODO: Add email attribute, but do not add to the Datastore.
   }
 
@@ -44,27 +42,41 @@ public final class GivrUser {
     return this.id;
   }
 
-  public static GivrUser getUserById(String userId) {
+  public boolean isMaintainer() {
+    return this.isMaintainer;
+  }
+
+  public static void addNewUserToDatastore(String userId, boolean isMaintainer) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Entity userEntity = new Entity("User");
+    userEntity.setProperty("userId", userId);
+    userEntity.setProperty("isMaintainer", isMaintainer);
+
+    datastore.put(userEntity);
+  }
+
+  public static GivrUser getUserByIdFromDatastore(String userId) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
-    Query query = new Query("MaintainerUser").setFilter(queryFilter);
+    Query query = new Query("User").setFilter(queryFilter);
       
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
     PreparedQuery preparedQuery = datastore.prepare(query);
     QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
     boolean isMaintainer = false;
-    boolean isLoggedIn = true;
 
-    if (userResult.size() == 1) {
+    if (userResult.size() < 1) {
+      addNewUserToDatastore(userId, isMaintainer);
+    } else if (userResult.size() == 1) {
       for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
-        isMaintainer = true;
+        isMaintainer = (boolean) entity.getProperty("isMaintainer");
       }
     } else {
       throw new IllegalArgumentException("More than one user with the userId was found.");
     }
 
-    GivrUser user = new GivrUser(userId, isLoggedIn, "");
+    GivrUser user = new GivrUser(userId, isMaintainer);
     return user;
   }
 
@@ -74,7 +86,7 @@ public final class GivrUser {
     User user = new User(email, authDomain);
     String userId = user.getUserId();
 
-    return getUserById(userId);
+    return getUserByIdFromDatastore(userId);
   }
 
   public static GivrUser getLoggedInUser() {
@@ -82,10 +94,8 @@ public final class GivrUser {
     boolean isUserLoggedIn = userService.isUserLoggedIn();
     
     if (isUserLoggedIn) {
-      return getUserById(userService.getCurrentUser().getUserId());
+      return getUserByIdFromDatastore(userService.getCurrentUser().getUserId());
     }
-
-    String loginUrl = userService.createLoginURL("/");
-    return new GivrUser("", isUserLoggedIn, loginUrl);
+    return null;
   }
 }
