@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Arrays;
 import com.google.appengine.api.datastore.Entity;
+import com.google.sps.data.GivrUser;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,11 +30,11 @@ public final class OrganizationUpdater {
   private Entity entity;
 
   public OrganizationUpdater(Entity entity) {
-     this.entity = entity;
+    this.entity = entity;
   }
 
   public Entity getEntity() {
-      return this.entity;
+    return this.entity;
   }
 
   public void updateOrganization(HttpServletRequest request, boolean isMaintainer, boolean isModerator) throws IllegalArgumentException{
@@ -55,9 +56,7 @@ public final class OrganizationUpdater {
     properties.put("moderator-list", "moderatorList");
 
     for(Map.Entry<String, String> entry : properties.entrySet()) {
-      String formKey = entry.getKey();
       String propertyKey = entry.getValue();
-      String formValue = "";
 
       // will only get approval param is a maintainer sent the request
       if(requiresMaintainer.contains(propertyKey) && !isMaintainer) {
@@ -65,10 +64,12 @@ public final class OrganizationUpdater {
       }
 
       // will only get moderatorList param if request is sent by a moderator or maintainer
-      if(requiresModerator.contains(propertyKey) && !isModerator && !isMaintainer) {
+      if(requiresModerator.contains(propertyKey) && !(isModerator || isMaintainer)) {
         continue;
       }
 
+      String formKey = entry.getKey();
+      String formValue = "";
       // setting organization description is optional
       if(!propertyKey.equals("orgDescription")) {
         try {
@@ -76,9 +77,12 @@ public final class OrganizationUpdater {
         } catch(IllegalArgumentException err) {
           throw new IllegalArgumentException();
         }
+      } else if (request.getParameter(formKey) != null) {
+          formValue = request.getParameter(formKey);
       } else {
-        formValue = request.getParameter(formKey);
+          formValue = "";
       }
+
       setOrganizationProperty(propertyKey, formValue);
     }
   }
@@ -86,23 +90,32 @@ public final class OrganizationUpdater {
   private String getParameterOrThrow(HttpServletRequest request, String formKey) {
     String result = request.getParameter(formKey);
     if(result.isEmpty() || result == null) {
-        throw new IllegalArgumentException("Form value cannot be null");
+      throw new IllegalArgumentException("Form value cannot be null");
     }
     return result;
   }
 
   private void setOrganizationProperty(String propertyKey, String formValue) {
     if(propertyKey.equals("moderatorList")) {
-      ArrayList<String> newModeratorList = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
+      ArrayList<String> newModeratorList = translateEmailsToIds(Arrays.asList(formValue.split("\\s*,\\s*")));
       this.entity.setProperty("moderatorList", newModeratorList);
     } else if(propertyKey.equals("isApproved")) {
       if(formValue.equals("approved")) {
         this.entity.setProperty("isApproved", true);
-      } else if(formValue.equals("notApproved")) {
+      } else {
           this.entity.setProperty("isApproved", false);
-        }
+      }
     } else {
         this.entity.setProperty(propertyKey, formValue);
     }
+  }
+
+  private ArrayList<String> translateEmailsToIds(ArrayList<String> emails) {
+    ArrayList<String> userIds = new ArrayList<String>();
+    for(String email : emails) {
+      GivrUser newUser = GivrUser.getUserByEmail(email);
+      userIds.add(newUser.getUserId());
+    }
+    return userIds;
   }
 }
