@@ -30,7 +30,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 
 public final class GivrUser {
   private String id;
-  private boolean isMaintainer;
+  private boolean isMaintainer = false;
 
   public GivrUser(String id, boolean isMaintainer) {
     this.id = id;
