@@ -30,7 +30,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 
 public final class GivrUser {
   private String id;
-  private boolean isMaintainer = false;
+  private boolean isMaintainer;
 
   public GivrUser(String id, boolean isMaintainer) {
     this.id = id;
@@ -44,6 +44,11 @@ public final class GivrUser {
 
   public boolean isMaintainer() {
     return this.isMaintainer;
+  }
+
+  //TODO(): get correct moderator status for organization
+  public boolean isModerator(String organization) {
+      return false;
   }
 
   public static GivrUser getUserByIdFromDatastore(String userId) {
