@@ -27,7 +27,7 @@ class User {
     }
 
     if (loginData.isLoggedIn) {
-      this.isMaintainer = loginData.user.isMaintainer;
+      this.isMaintainer = loginData.isMaintainer;
 
       // TODO(): add isModerator check
       if (!this.isMaintainer) {

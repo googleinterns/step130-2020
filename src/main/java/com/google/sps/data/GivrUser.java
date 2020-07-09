@@ -47,7 +47,7 @@ public final class GivrUser {
     return this.id;
   }
 
-  public void setLoginUrl(url) {
+  public void setLoginUrl(String url) {
     this.url = url;
   }
 
@@ -65,17 +65,18 @@ public final class GivrUser {
     QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
     boolean isMaintainer = false;
-    String isLoggedIn = true;
+    boolean isLoggedIn = true;
 
     if (userResult.size() == 1) {
       for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
         isMaintainer = (boolean) entity.getProperty("isMaintainer");
       }
-    } else {
+    } else if (userResult.size() > 1) {
       throw new IllegalArgumentException("More than one user with the userId was found.");
     }
 
-    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "");
+
+    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL will be set in AuthenticateServlet */);
     return user;
   }
 
@@ -96,6 +97,6 @@ public final class GivrUser {
     if (isUserLoggedIn) {
       return getUserByIdFromDatastore(userService.getCurrentUser().getUserId());
     }
-    return null;
+    return new GivrUser("", false, false, "");
   }
 }
