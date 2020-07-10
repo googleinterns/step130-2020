@@ -62,7 +62,8 @@ public class AddOrganizationServlet extends HttpServlet {
     changeHistory.add(history.recordHistory("Organization was registered", millisecondSinceEpoch));
     newOrganizationEntity.setProperty("changeHistory", changeHistory);
 
-    //TODO use UserId's here
+    // Setting moderatorList here instead of organizationUpdater because that will handle the form submission
+    // and this servlet will handle the rest of the instantiation
     ArrayList<String> moderatorList = new ArrayList<String>();
     moderatorList.add(user.getUserId());
 
