@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-async function getListOfOrganizations() {
-  const response = await fetch(`/list-organizations`);
+async function getListOfOrganizations(urlSearchParams) {
+  let response;
+  if (urlSearchParams) {
+    response = await fetch(`/list-organizations?${urlSearchParams.toString()}`);
+  } else {
+    response = await fetch(`/list-organizations`);
+  }
   const organizations = await response.json();
 
   return organizations;
@@ -21,7 +26,6 @@ async function getListOfOrganizations() {
 
 document.addEventListener("DOMContentLoaded", async function() {
   const organizations = await getListOfOrganizations();
-
   // TODO: Get Maintainer status by checking if requester User is a Maintainer. 
   // This checks that requester User has valid credentials to edit/delete/view ALL organizations. (by checking userID)
   let isMaintainer = false;
@@ -40,53 +44,75 @@ class SearchArea {
   constructor(searchAreaElement, organizations, isMaintainer) {
     this.searchArea = searchAreaElement;
     this.organizationSearchArea = document.createElement("div");
+    this.organizationsObjectsList = organizations;
+    this.isMaintainer = isMaintainer;
+    this.filterParams = new URLSearchParams();
 
-    this.zipcodeForm = document.createElement("div");
+    this.zipcodeFormArea = document.createElement("div");
     this.form = document.createElement("form");
-    this.form.setAttribute("action", "/list-organizations");
-    this.form.setAttribute("method", "POST");
+    this.form.setAttribute("onsubmit", "return false");
 
     this.zipcodeFormLabel = document.createElement("label");
     this.zipcodeFormLabel.setAttribute("for", "zipcode-entry");
     this.zipcodeFormLabel.setAttribute("id", "zipcode-label");
     this.zipcodeFormLabel.textContent = "Enter a zipcode: ";
-    this.zipcodeForm.appendChild(this.zipcodeFormLabel);
+    this.form.appendChild(this.zipcodeFormLabel);
 
     this.zipcodeFormEntry = document.createElement("input");
     this.zipcodeFormEntry.setAttribute("type", "text");
     this.zipcodeFormEntry.setAttribute("id", "zipcode-entry");
     this.zipcodeFormEntry.setAttribute("pattern", "[0-9]{5}");
     this.zipcodeFormEntry.setAttribute("name", "zipcode");
-    this.zipcodeForm.appendChild(this.zipcodeFormEntry);
+    this.form.appendChild(this.zipcodeFormEntry);
 
     this.zipcodeSubmit = document.createElement("input");
     this.zipcodeSubmit.setAttribute("type", "submit");
     this.zipcodeSubmit.setAttribute("class", "gray-button");
-    this.zipcodeForm.appendChild(this.zipcodeSubmit);
+    this.zipcodeSubmit.addEventListener('click', () => this.handleZipcodeSubmission(this.form));
+    this.form.appendChild(this.zipcodeSubmit);
 
-    this.organizationSearchArea.appendChild(this.zipcodeForm);
+    this.zipcodeFormArea.appendChild(this.form);
+    this.organizationSearchArea.appendChild(this.zipcodeFormArea);
 
-    this.filterButtonArea = document.createElement("div");
-    this.filterButtonArea.setAttribute("id", "filter-button-area");
+    this.filterInputArea = document.createElement("input");
+    this.filterInputArea.setAttribute("list", "filter-datalist");
+    this.filterInputArea.setAttribute("id", "filter-input-area");
+    this.filterInputArea.setAttribute("placeholder", "Filter Results");
+    this.filterInputArea.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        this.handleFilterSubmission(this.filterInputArea.value);
+      }
+    }.bind(this));
 
-    this.filterButton = document.createElement("button");
-    this.filterButton.setAttribute("type", "button");
-    this.filterButton.setAttribute("class", "gray-button");
-    this.filterButton.setAttribute("id", "filter-button");
-    this.filterButton.textContent = "Filter";
-    this.filterButtonArea.appendChild(this.filterButton);
+    this.filterDataList = document.createElement("datalist");
+    this.filterDataList.setAttribute("id", "filter-datalist");
+    this.filterOptions = ["Foods", "Clothing", "Shelter"];
+    for (let i = 0; i < this.filterOptions.length; i++) {
+      const option = document.createElement("option");
+      option.value = this.filterOptions[i];
+      this.filterDataList.appendChild(option);
+    }
 
-    this.organizationSearchArea.appendChild(this.filterButtonArea);
+    this.filterInputArea.appendChild(this.filterDataList);
+    this.organizationSearchArea.appendChild(this.filterInputArea);
 
-    this.organizationList = document.createElement("div");
-    this.organizationList.setAttribute("id", "organization-list");
+    this.organizationListDiv = document.createElement("div");
+    this.organizationListDiv.setAttribute("id", "organization-list");
     
     this.organizationPopupArea = document.createElement("div");
     this.organizationPopupArea.setAttribute("id", "organization-popup-area");
     this.organizationPopupArea.classList.add("hide-popup");
 
-    organizations.forEach((organization) => {
-      const newOrganization = new Organization(organization, isMaintainer);
+    this.renderListOfOrganizations();
+
+    this.organizationSearchArea.appendChild(this.organizationListDiv);
+    this.searchArea.appendChild(this.organizationSearchArea);
+    this.searchArea.appendChild(this.organizationPopupArea);
+  }
+
+  async renderListOfOrganizations() {
+    this.organizationsObjectsList.forEach((organization) => {
+      const newOrganization = new Organization(organization, this.isMaintainer);
 
       newOrganization.organizationElement.addEventListener('organization-selected', () => {
         const organizationPopupArea = document.getElementById("organization-popup-area");
@@ -103,11 +129,24 @@ class SearchArea {
         newOrganization.popupElement.remove();
       });
 
-      this.organizationList.appendChild(newOrganization.getOrganization());
+      this.organizationListDiv.appendChild(newOrganization.getOrganization());
     });
+  }
 
-    this.organizationSearchArea.appendChild(this.organizationList);
-    this.searchArea.appendChild(this.organizationSearchArea);
-    this.searchArea.appendChild(this.organizationPopupArea);
+  async handleZipcodeSubmission(zipcodeForm) {
+    this.filterParams.set("zipcode", zipcodeForm.zipcode.value);
+    this.organizationsObjectsList = [];
+    this.organizationListDiv.innerHTML = "";
+    this.organizationsObjectsList = await getListOfOrganizations(this.filterParams);
+    this.renderListOfOrganizations();
+  }
+
+  async handleFilterSubmission(filterParam) {
+    /* There can be more than one filterParam if the user clicks another without refreshing/clearing */
+    this.filterParams.append("filterParam", filterParam);
+    this.organizationsObjectsList = [];
+    this.organizationListDiv.innerHTML = "";
+    this.organizationsObjectsList = await getListOfOrganizations(this.filterParams);
+    this.renderListOfOrganizations();
   }
 }

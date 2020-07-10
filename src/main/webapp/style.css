@@ -58,7 +58,7 @@
   font-size: 20px;
 }
 
-#filter-button-area {
+#filter-input-area {
   margin: 3% auto;
   height: 30px;
 }
@@ -76,7 +76,7 @@
   padding: 5px 20px;
 }
 
-#filter-button {
+#filter-datalist {
     float: right;
 }
 
