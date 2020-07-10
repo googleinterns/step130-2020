@@ -12,31 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-async function getListOfOrganizations(urlSearchParams) {
-  let response;
-  if (urlSearchParams) {
-    response = await fetch(`/list-organizations?${urlSearchParams.toString()}`);
-  } else {
-    response = await fetch(`/list-organizations`);
-  }
-  const organizations = await response.json();
-
-  return organizations;
-}
-
 document.addEventListener("DOMContentLoaded", async function() {
-  const organizations = await getListOfOrganizations();
   // TODO: Get Maintainer status by checking if requester User is a Maintainer. 
   // This checks that requester User has valid credentials to edit/delete/view ALL organizations. (by checking userID)
   let isMaintainer = false;
 
   // TODO: Create separate JS file for listing organizations, instead of using SearchArea and having these checks below
   if (document.getElementById('search-area')) {
-    const mainSearchArea = new SearchArea(document.getElementById('search-area'), organizations, isMaintainer);
+    const mainSearchArea = new SearchArea(document.getElementById('search-area'), isMaintainer);
+    await mainSearchArea.getListOfOrganizations();
+    await mainSearchArea.renderListOfOrganizations()
   }
   isMaintainer = true;
   if (document.getElementById('all-organizations')) {
-    const organizationSearchArea = new SearchArea(document.getElementById('all-organizations'), organizations, isMaintainer);
+    const organizationSearchArea = new SearchArea(document.getElementById('all-organizations'), isMaintainer);
+    await organizationSearchArea.getListOfOrganizations();
+    await organizationSearchArea.renderListOfOrganizations();
   }
 });
 
@@ -44,9 +35,9 @@ class SearchArea {
   constructor(searchAreaElement, organizations, isMaintainer) {
     this.searchArea = searchAreaElement;
     this.organizationSearchArea = document.createElement("div");
-    this.organizationObjectsList = organizations;
     this.isMaintainer = isMaintainer;
     this.filterParams = new URLSearchParams();
+    this.organizationObjectsList = [];
 
     this.zipcodeFormArea = document.createElement("div");
     this.form = document.createElement("form");
@@ -103,8 +94,6 @@ class SearchArea {
     this.organizationPopupArea.setAttribute("id", "organization-popup-area");
     this.organizationPopupArea.classList.add("hide-popup");
 
-    this.renderListOfOrganizations();
-
     this.organizationSearchArea.appendChild(this.organizationListArea);
     this.searchArea.appendChild(this.organizationSearchArea);
     this.searchArea.appendChild(this.organizationPopupArea);
@@ -133,6 +122,16 @@ class SearchArea {
     });
   }
 
+  async getListOfOrganizations() {
+    let response;
+    if (this.filterParams) {
+      response = await fetch(`/list-organizations?${this.filterParams.toString()}`);
+    } else {
+      response = await fetch(`/list-organizations`);
+    }
+    this.organizationObjectsList = await response.json();
+  }
+
   async setUrlParamValue(urlParamKey, urlParamValue) {
     /* if the param is a zipcode, replace any existing one. Otherwise, add it to existing params */    
     if (urlParamKey === "zipcode") {
@@ -142,7 +141,7 @@ class SearchArea {
     }
     this.organizationObjectsList = [];
     this.organizationListArea.innerHTML = "";
-    this.organizationObjectsList = await getListOfOrganizations(this.filterParams);
-    this.renderListOfOrganizations();
+    await this.getListOfOrganizations();
+    await this.renderListOfOrganizations();
   }
 }
