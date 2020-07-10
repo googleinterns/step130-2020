@@ -64,7 +64,7 @@ public final class OrganizationUpdater {
       boolean propertyRequiresAuth = requiresMaintainer.contains(propertyKey) || requiresModerator.contains(propertyKey);
 
       // if updating for registering an organization then do not want to consider fields that require maintainer or moderator permissions
-      if(forRegistration && propertyRequiresAuth)) {
+      if(forRegistration && propertyRequiresAuth) {
           continue;
       }
       // will only get approval param is a maintainer sent the request
