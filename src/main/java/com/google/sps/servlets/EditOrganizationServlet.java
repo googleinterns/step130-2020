@@ -43,9 +43,8 @@ public class EditOrganizationServlet extends HttpServlet {
 
     //Get the proper organization entity for updating
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    long id = Long.parseLong(request.getParameter("id"));
-    Boolean isMaintainer = Boolean.parseBoolean(request.getParameter("isMaintainer"));
-    Key organizationKey = KeyFactory.createKey("Distributor", id);
+    long organizationId = Long.parseLong(request.getParameter("id"));
+    Key organizationKey = KeyFactory.createKey("Distributor", organizationId);
     Entity organizationEntity = new Entity("Distributor");
 
     // try catch for compliation purposes, servlet will not be called without a valid id param
@@ -57,14 +56,14 @@ public class EditOrganizationServlet extends HttpServlet {
     }
     
     GivrUser user = GivrUser.getLoggedInUser();
+
     OrganizationUpdater organizationUpdater = new OrganizationUpdater(organizationEntity);
     
     try {
-      organizationUpdater.updateOrganization(request, user, /*forRegistration*/ false);
+      organizationUpdater.updateOrganization(request, organizationId, user, /*forRegistration*/ false);
     } catch(IllegalArgumentException err) {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
-      }
     }
 
     // updates entity with changed properties from the form

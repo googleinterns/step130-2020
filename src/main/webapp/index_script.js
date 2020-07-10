@@ -155,16 +155,15 @@ class SearchArea {
   editOrganization(organization) {
     // all entry fields will be prepopulated with the current values for user experience
 
-    //TODO: get if user is maintainer, will determine showing approval buttons
+    //TODO(): get if user is maintainer, will determine showing approval buttons
     const isMaintainer = true;
 
-    // concatenate moderator list array into comma separated string
-    let moderatorListString = organization.moderators.join(", ");
+    // TODO(): Convert user ids to emails
+    const moderatorListString = this.convertIdsToEmails(organization.moderators);
 
     //use param list to pass in id to servlet
     const params = new URLSearchParams();
     params.append("id", organization.id);
-    params.append("isMaintainer", isMaintainer);
 
     const editFormAreaContent = document.createElement("div");
     editFormAreaContent.setAttribute("id", "edit-form-area-content");
@@ -340,5 +339,9 @@ class SearchArea {
     editFormAreaContent.appendChild(editForm);
 
     return editFormAreaContent;
+  }
+
+  convertIdsToEmails(moderators) {
+      return "placeholder";
   }
 }
