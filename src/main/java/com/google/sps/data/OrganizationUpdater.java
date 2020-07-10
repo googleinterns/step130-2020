@@ -41,8 +41,9 @@ public final class OrganizationUpdater {
     Set<String> requiresMaintainer = new HashSet<String>();
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
+    long organizationId = Long.parseLong(request.getParameter("id"));
     boolean isMaintainer = user.isMaintainer();
-    boolean isModerator = user.isModerator();
+    boolean isModerator = user.isModerator(organizationId);
 
     requiresMaintainer.add("isApproved");
     requiresModerator.add("moderatorList");
@@ -106,7 +107,7 @@ public final class OrganizationUpdater {
 
   private void setOrganizationProperty(String propertyKey, String formValue) {
     if(propertyKey.equals("moderatorList")) {
-      ArrayList<String> newModeratorList = translateEmailsToIds(Arrays.asList(formValue.split("\\s*,\\s*")));
+      ArrayList<String> newModeratorList = translateEmailsToIds((ArrayList) Arrays.asList(formValue.split("\\s*,\\s*")));
       this.entity.setProperty("moderatorList", newModeratorList);
     } else if(propertyKey.equals("isApproved")) {
       if(formValue.equals("approved")) {
