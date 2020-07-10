@@ -51,6 +51,11 @@ public final class GivrUser {
     return this.isMaintainer;
   }
 
+  //TODO(): get correct moderator status for organization
+  public boolean isModerator(String organizationId) {
+      return false;
+  }
+
   public static GivrUser getUserByIdFromDatastore(String userId) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
