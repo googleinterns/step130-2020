@@ -36,7 +36,6 @@ import com.google.sps.data.Organization;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.GivrUser;
-import java.lang.*;
 import java.io.IOException;
 
 @WebServlet("/list-organizations")
