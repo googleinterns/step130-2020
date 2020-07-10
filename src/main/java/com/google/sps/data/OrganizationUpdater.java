@@ -106,7 +106,7 @@ public final class OrganizationUpdater {
 
   private void setOrganizationProperty(String propertyKey, String formValue) {
     if(propertyKey.equals("moderatorList")) {
-      ArrayList<String> newModeratorList = translateEmailsToIds((ArrayList) Arrays.asList(formValue.split("\\s*,\\s*")));
+      ArrayList<String> newModeratorList = translateEmailsToIds(new ArrayList<String> (Arrays.asList(formValue.split("\\s*,\\s*"))));
       this.entity.setProperty("moderatorList", newModeratorList);
     } else if(propertyKey.equals("isApproved")) {
       if(formValue.equals("approved")) {

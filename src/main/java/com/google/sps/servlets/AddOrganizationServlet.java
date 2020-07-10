@@ -26,10 +26,10 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import java.util.ArrayList;
-import com.google.sps.data.GivrUser;
 import java.text.SimpleDateFormat;
-import com.google.sps.data.GivrUser;
 import com.google.sps.data.HistoryManager;
+import com.google.sps.data.OrganizationUpdater;
+import com.google.sps.data.GivrUser;
 import java.time.Instant;
 import java.io.IOException;
 
@@ -37,33 +37,19 @@ import java.io.IOException;
 public class AddOrganizationServlet extends HttpServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserService userService = UserServiceFactory.getUserService();
-    boolean isUserLoggedIn = userService.isUserLoggedIn();
-    String username;
-    String userId;
-    if (isUserLoggedIn) {
-      /* Currently uses user email to be consistent w other parts of codebase, subject to change */
-      username = userService.getCurrentUser().getEmail();
-      userId = userService.getCurrentUser().getUserId();
-    } else {
+    GivrUser user = GivrUser.getLoggedInUser();
+
+    if (user.getUserId().equals("")) {
       throw new IllegalArgumentException("Error: unable to register organization if user is not logged in.");
     }
     
-    // for now, ID will just be the one datastore gives it automatically
-    String orgName = request.getParameter("org-name");
-    String orgEmail = request.getParameter("email");
-    String orgStreetAddress = request.getParameter("address");
-    String orgPhoneNum = request.getParameter("phone-number");
-    String orgUrl = request.getParameter("url-link");
-    String orgDescription = request.getParameter("description");
-
     /* MillisecondSinceEpoch represent the number of milliseconds that have passed since
      * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
      * of time that is independent of their time zone */
     long millisecondSinceEpoch = Instant.now().toEpochMilli();
 
     // when suppliers are added, Entity kind will be from a parameter- for now is hardcoded
-    Entity newOrganization = new Entity("Distributor");
+    Entity newOrganizationEntity = new Entity("Distributor");
 
     /* This implementation stores history entries as embedded entities instead of custom objects
      * because it is much simpler that way */
@@ -72,27 +58,34 @@ public class AddOrganizationServlet extends HttpServlet {
     HistoryManager history = new HistoryManager();
 
     changeHistory.add(history.recordHistory("Organization was registered", millisecondSinceEpoch));
-    newOrganization.setProperty("changeHistory", changeHistory);
+    newOrganizationEntity.setProperty("changeHistory", changeHistory);
 
-    //TODO use UserId's here
+    // Setting moderatorList here instead of organizationUpdater because that will handle the form submission
+    // and this servlet will handle the rest of the instantiation
     ArrayList<String> moderatorList = new ArrayList<String>();
-    moderatorList.add(username);
+    moderatorList.add(user.getUserId());
 
-    //TODO: Use sarah's code to get these fields directly from the request
-    newOrganization.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
-    newOrganization.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
-    newOrganization.setProperty("orgName", orgName);
-    newOrganization.setProperty("orgEmail", orgEmail);
-    newOrganization.setProperty("orgPhoneNum", orgPhoneNum);
-    newOrganization.setProperty("orgStreetAddress", orgStreetAddress);
-    newOrganization.setProperty("orgDescription", orgDescription);
-    newOrganization.setProperty("orgWebsite", orgUrl);
-    newOrganization.setProperty("isApproved", false);
-    newOrganization.setProperty("moderatorList", moderatorList);
-    newOrganization.setProperty("changeHistory", changeHistory);
+    newOrganizationEntity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
+    newOrganizationEntity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
+    newOrganizationEntity.setProperty("isApproved", false);
+    newOrganizationEntity.setProperty("moderatorList", moderatorList);
+    newOrganizationEntity.setProperty("changeHistory", changeHistory);
+
+    OrganizationUpdater organizationUpdater = new OrganizationUpdater(newOrganizationEntity);
+    long organizationId = newOrganizationEntity.getKey().getId();
+    
+    // update rest of organization properties from inputted form
+    try {
+      organizationUpdater.updateOrganization(request, organizationId, user, /*forRegistration*/ true);
+    } catch(IllegalArgumentException err) {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
+    }
+
+    newOrganizationEntity = organizationUpdater.getEntity();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(newOrganization);
+    datastore.put(newOrganizationEntity);
 
     response.sendRedirect("/index.html");
   }
