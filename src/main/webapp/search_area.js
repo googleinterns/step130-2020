@@ -68,7 +68,7 @@ class SearchArea {
     this.zipcodeSubmit = document.createElement("input");
     this.zipcodeSubmit.setAttribute("type", "submit");
     this.zipcodeSubmit.setAttribute("class", "gray-button");
-    this.zipcodeSubmit.addEventListener('click', () => this.handleZipcodeSubmission(this.form));
+    this.zipcodeSubmit.addEventListener('click', () => this.setUrlParamValue("zipcode", this.form.zipcode.value));
     this.form.appendChild(this.zipcodeSubmit);
 
     this.zipcodeFormArea.appendChild(this.form);
@@ -80,7 +80,7 @@ class SearchArea {
     this.filterInputArea.setAttribute("placeholder", "Filter Results");
     this.filterInputArea.addEventListener('keypress', function (e) {
       if (e.key === 'Enter') {
-        this.handleFilterSubmission(this.filterInputArea.value);
+        this.setUrlParamValue("filterParam", this.filterInputArea.value);
       }
     }.bind(this));
 
@@ -133,17 +133,13 @@ class SearchArea {
     });
   }
 
-  async handleZipcodeSubmission(zipcodeForm) {
-    this.filterParams.set("zipcode", zipcodeForm.zipcode.value);
-    this.organizationsObjectsList = [];
-    this.organizationListDiv.innerHTML = "";
-    this.organizationsObjectsList = await getListOfOrganizations(this.filterParams);
-    this.renderListOfOrganizations();
-  }
-
-  async handleFilterSubmission(filterParam) {
-    /* There can be more than one filterParam if the user clicks another without refreshing/clearing */
-    this.filterParams.append("filterParam", filterParam);
+  async setUrlParamValue(urlParamKey, urlParamValue) {
+    /* if the param is a zipcode, replace any existing one. Otherwise, add it to existing params */    
+    if (urlParamKey === "zipcode") {
+      this.filterParams.set(urlParamKey, urlParamValue);      
+    } else {
+      this.filterParams.append(urlParamKey, urlParamValue);      
+    }
     this.organizationsObjectsList = [];
     this.organizationListDiv.innerHTML = "";
     this.organizationsObjectsList = await getListOfOrganizations(this.filterParams);
