@@ -34,13 +34,14 @@ public final class GivrUser {
   private boolean isMaintainer;
   private boolean isLoggedIn;
   private String url;
+  private String email;
 
-  public GivrUser(String id, boolean isMaintainer, boolean isLoggedIn, String url) {
+  public GivrUser(String id, boolean isMaintainer, boolean isLoggedIn, String url, String email) {
     this.id = id;
     this.isMaintainer = isMaintainer;
     this.isLoggedIn = isLoggedIn;
     this.url = url;
-    // TODO: Add email attribute, but do not add to the Datastore.
+    this.email = email;
   }
 
   public String getUserId() {
@@ -51,15 +52,20 @@ public final class GivrUser {
     return this.isMaintainer;
   }
 
-  public static void addNewUserToDatastore(String userId, boolean isMaintainer) {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity userEntity = new Entity("User");
-    userEntity.setProperty("userId", userId);
-    userEntity.setProperty("isMaintainer", isMaintainer);
-
-    datastore.put(userEntity);
+  public String getUserEmail() {
+    return this.email;
   }
 
+  public boolean isLoggedIn() {
+    return this.isLoggedIn;
+  }
+
+  public static boolean checkIfUserExistsWithProperty(String propertyName, String propertyValue) {
+    // TODO: Check if User with propertyName, propertyValue exists within Datastore.
+    return false;
+  }
+
+  // TODO: Refactor getUserByIdFromDatastore.
   public static GivrUser getUserByIdFromDatastore(String userId) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
@@ -72,21 +78,19 @@ public final class GivrUser {
     boolean isMaintainer = false;
     boolean isLoggedIn = true;
 
-    if (userResult.size() < 1) {
-      addNewUserToDatastore(userId, isMaintainer);
-    } else if (userResult.size() == 1) {
+    if (userResult.size() == 1) {
       for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
         isMaintainer = (boolean) entity.getProperty("isMaintainer");
       }
-    } else {
+    } else if (userResult.size() > 1) {
       throw new IllegalArgumentException("More than one user with the userId was found.");
     }
-
 
     GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */);
     return user;
   }
 
+  // TODO: Refactor getUserByEmail, by not creating a new User but using the Datastore through the function checkIfUserExistsWithProperty.
   public static GivrUser getUserByEmail(String email) {
     // TODO: Support OAuth.
     String authDomain = "gmail.com";
@@ -96,7 +100,7 @@ public final class GivrUser {
     return getUserByIdFromDatastore(userId);
   }
 
-  public static GivrUser getLoggedInUser() {
+  public static GivrUser getCurrentLoggedInUser() {
     UserService userService = UserServiceFactory.getUserService();
     boolean isUserLoggedIn = userService.isUserLoggedIn();
     String url = userService.createLoginURL("/");

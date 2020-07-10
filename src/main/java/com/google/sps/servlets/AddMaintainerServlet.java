@@ -22,7 +22,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import java.util.ArrayList;
-import com.google.sps.data.User;
+import com.google.sps.data.GivrUser;
 import java.io.IOException;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -35,7 +35,6 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Transaction;
 
 @WebServlet("/add-maintainer")
 public class AddMaintainerServlet extends HttpServlet {
@@ -45,9 +44,10 @@ public class AddMaintainerServlet extends HttpServlet {
 
     GivrUser currUser = GivrUser.getLoggedInUser();
 
-    if (currUser != null && currUser.getMaintainerStatus()) {
-      String newMaintainerEmail = request.getParameter("user-email");
-      // TODO: Check if the newMaintainer already has an account. Do we limit to only accounts that exist within our Datastore?
+    // User should be able to add another Maintainer only if they are a Maintainer.
+    if (!currUser.isMaintainer()) {
+      String newMaintainerEmail = request.getParameter("userEmail");
+
       changeMaintainerStatus(newMaintainerEmail);
       
       response.setStatus(HttpServletResponse.SC_OK);
@@ -56,6 +56,7 @@ public class AddMaintainerServlet extends HttpServlet {
     response.sendError(HttpServletResponse.SC_NOT_FOUND);
   }
 
+  // TODO: Finish refactoring changeMaintainerStatus with GivrUser updates.
   public void changeMaintainerStatus(String email) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Filter queryFilter = new FilterPredicate("userEmail", FilterOperator.EQUAL, email);
@@ -67,21 +68,17 @@ public class AddMaintainerServlet extends HttpServlet {
 
     boolean isMaintainer = false;
     String userId = "";
-    for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
-      userId = (String) entity.getProperty("userId");
-      isMaintainer = (boolean) entity.getProperty("isMaintainer");
-      Key userKey = entity.getKey();
-      
-      Transaction txn = datastore.beginTransaction();
-      try {
-        entity.setProperty("isMaintainer", !isMaintainer);
-        datastore.put(txn, entity);
-        txn.commit();
-      } finally {
-        if (txn.isActive()) {
-          txn.rollback();
-        }
-      }
+
+    // If User with email does not exist in the User table, this means that the User is not a Maintainer.
+    if (userResult.size() < 1) {
+      GivrUser newMaintainerUser = GivrUser.getUserByEmail(email);
+      Entity newUserEntity = new Entity("User");
+
+      newUserEntity.setProperty("userId", newMaintainerUser.getUserId());
+      newUserEntity.setProperty("isMaintainer", true);
+      newUserEntity.setProperty("userEmail", email);
+
+      datastore.put(newUserEntity);
     }
   }
 }

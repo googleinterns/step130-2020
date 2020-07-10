@@ -44,7 +44,9 @@ public class AuthenticateServlet extends HttpServlet {
     response.setContentType("application/json;");
     Gson gson = new Gson();
 
-    GivrUser user = GivrUser.getLoggedInUser();
+    GivrUser user = GivrUser.getCurrentLoggedInUser();
+
+    // TODO: Refer to GivrUser Design Implementation doc, implement flow of Authenticate using GivrUser class.
 
     String json = gson.toJson(user);
     response.getWriter().println(json);
