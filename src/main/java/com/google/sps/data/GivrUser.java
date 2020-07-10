@@ -52,7 +52,7 @@ public final class GivrUser {
   }
 
   //TODO(): get correct moderator status for organization
-  public boolean isModerator(String organizationId) {
+  public boolean isModerator(long organizationId) {
       return false;
   }
 
