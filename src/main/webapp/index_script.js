@@ -82,9 +82,9 @@ class SearchArea {
     //TODO: fetch organizations with param
     const response = await fetch(`/list-organizations`);
     const organizations = await response.json();
-    for (let i = 0; i < organizations.length; i++) {
-      this.organizationList.appendChild(this.createOrganization(organizations[i]));
-    }
+    organizations.forEach((organization) => {	
+      this.organizationList.appendChild(this.createOrganization(organization));
+    });
   }
 
   createOrganization(organization) {

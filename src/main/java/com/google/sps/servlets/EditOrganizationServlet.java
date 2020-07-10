@@ -45,9 +45,9 @@ public class EditOrganizationServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     long organizationId = Long.parseLong(request.getParameter("id"));
     Key organizationKey = KeyFactory.createKey("Distributor", organizationId);
-    Entity organizationEntity = new Entity("Distributor");
+    Entity organizationEntity = null;
 
-    // try catch for compliation purposes, servlet will not be called without a valid id param
+    // try catch for compilation purposes, servlet will not be called without a valid id param
     try {
       organizationEntity = datastore.get(organizationKey);
     } catch(com.google.appengine.api.datastore.EntityNotFoundException err) {
