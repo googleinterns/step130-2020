@@ -121,6 +121,8 @@ public final class OrganizationUpdater {
 
   private ArrayList<String> translateEmailsToIds(ArrayList<String> emails) {
     ArrayList<String> userIds = new ArrayList<String>();
+    
+    // TODO(): Implement correct way of getting user by email once that is decided on
     for(String email : emails) {
       GivrUser newUser = GivrUser.getUserByEmail(email);
       userIds.add(newUser.getUserId());
