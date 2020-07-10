@@ -67,6 +67,10 @@ class Organization {
     popupAddressElement.classList.add("organization-popup-address");
     popupAddressElement.textContent = this.organization.address;
 
+    const popupZipcodeElement = document.createElement('div');
+    popupZipcodeElement.classList.add("organization-popup-zipcode");
+    popupZipcodeElement.textContent = this.organization.zipcode;
+
     const popupEditElement = document.createElement('div');
     if (this.isMaintainer) {
       //TODO: Create Edit Organization Button for Maintainer.
@@ -78,6 +82,7 @@ class Organization {
     this.popupElement.appendChild(popupNameElement);
     this.popupElement.appendChild(popupPhoneElement);
     this.popupElement.appendChild(popupAddressElement);
+    this.popupElement.appendChild(popupZipcodeElement);
     this.popupElement.appendChild(popupEditElement);
     return this.popupElement;
   }

@@ -135,6 +135,7 @@ class SearchArea {
   async setUrlParamValue(urlParamKey, urlParamValue) {
     /* if the param is a zipcode, replace any existing one. Otherwise, add it to existing params */    
     if (urlParamKey === "zipcode") {
+      console.log("HERE HERE HERE");
       this.filterParams.set(urlParamKey, urlParamValue);      
     } else {
       this.filterParams.append(urlParamKey, urlParamValue);      

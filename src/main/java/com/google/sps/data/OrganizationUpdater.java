@@ -51,6 +51,7 @@ public final class OrganizationUpdater {
     properties.put("org-name", "orgName");
     properties.put("org-email", "orgEmail");
     properties.put("org-street-address", "orgStreetAddress");
+    properties.put("org-zip-code", "orgZipCode");
     properties.put("org-phone-num", "orgPhoneNum");
     properties.put("org-url", "orgUrl");
     properties.put("org-description","orgDescription");
