@@ -1,0 +1,10 @@
+indexes:
+
+- kind: Distributor
+  ancestor: no
+  properties:
+  - name: creationTimeStampMillis
+    direction: desc
+  - name: isApproved
+  - name: moderatorList
+  

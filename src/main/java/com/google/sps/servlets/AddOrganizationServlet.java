@@ -44,7 +44,6 @@ public class AddOrganizationServlet extends HttpServlet {
       throw new IllegalArgumentException("Error: unable to register organization if user is not logged in.");
     }
     
-
     /* MillisecondSinceEpoch represent the number of milliseconds that have passed since
      * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
      * of time that is independent of their time zone */
