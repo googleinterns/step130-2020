@@ -44,7 +44,7 @@ class SearchArea {
   constructor(searchAreaElement, organizations, isMaintainer) {
     this.searchArea = searchAreaElement;
     this.organizationSearchArea = document.createElement("div");
-    this.organizationsObjectsList = organizations;
+    this.organizationObjectsList = organizations;
     this.isMaintainer = isMaintainer;
     this.filterParams = new URLSearchParams();
 
@@ -96,8 +96,8 @@ class SearchArea {
     this.filterInputArea.appendChild(this.filterDataList);
     this.organizationSearchArea.appendChild(this.filterInputArea);
 
-    this.organizationListDiv = document.createElement("div");
-    this.organizationListDiv.setAttribute("id", "organization-list");
+    this.organizationListArea = document.createElement("div");
+    this.organizationListArea.setAttribute("id", "organization-list");
     
     this.organizationPopupArea = document.createElement("div");
     this.organizationPopupArea.setAttribute("id", "organization-popup-area");
@@ -105,13 +105,13 @@ class SearchArea {
 
     this.renderListOfOrganizations();
 
-    this.organizationSearchArea.appendChild(this.organizationListDiv);
+    this.organizationSearchArea.appendChild(this.organizationListArea);
     this.searchArea.appendChild(this.organizationSearchArea);
     this.searchArea.appendChild(this.organizationPopupArea);
   }
 
   async renderListOfOrganizations() {
-    this.organizationsObjectsList.forEach((organization) => {
+    this.organizationObjectsList.forEach((organization) => {
       const newOrganization = new Organization(organization, this.isMaintainer);
 
       newOrganization.organizationElement.addEventListener('organization-selected', () => {
@@ -129,7 +129,7 @@ class SearchArea {
         newOrganization.popupElement.remove();
       });
 
-      this.organizationListDiv.appendChild(newOrganization.getOrganization());
+      this.organizationListArea.appendChild(newOrganization.getOrganization());
     });
   }
 
@@ -140,9 +140,9 @@ class SearchArea {
     } else {
       this.filterParams.append(urlParamKey, urlParamValue);      
     }
-    this.organizationsObjectsList = [];
-    this.organizationListDiv.innerHTML = "";
-    this.organizationsObjectsList = await getListOfOrganizations(this.filterParams);
+    this.organizationObjectsList = [];
+    this.organizationListArea.innerHTML = "";
+    this.organizationObjectsList = await getListOfOrganizations(this.filterParams);
     this.renderListOfOrganizations();
   }
 }
