@@ -27,7 +27,6 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
-import com.google.sps.data.User;
 import com.google.sps.data.HistoryManager;
 import com.google.sps.data.OrganizationUpdater;
 import com.google.sps.data.GivrUser;
