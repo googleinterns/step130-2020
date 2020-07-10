@@ -59,18 +59,21 @@ public final class OrganizationUpdater {
 
     for(Map.Entry<String, String> entry : properties.entrySet()) {
       String propertyKey = entry.getValue();
+      boolean propertyRequiresMaintainer = requiresMaintainer.contains(propertyKey);
+      boolean propertyRequiresModerator = requiresModerator.contains(propertyKey);
+      boolean propertyRequiresAuth = requiresMaintainer.contains(propertyKey) || requiresModerator.contains(propertyKey);
 
       // if updating for registering an organization then do not want to consider fields that require maintainer or moderator permissions
-      if(forRegistration && (requiresModerator.contains(propertyKey) || requiresMaintainer.contains(propertyKey))) {
+      if(forRegistration && propertyRequiresAuth)) {
           continue;
       }
       // will only get approval param is a maintainer sent the request
-      if(requiresMaintainer.contains(propertyKey) && !isMaintainer) {
+      if(propertyRequiresMaintainer && !isMaintainer) {
         continue;
       }
 
       // will only get moderatorList param if request is sent by a moderator or maintainer
-      if(requiresModerator.contains(propertyKey) && !(isModerator || isMaintainer)) {
+      if(propertyRequiresModerator && !(isModerator || isMaintainer)) {
         continue;
       }
 
