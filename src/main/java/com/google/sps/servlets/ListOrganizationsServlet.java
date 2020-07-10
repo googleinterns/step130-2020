@@ -48,18 +48,6 @@ public class ListOrganizationsServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     GivrUser currentUser = GivrUser.getLoggedInUser();
 
-    /* These statements show how to reference the parameters being received, for easier implementation of this backend */
-    if (request.getParameter("zipcode") != null) {
-      System.out.println("Zipcode is: " + request.getParameter("zipcode"));
-    }
-
-    if (request.getParameterValues("filterParam") != null) {
-      String filterParams[] = request.getParameterValues("filterParam");
-      for (String param : filterParams) {
-        System.out.println("One of the filter params is: " + param);
-      }
-    }
-
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
     Query query = getQueryFromParams(request, currentUser);
