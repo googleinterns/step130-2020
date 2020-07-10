@@ -21,13 +21,13 @@ document.addEventListener("DOMContentLoaded", async function() {
   if (document.getElementById('search-area')) {
     const mainSearchArea = new SearchArea(document.getElementById('search-area'), isMaintainer);
     await mainSearchArea.getListOfOrganizations();
-    await mainSearchArea.renderListOfOrganizations()
+    mainSearchArea.renderListOfOrganizations()
   }
   isMaintainer = true;
   if (document.getElementById('all-organizations')) {
     const organizationSearchArea = new SearchArea(document.getElementById('all-organizations'), isMaintainer);
     await organizationSearchArea.getListOfOrganizations();
-    await organizationSearchArea.renderListOfOrganizations();
+    organizationSearchArea.renderListOfOrganizations();
   }
 });
 
@@ -69,18 +69,18 @@ class SearchArea {
     this.filterInputArea.setAttribute("list", "filter-datalist");
     this.filterInputArea.setAttribute("id", "filter-input-area");
     this.filterInputArea.setAttribute("placeholder", "Filter Results");
-    this.filterInputArea.addEventListener('keypress', function (e) {
+    this.filterInputArea.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         this.setUrlParamValue("filterParam", this.filterInputArea.value);
       }
-    }.bind(this));
+    });
 
     this.filterDataList = document.createElement("datalist");
     this.filterDataList.setAttribute("id", "filter-datalist");
     this.filterOptions = ["Foods", "Clothing", "Shelter"];
-    for (let i = 0; i < this.filterOptions.length; i++) {
+    for (const value of this.filterOptions) {
       const option = document.createElement("option");
-      option.value = this.filterOptions[i];
+      option.value = value;
       this.filterDataList.appendChild(option);
     }
 
@@ -99,7 +99,7 @@ class SearchArea {
     this.searchArea.appendChild(this.organizationPopupArea);
   }
 
-  async renderListOfOrganizations() {
+  renderListOfOrganizations() {
     this.organizationObjectsList.forEach((organization) => {
       const newOrganization = new Organization(organization, this.isMaintainer);
 
@@ -142,6 +142,6 @@ class SearchArea {
     this.organizationObjectsList = [];
     this.organizationListArea.innerHTML = "";
     await this.getListOfOrganizations();
-    await this.renderListOfOrganizations();
+    this.renderListOfOrganizations();
   }
 }
