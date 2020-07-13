@@ -16,26 +16,29 @@ document.addEventListener("DOMContentLoaded", async function() {
   // TODO: Get Maintainer status by checking if requester User is a Maintainer. 
   // This checks that requester User has valid credentials to edit/delete/view ALL organizations. (by checking userID)
   let isMaintainer = false;
+  let forOrganizationsPage = false;
 
   // TODO: Create separate JS file for listing organizations, instead of using SearchArea and having these checks below
   if (document.getElementById('search-area')) {
-    const mainSearchArea = new SearchArea(document.getElementById('search-area'), isMaintainer);
+    const mainSearchArea = new SearchArea(document.getElementById('search-area'), isMaintainer, forOrganizationsPage);
     await mainSearchArea.getListOfOrganizations();
     mainSearchArea.renderListOfOrganizations()
   }
   isMaintainer = true;
   if (document.getElementById('all-organizations')) {
-    const organizationSearchArea = new SearchArea(document.getElementById('all-organizations'), isMaintainer);
+    forOrganizationsPage = true;
+    const organizationSearchArea = new SearchArea(document.getElementById('all-organizations'), isMaintainer, forOrganizationsPage);
     await organizationSearchArea.getListOfOrganizations();
     organizationSearchArea.renderListOfOrganizations();
   }
 });
 
 class SearchArea {
-  constructor(searchAreaElement, organizations, isMaintainer) {
+  constructor(searchAreaElement, isMaintainer, forOrganizationsPage) {
     this.searchArea = searchAreaElement;
     this.organizationSearchArea = document.createElement("div");
     this.isMaintainer = isMaintainer;
+    this.forOrganizationsPage = forOrganizationsPage;
     this.filterParams = new URLSearchParams();
     this.organizationObjectsList = [];
 
@@ -101,7 +104,7 @@ class SearchArea {
 
   renderListOfOrganizations() {
     this.organizationObjectsList.forEach((organization) => {
-      const newOrganization = new Organization(organization, this.isMaintainer);
+      const newOrganization = new Organization(organization, this.isMaintainer, this.forOrganizationsPage);
 
       newOrganization.organizationElement.addEventListener('organization-selected', () => {
         const organizationPopupArea = document.getElementById("organization-popup-area");
