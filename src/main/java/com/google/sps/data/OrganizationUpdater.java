@@ -68,7 +68,7 @@ public final class OrganizationUpdater {
 
       // if updating for registering an organization then do not want to consider fields that require maintainer or moderator permissions
       if(forRegistration && propertyRequiresAuth) {
-          continue;
+        continue;
       }
       // will only get approval param is a maintainer sent the request
       if(propertyRequiresMaintainer && !isMaintainer) {
@@ -142,27 +142,26 @@ public final class OrganizationUpdater {
      * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
      * of time that is independent of their time zone */
     long millisecondSinceEpoch = (long) historyUpdate.getProperty("changeTimeStampMillis");
-    HistoryManager history = new HistoryManager();
 
     if(forRegistration) {
-    // Setting moderatorList here instead of organizationUpdater because that will handle the form submission
-    // and this servlet will handle the rest of the instantiation
-    ArrayList<String> moderatorList = new ArrayList<String>();
-    moderatorList.add(user.getUserId());
+      // Setting moderatorList here instead of organizationUpdater because that will handle the form submission
+      // and this servlet will handle the rest of the instantiation
+      ArrayList<String> moderatorList = new ArrayList<String>();
+      moderatorList.add(user.getUserId());
 
-    /* This implementation stores history entries as embedded entities instead of custom objects
-     * because it is much simpler that way */
-    ArrayList changeHistory = new ArrayList<>();
-    changeHistory.add(historyUpdate);
+      /* This implementation stores history entries as embedded entities instead of custom objects
+      * because it is much simpler that way */
+      ArrayList changeHistory = new ArrayList<>();
+      changeHistory.add(historyUpdate);
 
-    this.entity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
-    this.entity.setProperty("isApproved", false);
-    this.entity.setProperty("moderatorList", moderatorList);
-    this.entity.setProperty("changeHistory", changeHistory);
+      this.entity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
+      this.entity.setProperty("isApproved", false);
+      this.entity.setProperty("moderatorList", moderatorList);
+      this.entity.setProperty("changeHistory", changeHistory);
     } else {
-    ArrayList<EmbeddedEntity> changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
-    changeHistory.add(historyUpdate);
-    this.entity.setProperty("changeHistory", changeHistory);
+      ArrayList<EmbeddedEntity> changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
+      changeHistory.add(historyUpdate);
+      this.entity.setProperty("changeHistory", changeHistory);
     }
     
     this.entity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
