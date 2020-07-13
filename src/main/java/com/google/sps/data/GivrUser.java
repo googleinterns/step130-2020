@@ -61,6 +61,11 @@ public final class GivrUser {
     return this.isLoggedIn;
   }
 
+  //TODO(): get correct moderator status for organization
+  public boolean isModerator(long organizationId) {
+      return false;
+  }
+
   public static PreparedQuery getPreparedQueryResultUserWithProperty(String propertyName, String propertyValue) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 

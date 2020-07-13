@@ -50,7 +50,6 @@ public class ListOrganizationsServlet extends HttpServlet {
 
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
-
     Query query = getQueryFromParams(request, currentUser);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
@@ -60,7 +59,6 @@ public class ListOrganizationsServlet extends HttpServlet {
 
     /* Fills requestedOrganizations array*/
     for (Entity entity : results) {
-      
       // TODO(): Implement better schema to represent opening and closing hours for different days
       Organization newOrg = new Organization(entity);
       requestedOrganizations.add(newOrg);
@@ -72,7 +70,7 @@ public class ListOrganizationsServlet extends HttpServlet {
 
   /* This function constructs a query based on the request parameters & user's role */
   public Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
-    Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);;
+    Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
 
     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
     String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
@@ -87,11 +85,10 @@ public class ListOrganizationsServlet extends HttpServlet {
       query.setFilter(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
     }
 
-    // TODO(): fix showing approved orgs
-    // if (!userIsMaintainer) {
-    //   /* If the user is not a maintainer, only allow them to see approved orgs */
-    //   query.setFilter(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
-    // }
+    if (!userIsMaintainer) {
+      /* If the user is not a maintainer, only allow them to see approved orgs */
+      query.setFilter(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
+    }
 
     // TODO(): Read through request parameters and for all valid parameters and use them to modify query (filtering)
 
