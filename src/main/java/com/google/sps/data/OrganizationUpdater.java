@@ -24,7 +24,6 @@ import java.text.SimpleDateFormat;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.sps.data.GivrUser;
-import java.time.Instant;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
@@ -142,7 +141,7 @@ public final class OrganizationUpdater {
     /* MillisecondSinceEpoch represent the number of milliseconds that have passed since
      * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
      * of time that is independent of their time zone */
-    long millisecondSinceEpoch = Instant.now().toEpochMilli();
+    long millisecondSinceEpoch = (long) historyUpdate.getProperty("changeTimeStampMillis");
     HistoryManager history = new HistoryManager();
 
     if(forRegistration) {
