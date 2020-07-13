@@ -141,5 +141,15 @@ public final class OrganizationUpdater {
   private void updateInvitedModerator(GivrUser user) {
     // Will be called if an invited moderator logs in, will be removing them from the 
     // invited moderator set and adding there user id to the moderator list
+    Set<String> invitedModerators = (HashSet) this.entity.getProperty("invitedModerators");
+    String userEmail = user.getUserEmail();
+
+    if(invitedModerators.contains(userEmail)) {
+        invitedModerators.remove(userEmail);
+        ArrayList<String> moderatorList = (ArrayList) this.entity.getProperty("moderatorList");
+        moderatorList.add(user.getUserId());
+        this.entity.setProperty("moderatorList", moderatorList);
+        this.entity.setProperty("invitedModerators", invitedModerators);
+    }
   }
 }
