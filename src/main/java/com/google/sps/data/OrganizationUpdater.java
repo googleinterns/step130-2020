@@ -125,8 +125,21 @@ public final class OrganizationUpdater {
     // TODO(): Implement correct way of getting user by email once that is decided on
     for(String email : emails) {
       GivrUser newUser = GivrUser.getUserByEmail(email);
-      userIds.add(newUser.getUserId());
+      userId = newUser.getUserId();
+      // If failed will return "" (?) and user will be added to the invited moderator property 
+      // and not the offical list
+      if(userId.equals("")) {
+        Set<String> invitedModerators = new HashSet(this.entity.getParameter("invitedModerators"));
+        invitedModerators.add(email);
+      } else {
+        userIds.add(newUser.getUserId());
+      }
     }
     return userIds;
+  }
+
+  private void updateInvitedModerator(GivrUser user) {
+    // Will be called if an invited moderator logs in, will be removing them from the 
+    // invited moderator set and adding there user id to the moderator list
   }
 }
