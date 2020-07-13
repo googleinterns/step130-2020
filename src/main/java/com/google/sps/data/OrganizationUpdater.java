@@ -42,7 +42,7 @@ public final class OrganizationUpdater {
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
     boolean isMaintainer = user.isMaintainer();
-    boolean isModerator = user.isModerator(organizationId);
+    boolean isModerator = user.isModerator(this.entity.getKey().getId());
 
     requiresMaintainer.add("isApproved");
     requiresModerator.add("moderatorList");
