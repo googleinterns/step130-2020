@@ -23,16 +23,12 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Arrays;
-import java.text.SimpleDateFormat;
-import com.google.sps.data.HistoryManager;
 import com.google.sps.data.OrganizationUpdater;
 import com.google.sps.data.GivrUser;
-import java.time.Instant;
 import java.io.IOException;
 import com.google.gson.Gson;
 
@@ -67,15 +63,6 @@ public class EditOrganizationServlet extends HttpServlet {
 
     // updates entity with changed properties from the form
     organizationEntity = organizationUpdater.getEntity();
-
-    //TODO: get timestamp with transactions instead
-    long millisecondSinceEpoch = Instant.now().toEpochMilli();
-    organizationEntity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
-
-    ArrayList<EmbeddedEntity> changeHistory = (ArrayList) organizationEntity.getProperty("changeHistory");
-    HistoryManager history = new HistoryManager();
-    changeHistory.add(history.recordHistory("Organization was edited", millisecondSinceEpoch));
-    organizationEntity.setProperty("changeHistory", changeHistory);
 
     datastore.put(organizationEntity);
     System.out.println("Edited Organization");

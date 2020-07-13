@@ -22,15 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import java.util.ArrayList;
-import java.text.SimpleDateFormat;
-import com.google.sps.data.HistoryManager;
 import com.google.sps.data.OrganizationUpdater;
 import com.google.sps.data.GivrUser;
-import java.time.Instant;
 import java.io.IOException;
 
 @WebServlet("/add-organization")
@@ -42,34 +38,9 @@ public class AddOrganizationServlet extends HttpServlet {
     if (user.getUserId().equals("")) {
       throw new IllegalArgumentException("Error: unable to register organization if user is not logged in.");
     }
-    
-    /* MillisecondSinceEpoch represent the number of milliseconds that have passed since
-     * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
-     * of time that is independent of their time zone */
-    long millisecondSinceEpoch = Instant.now().toEpochMilli();
 
     // when suppliers are added, Entity kind will be from a parameter- for now is hardcoded
     Entity newOrganizationEntity = new Entity("Distributor");
-
-    /* This implementation stores history entries as embedded entities instead of custom objects
-     * because it is much simpler that way */
-    ArrayList changeHistory = new ArrayList<>();
-    
-    HistoryManager history = new HistoryManager();
-
-    changeHistory.add(history.recordHistory("Organization was registered", millisecondSinceEpoch));
-    newOrganizationEntity.setProperty("changeHistory", changeHistory);
-
-    // Setting moderatorList here instead of organizationUpdater because that will handle the form submission
-    // and this servlet will handle the rest of the instantiation
-    ArrayList<String> moderatorList = new ArrayList<String>();
-    moderatorList.add(user.getUserId());
-
-    newOrganizationEntity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
-    newOrganizationEntity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
-    newOrganizationEntity.setProperty("isApproved", false);
-    newOrganizationEntity.setProperty("moderatorList", moderatorList);
-    newOrganizationEntity.setProperty("changeHistory", changeHistory);
 
     OrganizationUpdater organizationUpdater = new OrganizationUpdater(newOrganizationEntity);
     

@@ -20,8 +20,11 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Arrays;
+import java.text.SimpleDateFormat;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.sps.data.GivrUser;
+import java.time.Instant;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
@@ -57,6 +60,7 @@ public final class OrganizationUpdater {
     properties.put("approval", "isApproved");
     properties.put("moderator-list", "moderatorList");
 
+    // Updates entity properties from form
     for(Map.Entry<String, String> entry : properties.entrySet()) {
       String propertyKey = entry.getValue();
       boolean propertyRequiresMaintainer = requiresMaintainer.contains(propertyKey);
@@ -94,6 +98,10 @@ public final class OrganizationUpdater {
 
       setOrganizationProperty(propertyKey, formValue);
     }
+
+    // Updates non form properties such as change history, lastEditTimeStamp, etc
+    updateNonFormProperties(user, forRegistration);
+
   }
 
   private String getParameterOrThrow(HttpServletRequest request, String formKey) {
@@ -128,5 +136,36 @@ public final class OrganizationUpdater {
       userIds.add(newUser.getUserId());
     }
     return userIds;
+  }
+
+  private void updateNonFormProperties(GivrUser user, boolean forRegistration) {
+    /* MillisecondSinceEpoch represent the number of milliseconds that have passed since
+     * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
+     * of time that is independent of their time zone */
+    long millisecondSinceEpoch = Instant.now().toEpochMilli();
+    HistoryManager history = new HistoryManager();
+
+    if(forRegistration) {
+    // Setting moderatorList here instead of organizationUpdater because that will handle the form submission
+    // and this servlet will handle the rest of the instantiation
+    ArrayList<String> moderatorList = new ArrayList<String>();
+    moderatorList.add(user.getUserId());
+
+    /* This implementation stores history entries as embedded entities instead of custom objects
+     * because it is much simpler that way */
+    ArrayList changeHistory = new ArrayList<>();
+    changeHistory.add(history.recordHistory("Organization was registered", millisecondSinceEpoch));
+
+    this.entity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
+    this.entity.setProperty("isApproved", false);
+    this.entity.setProperty("moderatorList", moderatorList);
+    this.entity.setProperty("changeHistory", changeHistory);
+    } else {
+    ArrayList<EmbeddedEntity> changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
+    changeHistory.add(history.recordHistory("Organization was edited", millisecondSinceEpoch));
+    this.entity.setProperty("changeHistory", changeHistory);
+    }
+    
+    this.entity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
   }
 }
