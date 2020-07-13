@@ -72,11 +72,10 @@ public class AddOrganizationServlet extends HttpServlet {
     newOrganizationEntity.setProperty("changeHistory", changeHistory);
 
     OrganizationUpdater organizationUpdater = new OrganizationUpdater(newOrganizationEntity);
-    long organizationId = newOrganizationEntity.getKey().getId();
     
     // update rest of organization properties from inputted form
     try {
-      organizationUpdater.updateOrganization(request, organizationId, user, /*forRegistration*/ true);
+      organizationUpdater.updateOrganization(request, user, /*forRegistration*/ true);
     } catch(IllegalArgumentException err) {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
