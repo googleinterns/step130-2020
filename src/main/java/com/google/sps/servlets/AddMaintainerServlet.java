@@ -22,6 +22,8 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import com.google.sps.data.GivrUser;
 import java.io.IOException;
 import com.google.appengine.api.users.UserService;
@@ -39,7 +41,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 @WebServlet("/add-maintainer")
 public class AddMaintainerServlet extends HttpServlet {
 
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json;");
 
     GivrUser currUser = GivrUser.getCurrentLoggedInUser();
@@ -50,7 +52,7 @@ public class AddMaintainerServlet extends HttpServlet {
 
       boolean doesNewMaintainerExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userEmail", currUser.getUserEmail());
       if (doesNewMaintainerExistInDatastore) {
-        changeMaintainerStatus(newMaintainerEmail);
+        changeMaintainerStatus(newMaintainerEmail, currUser.getUserId());
       } else {
         addNewMaintainerToDatastore(newMaintainerEmail);
       }
@@ -71,8 +73,11 @@ public class AddMaintainerServlet extends HttpServlet {
     datastore.put(newUserEntity);
   }
 
-  public void changeMaintainerStatus(String email) {
+  public void changeMaintainerStatus(String email, String userId) {
     boolean isMaintainer = true;
-    GivrUser.updateUserInDatastore("userEmail", email, "isMaintainer", Boolean.toString(isMaintainer));
+    Map<String, String> propertyNamesAndValuesToUpdate = new HashMap<String, String>();
+    propertyNamesAndValuesToUpdate.put("isMaintainer", Boolean.toString(isMaintainer));
+    propertyNamesAndValuesToUpdate.put("userId", userId);
+    GivrUser.updateUserInDatastore("userEmail", email, propertyNamesAndValuesToUpdate);
   }
 }

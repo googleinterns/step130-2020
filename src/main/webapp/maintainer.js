@@ -13,14 +13,23 @@
 // limitations under the License.
 
 document.addEventListener('DOMContentLoaded', () => {
-  // TODO: Add UI for adding Maintainer as a Maintainer. Create input box to submit on click and call /add-maintainer.
+  // TODO: Move this input form to be visible for only Maintainers.
+  
+  const emailForm = document.createElement('form');
+  emailForm.setAttribute("method", "POST");
+  
+  const emailInputElement = document.createElement("input");
+  emailInputElement.setAttribute("type", "text");
+  emailInputElement.setAttribute("id", "userEmail");
+  emailInputElement.setAttribute("name", "userEmail");
+  emailForm.appendChild(emailInputElement);
+
+  const submitButton = document.createElement("input");
+  submitButton.textContent = "Submit";
+  submitButton.setAttribute("type", "submit");
+  emailForm.appendChild(submitButton);
+
+  emailForm.setAttribute("action", "/add-maintainer");
+  
+  document.body.appendChild(emailForm);
 });
-
-async function getMaintainerStatus(email) {
-  const response = await fetch(`/add-maintainer?userEmail=${email}`);
-
-  if (response.status !== 200) {
-    throw new Error('Could not successfully add new maintainer.');
-    return;
-  }
-}
