@@ -37,7 +37,7 @@ public final class OrganizationUpdater {
     return this.entity;
   }
 
-  public void updateOrganization(HttpServletRequest request, long organizationId, GivrUser user, boolean forRegistration) throws IllegalArgumentException{
+  public void updateOrganization(HttpServletRequest request, GivrUser user, boolean forRegistration) throws IllegalArgumentException{
     Set<String> requiresMaintainer = new HashSet<String>();
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
