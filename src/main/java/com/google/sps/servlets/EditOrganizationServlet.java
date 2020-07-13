@@ -60,7 +60,7 @@ public class EditOrganizationServlet extends HttpServlet {
     OrganizationUpdater organizationUpdater = new OrganizationUpdater(organizationEntity);
     
     try {
-      organizationUpdater.updateOrganization(request, organizationId, user, /*forRegistration*/ false);
+      organizationUpdater.updateOrganization(request, user, /*forRegistration*/ false);
     } catch(IllegalArgumentException err) {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
