@@ -69,7 +69,7 @@ public class ListOrganizationsServlet extends HttpServlet {
   }
 
   /* This function constructs a query based on the request parameters & user's role */
-  public Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
+  public static Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
     Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
 
     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
@@ -95,7 +95,7 @@ public class ListOrganizationsServlet extends HttpServlet {
     return query;
   }
 
-  public boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
+  public static boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
     String requestParameter = request.getParameter(key);
     return (requestParameter != null) && (requestParameter.equals("true"));
   }
