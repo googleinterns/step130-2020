@@ -103,7 +103,8 @@
   font-size: 30px;
 }
 
-#search-area {
+#search-area,
+#all-organizations {
   display: flex;
   justify-content: space-around;
 }

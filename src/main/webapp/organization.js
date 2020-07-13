@@ -71,6 +71,18 @@ class Organization {
     popupAddressElement.classList.add("organization-popup-address");
     popupAddressElement.textContent = this.organization.address;
 
+    const popupEmailElement = document.createElement('div');
+    popupEmailElement.classList.add("organization-popup-email");
+    popupEmailElement.textContent = this.organization.email;
+
+    const popupUrlLinkElement = document.createElement('div');
+    popupUrlLinkElement.classList.add("organization-popup-url-link");
+    popupUrlLinkElement.textContent = this.organization.urlLink;
+
+    const popupDescriptionElement = document.createElement('div');
+    popupDescriptionElement.classList.add("organization-popup-description");
+    popupDescriptionElement.textContent = this.organization.description;
+
     const popupEditElement = document.createElement('button');
     if(this.forOrganizationsPage) {
       popupEditElement.classList.add("gray-button");
@@ -89,6 +101,9 @@ class Organization {
     this.popupElement.appendChild(popupNameElement);
     this.popupElement.appendChild(popupPhoneElement);
     this.popupElement.appendChild(popupAddressElement);
+    this.popupElement.appendChild(popupEmailElement);
+    this.popupElement.appendChild(popupUrlLinkElement);
+    this.popupElement.appendChild(popupDescriptionElement);
     if(this.forOrganizationsPage) {
       this.popupElement.appendChild(popupEditElement);
     }
