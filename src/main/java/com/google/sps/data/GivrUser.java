@@ -61,7 +61,7 @@ public final class GivrUser {
     return this.isLoggedIn;
   }
 
-  public static PreparedQuery getPreparedQueryResultUserWithProperty(String propertyName, String propertyValue) {
+  public static PreparedQuery getPreparedQueryResultOfUserWithProperty(String propertyName, String propertyValue) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Filter queryFilter = null;
@@ -78,7 +78,7 @@ public final class GivrUser {
 
   // Check if User with propertyName, propertyValue exists within Datastore.
   public static boolean checkIfUserWithPropertyExists(String propertyName, String propertyValue) {
-    PreparedQuery preparedQuery = getPreparedQueryResultUserWithProperty(propertyName, propertyValue);
+    PreparedQuery preparedQuery = getPreparedQueryResultOfUserWithProperty(propertyName, propertyValue);
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
     QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
@@ -96,7 +96,7 @@ public final class GivrUser {
       throw new IllegalArgumentException("User with " + identifyingProperty + " of value: " + identifyingValue + " was not found in the Datastore.");
     }
 
-    PreparedQuery preparedQuery = getPreparedQueryResultUserWithProperty(identifyingProperty, identifyingValue);
+    PreparedQuery preparedQuery = getPreparedQueryResultOfUserWithProperty(identifyingProperty, identifyingValue);
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -116,7 +116,7 @@ public final class GivrUser {
   }
 
   public static GivrUser getUserById(String userId) {
-    PreparedQuery preparedQuery = getPreparedQueryResultUserWithProperty("userId", userId);
+    PreparedQuery preparedQuery = getPreparedQueryResultOfUserWithProperty("userId", userId);
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
     QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
@@ -144,7 +144,7 @@ public final class GivrUser {
       return new GivrUser("", false, false, "", email);
     }
     
-    PreparedQuery preparedQuery = getPreparedQueryResultUserWithProperty("userEmail", email);
+    PreparedQuery preparedQuery = getPreparedQueryResultOfUserWithProperty("userEmail", email);
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
     QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
