@@ -71,7 +71,7 @@ public class ListOrganizationsServlet extends HttpServlet {
   }
 
   /* This function constructs a query based on the request parameters & user's role */
-  public Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
+  public static Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
     Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
 
     ArrayList<Filter> filterCollection = new ArrayList<Filter>();
@@ -100,7 +100,7 @@ public class ListOrganizationsServlet extends HttpServlet {
       filterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
     }
 
-    if (userIsMaintainer) {
+    if (!userIsMaintainer) {
       /* If the user is not a maintainer, only allow them to see approved orgs */
       filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
     }
@@ -119,7 +119,7 @@ public class ListOrganizationsServlet extends HttpServlet {
     return query;
   }
 
-  public boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
+  public static boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
     String requestParameter = request.getParameter(key);
     return (requestParameter != null) && (requestParameter.equals("true"));
   }

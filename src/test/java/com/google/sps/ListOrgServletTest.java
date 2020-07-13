@@ -30,8 +30,9 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.sps.data.GivrUser;
 import com.google.sps.servlets.ListOrganizationsServlet;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Random;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.After;
@@ -45,9 +46,65 @@ public final class ListOrgServletTest {
 
   private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
+  private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+  /* The masterEntityList is a list of entities that are populated into the local datastore, and also exist 
+   * in an arraylist. For each test, the datastore applies the Query received from the servlet, and then
+   * compares that query to a hardcoded list of expected entities given that tests parameters / user fields */
+  private ArrayList<Entity> masterEntityList = new ArrayList<>();
+
   @Before
   public void setUp() {
     helper.setUp();
+
+    Entity entity0 = new Entity("Distributor");
+    entity0.setProperty("creationTimeStampMillis", 0);
+    entity0.setProperty("isApproved", false);
+    entity0.setProperty("orgZipCode", "12345");
+    masterEntityList.add(entity0);
+    datastore.put(entity0);
+
+    Entity entity1 = new Entity("Distributor");
+    entity1.setProperty("creationTimeStampMillis", 1);
+    entity1.setProperty("isApproved", true);
+    entity1.setProperty("orgZipCode", "02763");
+    masterEntityList.add(entity1);
+    datastore.put(entity1);
+
+    Entity entity2 = new Entity("Distributor");
+    entity2.setProperty("creationTimeStampMillis", 2);
+    entity2.setProperty("isApproved", true);
+    entity2.setProperty("orgZipCode", "47906");
+    masterEntityList.add(entity2);
+    datastore.put(entity2);
+
+    Entity entity3 = new Entity("Distributor");
+    entity3.setProperty("creationTimeStampMillis", 3);
+    entity3.setProperty("isApproved", false);
+    entity3.setProperty("orgZipCode", "47906");
+    masterEntityList.add(entity3);
+    datastore.put(entity3);
+
+    Entity entity4 = new Entity("Distributor");
+    entity4.setProperty("creationTimeStampMillis", 4);
+    entity4.setProperty("isApproved", true);
+    entity4.setProperty("orgZipCode", "02763");
+    masterEntityList.add(entity4);
+    datastore.put(entity4);
+
+    Entity entity5 = new Entity("Distributor");
+    entity5.setProperty("creationTimeStampMillis", 5);
+    entity5.setProperty("isApproved", false);
+    entity5.setProperty("orgZipCode", "02763");
+    masterEntityList.add(entity5);
+    datastore.put(entity5);
+
+    Entity entity6 = new Entity("Distributor");
+    entity6.setProperty("creationTimeStampMillis", 6);
+    entity6.setProperty("isApproved", false);
+    entity6.setProperty("orgZipCode", "94566");
+    masterEntityList.add(entity6);
+    datastore.put(entity6);
   }
 
   @After
@@ -56,37 +113,66 @@ public final class ListOrgServletTest {
   }
 
   @Test
-  public void testQueryWithNoFilterParams() {
-    /* Preparing the datastore */
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    for (int i = 0; i < 5; i++) {
-      Entity mockEntity = new Entity("Distributor");
-      Random rand = new Random();
-      /* sets creation timestamp as random number from 1000-2000 */
-      mockEntity.setProperty("creationTimeStampMillis", rand.nextInt(1000) + 1000);
-      datastore.put(mockEntity);
-    }
+  public void testQueryWithNoFilter() {
+    /* For this test, all of the entities need to be returned because there are no filter limits,
+     * but the master list must be reversed */
+    ArrayList<Entity> expectedList = new ArrayList<Entity>(masterEntityList);
+    Collections.reverse(expectedList);
 
-    GivrUser mockUser = new GivrUser("000", true, true, "google.com");
+    /* This user is a maintainer, meaning they see everything */
+    GivrUser mockUser = new GivrUser("testId", true, true, "google.com");
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
     when(mockRequest.getParameter("zipcode")).thenReturn(null);
     when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
 
     Query receivedQuery = ListOrganizationsServlet.getQueryFromParams(mockRequest, mockUser);
-    Query myQuery = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
-    System.out.println("-------------------------------------------Equality evaluates to :" + datastore.prepare(receivedQuery).equals(datastore.prepare(myQuery)));
-
-    System.out.println("RECEIVED QUERY:  " + receivedQuery.toString());
-    for (Entity entity : datastore.prepare(receivedQuery).asIterable()) {
-      System.out.println("ENTITY IS: " + entity.toString());
-    }
-    System.out.println("MY TEST QUERY:   " + myQuery.toString());
-    for (Entity entity : datastore.prepare(myQuery).asIterable()) {
-      System.out.println("ENTITY IS: " + entity.toString());
-    }
 
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
-    Assert.assertIterableEquals(datastore.prepare(receivedQuery).asQueryResultList(fetchOptions), datastore.prepare(myQuery).asQueryResultList(fetchOptions));
+    Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
+  }
+@Test
+  public void testQueryAsNormalUser() {
+
+    ArrayList<Entity> expectedList = new ArrayList<Entity>();
+    /* Only the isApproved = true orgs are added to this simulated query, and they are added in
+     * descending order of their timestamp */
+    expectedList.add(masterEntityList.get(4));
+    expectedList.add(masterEntityList.get(2));
+    expectedList.add(masterEntityList.get(1));
+
+    /* This user is not a maintainer, so they only see approved orgs*/
+    GivrUser mockUser = new GivrUser("testId", false, true, "google.com");
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+  
+    when(mockRequest.getParameter("zipcode")).thenReturn(null);
+    when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
+
+    Query receivedQuery = ListOrganizationsServlet.getQueryFromParams(mockRequest, mockUser);
+
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
+    Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
+  }
+
+ @Test
+  public void testZipcodeFilter() {
+
+    ArrayList<Entity> expectedList = new ArrayList<Entity>();
+    /* Only the orgs with the zipcode 02763 are added to the expected query results */
+    expectedList.add(masterEntityList.get(5));
+    expectedList.add(masterEntityList.get(4));
+    expectedList.add(masterEntityList.get(1));
+
+    GivrUser mockUser = new GivrUser("testId", true, true, "google.com");
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+  
+    when(mockRequest.getParameter("zipcode")).thenReturn("02763");
+    when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
+
+    Query receivedQuery = ListOrganizationsServlet.getQueryFromParams(mockRequest, mockUser);
+
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
+
+    Assert.assertArrayEquals(expectedList.toArray(), this.datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
 }
