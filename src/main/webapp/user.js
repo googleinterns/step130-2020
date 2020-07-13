@@ -19,7 +19,6 @@ class User {
 
   async renderLoginStatus() {
     const response = await fetch('/authenticate');
-    console.log(response);
     const loginData = await response.json();
 
     if (response.status !== 200) {
