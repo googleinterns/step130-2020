@@ -26,12 +26,11 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import java.util.ArrayList;
-import java.text.SimpleDateFormat;
-import com.google.sps.data.HistoryManager;
 import com.google.sps.data.OrganizationUpdater;
+import com.google.sps.data.HistoryManager;
 import com.google.sps.data.GivrUser;
-import java.time.Instant;
 import java.io.IOException;
+import java.time.Instant;
 
 @WebServlet("/add-organization")
 public class AddOrganizationServlet extends HttpServlet {
@@ -42,41 +41,18 @@ public class AddOrganizationServlet extends HttpServlet {
     if (user.getUserId().equals("")) {
       throw new IllegalArgumentException("Error: unable to register organization if user is not logged in.");
     }
-    
-    /* MillisecondSinceEpoch represent the number of milliseconds that have passed since
-     * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
-     * of time that is independent of their time zone */
-    long millisecondSinceEpoch = Instant.now().toEpochMilli();
 
     // when suppliers are added, Entity kind will be from a parameter- for now is hardcoded
     Entity newOrganizationEntity = new Entity("Distributor");
 
-    /* This implementation stores history entries as embedded entities instead of custom objects
-     * because it is much simpler that way */
-    ArrayList changeHistory = new ArrayList<>();
-    
-    HistoryManager history = new HistoryManager();
-
-    changeHistory.add(history.recordHistory("Organization was registered", millisecondSinceEpoch));
-    newOrganizationEntity.setProperty("changeHistory", changeHistory);
-
-    // Setting moderatorList here instead of organizationUpdater because that will handle the form submission
-    // and this servlet will handle the rest of the instantiation
-    ArrayList<String> moderatorList = new ArrayList<String>();
-    moderatorList.add(user.getUserId());
-
-    newOrganizationEntity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
-    newOrganizationEntity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
-    newOrganizationEntity.setProperty("isApproved", false);
-    newOrganizationEntity.setProperty("moderatorList", moderatorList);
-    newOrganizationEntity.setProperty("changeHistory", changeHistory);
-
     OrganizationUpdater organizationUpdater = new OrganizationUpdater(newOrganizationEntity);
-    long organizationId = newOrganizationEntity.getKey().getId();
+    long millisecondSinceEpoch = Instant.now().toEpochMilli();
+    HistoryManager history = new HistoryManager();
+    EmbeddedEntity historyUpdate = history.recordHistory("Organization was registered", millisecondSinceEpoch);
     
     // update rest of organization properties from inputted form
     try {
-      organizationUpdater.updateOrganization(request, organizationId, user, /*forRegistration*/ true);
+      organizationUpdater.updateOrganization(request, user, /*forRegistration*/ true, historyUpdate);
     } catch(IllegalArgumentException err) {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
