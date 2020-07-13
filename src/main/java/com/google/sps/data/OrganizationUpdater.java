@@ -40,7 +40,7 @@ public final class OrganizationUpdater {
     return this.entity;
   }
 
-  public void updateOrganization(HttpServletRequest request, GivrUser user, boolean forRegistration) throws IllegalArgumentException{
+  public void updateOrganization(HttpServletRequest request, GivrUser user, boolean forRegistration, EmbeddedEntity historyUpdate) throws IllegalArgumentException{
     Set<String> requiresMaintainer = new HashSet<String>();
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
@@ -100,7 +100,7 @@ public final class OrganizationUpdater {
     }
 
     // Updates non form properties such as change history, lastEditTimeStamp, etc
-    updateNonFormProperties(user, forRegistration);
+    updateNonFormProperties(user, forRegistration, historyUpdate);
 
   }
 
@@ -138,7 +138,7 @@ public final class OrganizationUpdater {
     return userIds;
   }
 
-  private void updateNonFormProperties(GivrUser user, boolean forRegistration) {
+  private void updateNonFormProperties(GivrUser user, boolean forRegistration, EmbeddedEntity historyUpdate) {
     /* MillisecondSinceEpoch represent the number of milliseconds that have passed since
      * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
      * of time that is independent of their time zone */
@@ -154,7 +154,7 @@ public final class OrganizationUpdater {
     /* This implementation stores history entries as embedded entities instead of custom objects
      * because it is much simpler that way */
     ArrayList changeHistory = new ArrayList<>();
-    changeHistory.add(history.recordHistory("Organization was registered", millisecondSinceEpoch));
+    changeHistory.add(historyUpdate);
 
     this.entity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
     this.entity.setProperty("isApproved", false);
@@ -162,7 +162,7 @@ public final class OrganizationUpdater {
     this.entity.setProperty("changeHistory", changeHistory);
     } else {
     ArrayList<EmbeddedEntity> changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
-    changeHistory.add(history.recordHistory("Organization was edited", millisecondSinceEpoch));
+    changeHistory.add(historyUpdate);
     this.entity.setProperty("changeHistory", changeHistory);
     }
     

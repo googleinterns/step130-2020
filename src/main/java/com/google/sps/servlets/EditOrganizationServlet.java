@@ -23,14 +23,17 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Arrays;
 import com.google.sps.data.OrganizationUpdater;
 import com.google.sps.data.GivrUser;
+import com.google.sps.data.HistoryManager;
 import java.io.IOException;
 import com.google.gson.Gson;
+import java.time.Instant;
 
 @WebServlet("/edit-organization")
 public class EditOrganizationServlet extends HttpServlet {
@@ -53,9 +56,12 @@ public class EditOrganizationServlet extends HttpServlet {
     GivrUser user = GivrUser.getLoggedInUser();
 
     OrganizationUpdater organizationUpdater = new OrganizationUpdater(organizationEntity);
+    long millisecondSinceEpoch = Instant.now().toEpochMilli();
+    HistoryManager history = new HistoryManager();
+    EmbeddedEntity historyUpdate = history.recordHistory("Organization was edited", millisecondSinceEpoch);
     
     try {
-      organizationUpdater.updateOrganization(request, user, /*forRegistration*/ false);
+      organizationUpdater.updateOrganization(request, user, /*forRegistration*/ false, historyUpdate);
     } catch(IllegalArgumentException err) {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
         return;

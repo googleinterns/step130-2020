@@ -22,12 +22,15 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import java.util.ArrayList;
 import com.google.sps.data.OrganizationUpdater;
+import com.google.sps.data.HistoryManager;
 import com.google.sps.data.GivrUser;
 import java.io.IOException;
+import java.time.Instant;
 
 @WebServlet("/add-organization")
 public class AddOrganizationServlet extends HttpServlet {
@@ -43,10 +46,13 @@ public class AddOrganizationServlet extends HttpServlet {
     Entity newOrganizationEntity = new Entity("Distributor");
 
     OrganizationUpdater organizationUpdater = new OrganizationUpdater(newOrganizationEntity);
+    long millisecondSinceEpoch = Instant.now().toEpochMilli();
+    HistoryManager history = new HistoryManager();
+    EmbeddedEntity historyUpdate = history.recordHistory("Organization was registered", millisecondSinceEpoch);
     
     // update rest of organization properties from inputted form
     try {
-      organizationUpdater.updateOrganization(request, user, /*forRegistration*/ true);
+      organizationUpdater.updateOrganization(request, user, /*forRegistration*/ true, historyUpdate);
     } catch(IllegalArgumentException err) {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
         return;
