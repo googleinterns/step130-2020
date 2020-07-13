@@ -27,6 +27,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Transaction;
 
 public final class GivrUser {
 
@@ -60,44 +61,94 @@ public final class GivrUser {
     return this.isLoggedIn;
   }
 
-  public static boolean checkIfUserExistsWithProperty(String propertyName, String propertyValue) {
-    // TODO: Check if User with propertyName, propertyValue exists within Datastore.
-    return false;
+  public static PreparedQuery getPreparedQueryResultUserWithProperty(String propertyName, String propertyValue) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Filter queryFilter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
+    Query query = new Query("User").setFilter(queryFilter);
+
+    PreparedQuery preparedQuery = datastore.prepare(query);
+
+    return preparedQuery;
   }
 
-  // TODO: Refactor getUserByIdFromDatastore.
-  public static GivrUser getUserByIdFromDatastore(String userId) {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Filter queryFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userId);
-    Query query = new Query("User").setFilter(queryFilter);
-      
+  // Check if User with propertyName, propertyValue exists within Datastore.
+  public static boolean checkIfUserWithPropertyExists(String propertyName, String propertyValue) {
+    PreparedQuery preparedQuery = getPreparedQueryResultUserWithProperty(propertyName, propertyValue);
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
-    PreparedQuery preparedQuery = datastore.prepare(query);
+    QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
+
+    if (userResult.size() < 1) {
+      return false;
+    } else if (userResult.size() > 1) {
+      throw new IllegalArgumentException("More than one user with the " + propertyName + " was found.");
+    }
+    return true;
+  }
+
+  // Updates a User entity in Datastore, identifying with the first two parameters with values from second two parameters.
+  public static void updateUserInDatastore(String identifyingProperty, String identifyingValue, String updateProperty, String updateValue) {  
+    if (!checkIfUserWithPropertyExists(identifyingProperty, identifyingValue)) {
+      throw new IllegalArgumentException("User with " + identifyingProperty + " of value: " + identifyingValue + " was not found in the Datastore.");
+    }
+    PreparedQuery preparedQuery = getPreparedQueryResultUserWithProperty(identifyingProperty, identifyingValue);
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
+      Transaction txn = datastore.beginTransaction();
+      try {
+        entity.setProperty(updateProperty, updateValue);
+        datastore.put(txn, entity);
+
+        txn.commit();
+      } finally {
+        if (txn.isActive()) {
+          txn.rollback();
+        }
+      }
+    }
+  }
+
+  public static GivrUser getUserById(String userId) {
+    PreparedQuery preparedQuery = getPreparedQueryResultUserWithProperty("userId", userId);
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
     QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
 
     boolean isMaintainer = false;
     boolean isLoggedIn = true;
+    String userEmail = "";
 
     if (userResult.size() == 1) {
       for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
         isMaintainer = (boolean) entity.getProperty("isMaintainer");
+        userEmail = (String) entity.getProperty("userEmail");
       }
     } else if (userResult.size() > 1) {
       throw new IllegalArgumentException("More than one user with the userId was found.");
     }
 
-    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */);
+    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */, userEmail);
     return user;
   }
 
-  // TODO: Refactor getUserByEmail, by not creating a new User but using the Datastore through the function checkIfUserExistsWithProperty.
   public static GivrUser getUserByEmail(String email) {
     // TODO: Support OAuth.
-    String authDomain = "gmail.com";
-    User user = new User(email, authDomain);
-    String userId = user.getUserId();
 
-    return getUserByIdFromDatastore(userId);
+    if (!checkIfUserWithPropertyExists("userEmail", email)) {
+      return new GivrUser("", false, false, "", email);
+    }
+    
+    PreparedQuery preparedQuery = getPreparedQueryResultUserWithProperty("userEmail", email);
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
+    QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
+
+    String userId = "";
+    boolean isMaintainer = false;
+    for (Entity entity: preparedQuery.asIterable(fetchOptions)) {
+      userId = (String) entity.getProperty("userId");
+      isMaintainer = (boolean) entity.getProperty("isMaintainer");
+    }
+    return new GivrUser(userId, isMaintainer, false /* isLoggedIn */, "" /* loginURL */, email);
   }
 
   public static GivrUser getCurrentLoggedInUser() {
@@ -106,8 +157,8 @@ public final class GivrUser {
     String url = userService.createLoginURL("/");
     
     if (isUserLoggedIn) {
-      return getUserByIdFromDatastore(userService.getCurrentUser().getUserId());
+      return getUserById(userService.getCurrentUser().getUserId());
     }
-    return new GivrUser("", false, false, url);
+    return new GivrUser("" /* userId */, false /* isMaintainer */, false /* isLoggedIn */, url /* loginURL */, "" /* userEmail */);
   }
 }

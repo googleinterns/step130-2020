@@ -46,9 +46,29 @@ public class AuthenticateServlet extends HttpServlet {
 
     GivrUser user = GivrUser.getCurrentLoggedInUser();
 
-    // TODO: Refer to GivrUser Design Implementation doc, implement flow of Authenticate using GivrUser class.
+    boolean doesUserIdExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userId", user.getUserId());
+    if (!doesUserIdExistInDatastore) {
+
+      boolean doesUserEmailExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userEmail", user.getUserEmail());
+      if (doesUserEmailExistInDatastore) {
+        // User is either a Moderator or Maintainer, that has not logged in.
+
+        boolean isMaintainer = user.isMaintainer();
+        if (!isMaintainer) { // User is a Moderator.
+
+          // TODO: Update organization.
+        }
+
+        // Update entity with current user's userId.
+        GivrUser.updateUserInDatastore("userEmail", user.getUserEmail(), "userId", user.getUserId());
+      }
+    } else {
+      // Ensures that the userEmail is up-to-date.
+      GivrUser.updateUserInDatastore("userId", user.getUserId(), "userEmail", user.getUserEmail());
+    }
 
     String json = gson.toJson(user);
     response.getWriter().println(json);
+    return;
   }
 }
