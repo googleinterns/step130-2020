@@ -75,8 +75,9 @@ class Organization {
     popupEmailElement.classList.add("organization-popup-email");
     popupEmailElement.textContent = this.organization.email;
 
-    const popupUrlLinkElement = document.createElement('div');
+    const popupUrlLinkElement = document.createElement('a');
     popupUrlLinkElement.classList.add("organization-popup-url-link");
+    popupUrlLinkElement.setAttribute("href", this.organization.urlLink);
     popupUrlLinkElement.textContent = this.organization.urlLink;
 
     const popupDescriptionElement = document.createElement('div');
