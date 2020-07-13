@@ -63,11 +63,16 @@ public final class GivrUser {
 
   public static PreparedQuery getPreparedQueryResultUserWithProperty(String propertyName, String propertyValue) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Filter queryFilter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
+
+    Filter queryFilter = null;
+    if (propertyName.equals("isMaintainer")) {
+      queryFilter = new FilterPredicate(propertyName, FilterOperator.EQUAL, Boolean.parseBoolean(propertyValue));
+    } else {
+      queryFilter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
+    }
     Query query = new Query("User").setFilter(queryFilter);
 
     PreparedQuery preparedQuery = datastore.prepare(query);
-
     return preparedQuery;
   }
 
@@ -90,6 +95,7 @@ public final class GivrUser {
     if (!checkIfUserWithPropertyExists(identifyingProperty, identifyingValue)) {
       throw new IllegalArgumentException("User with " + identifyingProperty + " of value: " + identifyingValue + " was not found in the Datastore.");
     }
+
     PreparedQuery preparedQuery = getPreparedQueryResultUserWithProperty(identifyingProperty, identifyingValue);
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

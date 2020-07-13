@@ -42,43 +42,37 @@ public class AddMaintainerServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json;");
 
-    GivrUser currUser = GivrUser.getLoggedInUser();
+    GivrUser currUser = GivrUser.getCurrentLoggedInUser();
 
-    // User should be able to add another Maintainer only if they are a Maintainer.
-    if (!currUser.isMaintainer()) {
+    // User can add another Maintainer only if they are a Maintainer.
+    if (currUser.isMaintainer()) {
       String newMaintainerEmail = request.getParameter("userEmail");
 
-      changeMaintainerStatus(newMaintainerEmail);
-      
+      boolean doesNewMaintainerExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userEmail", currUser.getUserEmail());
+      if (doesNewMaintainerExistInDatastore) {
+        changeMaintainerStatus(newMaintainerEmail);
+      } else {
+        addNewMaintainerToDatastore(newMaintainerEmail);
+      }
       response.setStatus(HttpServletResponse.SC_OK);
       return;
     }
     response.sendError(HttpServletResponse.SC_NOT_FOUND);
   }
 
-  // TODO: Finish refactoring changeMaintainerStatus with GivrUser updates.
-  public void changeMaintainerStatus(String email) {
+  public void addNewMaintainerToDatastore(String email) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Filter queryFilter = new FilterPredicate("userEmail", FilterOperator.EQUAL, email);
-    Query query = new Query("User").setFilter(queryFilter);
-      
-    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(1);
-    PreparedQuery preparedQuery = datastore.prepare(query);
-    QueryResultList<Entity> userResult = preparedQuery.asQueryResultList(fetchOptions);
+    Entity newUserEntity = new Entity("User");
 
-    boolean isMaintainer = false;
-    String userId = "";
+    newUserEntity.setProperty("userId", "");
+    newUserEntity.setProperty("isMaintainer", true);
+    newUserEntity.setProperty("userEmail", email);
 
-    // If User with email does not exist in the User table, this means that the User is not a Maintainer.
-    if (userResult.size() < 1) {
-      GivrUser newMaintainerUser = GivrUser.getUserByEmail(email);
-      Entity newUserEntity = new Entity("User");
+    datastore.put(newUserEntity);
+  }
 
-      newUserEntity.setProperty("userId", newMaintainerUser.getUserId());
-      newUserEntity.setProperty("isMaintainer", true);
-      newUserEntity.setProperty("userEmail", email);
-
-      datastore.put(newUserEntity);
-    }
+  public void changeMaintainerStatus(String email) {
+    boolean isMaintainer = true;
+    GivrUser.updateUserInDatastore("userEmail", email, "isMaintainer", Boolean.toString(isMaintainer));
   }
 }
