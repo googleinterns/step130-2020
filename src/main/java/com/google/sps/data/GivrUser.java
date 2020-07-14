@@ -94,7 +94,7 @@ public final class GivrUser {
     Entity entity = getUserFromDatastoreWithProperty(identifyingProperty, identifyingValue);
 
     if (entity == null) {
-      throw new NoResultException("User with " + identifyingProperty + ": " + identifyingValue + " was not found.");
+      throw new Error("User with " + identifyingProperty + ": " + identifyingValue + " was not found.");
     }
 
     Transaction txn = datastore.beginTransaction();

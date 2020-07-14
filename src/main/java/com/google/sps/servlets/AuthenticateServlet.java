@@ -42,7 +42,7 @@ import java.lang.Object;
 @WebServlet("/authenticate")
 public class AuthenticateServlet extends HttpServlet {
 
-  private void MaybeUpdateUserByEmailInDatastore(String userEmail) {
+  private void MaybeUpdateUserByEmailInDatastore(GivrUser user) {
     Map<String, Object> propertyNamesAndValuesToUpdate = new HashMap<String, Object>();
 
     boolean doesUserEmailExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userEmail", user.getUserEmail());
@@ -82,7 +82,7 @@ public class AuthenticateServlet extends HttpServlet {
 
     boolean doesUserIdExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userId", user.getUserId());
     if (!doesUserIdExistInDatastore) {
-      MaybeUpdateUserByEmailInDatastore(user.getUserEmail());
+      MaybeUpdateUserByEmailInDatastore(user);
     } else {
       MaybeUpdateEmailAddressOfUserIdInDatastore(user);
     }
