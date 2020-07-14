@@ -80,8 +80,7 @@ public final class GivrUser {
   private static Entity getUserFromDatastoreWithProperty(String propertyName, String propertyValue) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     
-    Filter queryFilter = null;
-    queryFilter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
+    Filter queryFilter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
     Query query = new Query("User").setFilter(queryFilter);
     PreparedQuery preparedQuery = datastore.prepare(query);
     Entity entity = preparedQuery.asSingleEntity();
