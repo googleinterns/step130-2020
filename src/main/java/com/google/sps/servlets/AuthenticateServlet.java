@@ -45,8 +45,8 @@ public class AuthenticateServlet extends HttpServlet {
   private void MaybeUpdateUserByEmailInDatastore(GivrUser user) {
     Map<String, Object> propertyNamesAndValuesToUpdate = new HashMap<String, Object>();
 
-    boolean doesUserEmailExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userEmail", user.getUserEmail());
-      if (doesUserEmailExistInDatastore) {
+    Entity userWithEmail = GivrUser.getUserFromDatastoreWithProperty("userEmail", user.getUserEmail());
+      if (userWithEmail != null) {
         // User is either a Moderator or Maintainer, that has not logged in.
         boolean isMaintainer = user.isMaintainer();
         if (!isMaintainer) { // User is a Moderator.
@@ -80,8 +80,8 @@ public class AuthenticateServlet extends HttpServlet {
 
     GivrUser user = GivrUser.getCurrentLoggedInUser();
 
-    boolean doesUserIdExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userId", user.getUserId());
-    if (!doesUserIdExistInDatastore) {
+    Entity userWithId = GivrUser.getUserFromDatastoreWithProperty("userId", user.getUserId());
+    if (userWithId == null) {
       MaybeUpdateUserByEmailInDatastore(user);
     } else {
       MaybeUpdateEmailAddressOfUserIdInDatastore(user);

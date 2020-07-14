@@ -69,13 +69,6 @@ public final class GivrUser {
       return false;
   }
 
-  public static boolean checkIfUserWithPropertyExists(String propertyName, String propertyValue) {
-    if (getUserFromDatastoreWithProperty(propertyName, propertyValue) == null) {
-      return false;
-    }
-    return true;
-  }
-
   // Gets User with propertyName, propertyValue exists within Datastore.
   public static Entity getUserFromDatastoreWithProperty(String propertyName, String propertyValue) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -83,8 +76,13 @@ public final class GivrUser {
     Filter queryFilter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
     Query query = new Query("User").setFilter(queryFilter);
     PreparedQuery preparedQuery = datastore.prepare(query);
-    Entity entity = preparedQuery.asSingleEntity();
 
+    Entity entity = null;
+    try {
+      entity = preparedQuery.asSingleEntity();
+    } catch(PreparedQuery.TooManyResultsException exception) {
+      exception.printStackTrace();
+    }
     return entity; // Entity can be null.
   }
 
