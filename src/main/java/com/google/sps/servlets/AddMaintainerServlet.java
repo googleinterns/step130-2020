@@ -46,20 +46,20 @@ public class AddMaintainerServlet extends HttpServlet {
 
     GivrUser currUser = GivrUser.getCurrentLoggedInUser();
 
-    // User can add another Maintainer only if they are a Maintainer.
-    if (currUser.isMaintainer()) {
-      String newMaintainerEmail = request.getParameter("userEmail");
-
-      boolean doesNewMaintainerExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userEmail", currUser.getUserEmail());
-      if (doesNewMaintainerExistInDatastore) {
-        changeMaintainerStatus(newMaintainerEmail, currUser.getUserId());
-      } else {
-        addNewMaintainerToDatastore(newMaintainerEmail);
-      }
-      response.setStatus(HttpServletResponse.SC_OK);
-      return;
+    if (!currUser.isMaintainer()) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
-    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+
+    // User can add another Maintainer only if they are a Maintainer.
+    String newMaintainerEmail = request.getParameter("userEmail");
+
+    boolean doesNewMaintainerExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userEmail", currUser.getUserEmail());
+    if (doesNewMaintainerExistInDatastore) {
+      changeMaintainerStatus(newMaintainerEmail, currUser.getUserId());
+    } else {
+      addNewMaintainerToDatastore(newMaintainerEmail);
+    }
+    response.setStatus(HttpServletResponse.SC_OK);
   }
 
   public void addNewMaintainerToDatastore(String email) {
@@ -75,8 +75,8 @@ public class AddMaintainerServlet extends HttpServlet {
 
   public void changeMaintainerStatus(String email, String userId) {
     boolean isMaintainer = true;
-    Map<String, String> propertyNamesAndValuesToUpdate = new HashMap<String, String>();
-    propertyNamesAndValuesToUpdate.put("isMaintainer", Boolean.toString(isMaintainer));
+    Map<String, Object> propertyNamesAndValuesToUpdate = new HashMap<String, Object>();
+    propertyNamesAndValuesToUpdate.put("isMaintainer", isMaintainer);
     propertyNamesAndValuesToUpdate.put("userId", userId);
     GivrUser.updateUserInDatastore("userEmail", email, propertyNamesAndValuesToUpdate);
   }

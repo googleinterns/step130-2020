@@ -37,22 +37,15 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.Object;
 
 @WebServlet("/authenticate")
 public class AuthenticateServlet extends HttpServlet {
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse  response) throws IOException {
-    response.setContentType("application/json;");
-    Gson gson = new Gson();
+  private void MaybeUpdateUserByEmailInDatastore(GivrUser user) {
+    Map<String, Object> propertyNamesAndValuesToUpdate = new HashMap<String, Object>();
 
-    GivrUser user = GivrUser.getCurrentLoggedInUser();
-
-    Map<String, String> propertyNamesAndValuesToUpdate = new HashMap<String, String>();
-
-    boolean doesUserIdExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userId", user.getUserId());
-    if (!doesUserIdExistInDatastore) {
-      boolean doesUserEmailExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userEmail", user.getUserEmail());
+    boolean doesUserEmailExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userEmail", user.getUserEmail());
       if (doesUserEmailExistInDatastore) {
         // User is either a Moderator or Maintainer, that has not logged in.
         boolean isMaintainer = user.isMaintainer();
@@ -65,18 +58,33 @@ public class AuthenticateServlet extends HttpServlet {
         propertyNamesAndValuesToUpdate.put("userId", user.getUserId());
         GivrUser.updateUserInDatastore("userEmail", user.getUserEmail(), propertyNamesAndValuesToUpdate);
       }
-    } else {
-      PreparedQuery preparedQuery = GivrUser.getPreparedQueryResultOfUserWithProperty("userId", user.getUserId());
-      String emailInDatastore = "";
+  }
 
-      for (Entity entity: preparedQuery.asIterable(FetchOptions.Builder.withLimit(1))) {
-        emailInDatastore = (String) entity.getProperty("userEmail");
-      }
-      // Ensures that the userEmail is up-to-date.
-      if (!user.getUserEmail().equals(emailInDatastore)) {
-        propertyNamesAndValuesToUpdate.put("userEmail", user.getUserEmail());
-        GivrUser.updateUserInDatastore("userId", user.getUserId(), propertyNamesAndValuesToUpdate);
-      }
+  private void MaybeUpdateEmailAddressOfUserIdInDatastore(GivrUser currUser) {
+    Entity entity = GivrUser.getUserFromDatastoreWithProperty("userId", currUser.getUserId());
+    Map<String, Object> propertyNamesAndValuesToUpdate = new HashMap<String, Object>();
+
+    String emailInDatastore = (String) entity.getProperty("userEmail");
+
+    // Ensures that the userEmail is up-to-date.
+    if (!currUser.getUserEmail().equals(emailInDatastore)) {
+      propertyNamesAndValuesToUpdate.put("userEmail", currUser.getUserEmail());
+      GivrUser.updateUserInDatastore("userId", currUser.getUserId(), propertyNamesAndValuesToUpdate);
+    }
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse  response) throws IOException {
+    response.setContentType("application/json;");
+    Gson gson = new Gson();
+
+    GivrUser user = GivrUser.getCurrentLoggedInUser();
+
+    boolean doesUserIdExistInDatastore = GivrUser.checkIfUserWithPropertyExists("userId", user.getUserId());
+    if (!doesUserIdExistInDatastore) {
+      MaybeUpdateUserByEmailInDatastore(user);
+    } else {
+      MaybeUpdateEmailAddressOfUserIdInDatastore(user);
     }
     String json = gson.toJson(user);
     response.getWriter().println(json);
