@@ -71,6 +71,10 @@ class Organization {
     popupAddressElement.classList.add("organization-popup-address");
     popupAddressElement.textContent = this.organization.address;
 
+    const popupZipcodeElement = document.createElement('div');
+    popupZipcodeElement.classList.add("organization-popup-zipcode");
+    popupZipcodeElement.textContent = this.organization.zipcode;
+
     const popupEmailElement = document.createElement('div');
     popupEmailElement.classList.add("organization-popup-email");
     popupEmailElement.textContent = this.organization.email;
@@ -102,6 +106,7 @@ class Organization {
     this.popupElement.appendChild(popupNameElement);
     this.popupElement.appendChild(popupPhoneElement);
     this.popupElement.appendChild(popupAddressElement);
+    this.popupElement.appendChild(popupZipcodeElement);
     this.popupElement.appendChild(popupEmailElement);
     this.popupElement.appendChild(popupUrlLinkElement);
     this.popupElement.appendChild(popupDescriptionElement);
