@@ -14,7 +14,7 @@
 
 package com.google.sps;
 
-import static org.mockito.Mockito.*
+import static org.mockito.Mockito.*;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -47,10 +47,10 @@ public final class AddMaintainerServletTest {
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
   @Mock
-  HttpServletRequest request;
+  HttpServletRequest mockRequest;
 
   @Mock
-  HttpServletResponse response;
+  HttpServletResponse mockResponse;
 
   @Before
   public void setUp() {
@@ -82,16 +82,25 @@ public final class AddMaintainerServletTest {
   */
   @Test
   public void Add_InvokedByNonMaintainer_ShouldSendError() {
-    when(request.getParameter("userEmail")).thenReturn("")
+    mockRequest = mock(HttpServletRequest.class);
     GivrUser mockCurrentUser = new GivrUser("testId", false, true, "", "jennb206+mockCurrentUser@gmail.com");
+    
+    when(mockRequest.getParameter("userEmail")).thenReturn("jennb206+test0@gmail.com");
+    when(GivrUser.getCurrentLoggedInUser()).thenReturn(mockCurrentUser);
 
+    AddMaintainerServlet servlet = new AddMaintainerServlet();
+    servlet.doPost(mockRequest, mockResponse);
 
+    int actualResponseStatus = mockResponse.getStatus();
+    int expectedResponseStatus = HttpServletResponse.SC_NOT_FOUND;
+
+    Assert.assertEquals(expectedResponseStatus, actualResponseStatus);
   }
 
-  @Test
-  public void testRequestReturnsCorrect() {
+  // @Test
+  // public void testRequestReturnsCorrect() {
     
 
-  }
+  // }
       
 }
