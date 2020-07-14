@@ -69,8 +69,15 @@ public final class GivrUser {
       return false;
   }
 
-  // Check if User with propertyName, propertyValue exists within Datastore.
-  public static Entity getUserFromDatabaseWithProperty(String propertyName, String propertyValue) {
+  public static boolean checkIfUserWithPropertyExists(String propertyName, String propertyValue) {
+    if (getUserFromDatastoreWithProperty(propertyName, propertyValue) == null) {
+      return false;
+    }
+    return true;
+  }
+
+  // Gets User with propertyName, propertyValue exists within Datastore.
+  private static Entity getUserFromDatastoreWithProperty(String propertyName, String propertyValue) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     
     Filter queryFilter = null;
@@ -85,7 +92,7 @@ public final class GivrUser {
   // Updates a User entity in Datastore, identifying with the first two parameters with values from second two parameters.
   public static void updateUserInDatastore(String identifyingProperty, String identifyingValue, Map<String, Object> updatePropertyNamesAndValues) {  
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity entity = getUserFromDatabaseWithProperty(identifyingProperty, identifyingValue);
+    Entity entity = getUserFromDatastoreWithProperty(identifyingProperty, identifyingValue);
 
     if (entity == null) {
       throw new NoResultException("User with " + identifyingProperty + ": " + identifyingValue + " was not found.");
@@ -108,7 +115,7 @@ public final class GivrUser {
   }
 
   public static GivrUser getUserById(String userId) {
-    Entity entity = getUserFromDatabaseWithProperty("userId", userId);
+    Entity entity = getUserFromDatastoreWithProperty("userId", userId);
 
     boolean isMaintainer = false;
     boolean isLoggedIn = true;
@@ -125,7 +132,7 @@ public final class GivrUser {
 
   public static GivrUser getUserByEmail(String email) {
     // TODO: Support OAuth.
-    Entity entity = getUserFromDatabaseWithProperty("userEmail", email);
+    Entity entity = getUserFromDatastoreWithProperty("userEmail", email);
 
     String userId = "";
     boolean isMaintainer = false;
