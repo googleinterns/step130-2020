@@ -56,7 +56,19 @@ public final class ListOrgServletTest {
   @Before
   public void setUp() {
     helper.setUp();
- 
+    //                  Existing entity table
+    // +-------+-------------------------+------------+---------+
+    // | Index | creationTimeStampMillis | isApproved | zipCode |
+    // +-------+-------------------------+------------+---------+
+    // |     0 |                       0 | false      |   12345 |
+    // |     1 |                       1 | true       |   02763 |
+    // |     2 |                       2 | true       |   47906 |
+    // |     3 |                       3 | false      |   47906 |
+    // |     4 |                       4 | true       |   02763 |
+    // |     5 |                       5 | false      |   02763 |
+    // |     6 |                       6 | false      |   94566 |
+    // +-------+-------------------------+------------+---------+
+
     Entity entity0 = new Entity("Distributor");
     entity0.setProperty("creationTimeStampMillis", 0);
     entity0.setProperty("isApproved", false);
@@ -115,9 +127,15 @@ public final class ListOrgServletTest {
   @Test
   public void testQueryWithNoFilter() {
     /* For this test, all of the entities need to be returned because there are no filter limits,
-     * but the master list must be reversed */
-    ArrayList<Entity> expectedList = new ArrayList<Entity>(masterEntityList);
-    Collections.reverse(expectedList);
+     * but the master list must be reversed since the query returns them in descending order*/
+    ArrayList<Entity> expectedList = new ArrayList<Entity>();
+    expectedList.add(masterEntityList.get(6));
+    expectedList.add(masterEntityList.get(5));
+    expectedList.add(masterEntityList.get(4));
+    expectedList.add(masterEntityList.get(3));
+    expectedList.add(masterEntityList.get(2));
+    expectedList.add(masterEntityList.get(1));
+    expectedList.add(masterEntityList.get(0));
  
     /* This user is a maintainer, meaning they see everything */
     GivrUser mockUser = new GivrUser("testId", true, true, "google.com");
