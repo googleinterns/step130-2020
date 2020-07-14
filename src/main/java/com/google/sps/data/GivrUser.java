@@ -69,13 +69,6 @@ public final class GivrUser {
       return false;
   }
 
-  public static boolean checkIfUserWithPropertyExists(String propertyName, String propertyValue) {
-    if (getUserFromDatastoreWithProperty(propertyName, propertyValue) == null) {
-      return false;
-    }
-    return true;
-  }
-
   // Gets User with propertyName, propertyValue exists within Datastore.
   public static Entity getUserFromDatastoreWithProperty(String propertyName, String propertyValue) {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
