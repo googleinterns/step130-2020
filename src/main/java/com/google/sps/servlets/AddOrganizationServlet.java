@@ -36,7 +36,7 @@ import java.time.Instant;
 public class AddOrganizationServlet extends HttpServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    GivrUser user = GivrUser.getCurrentLoggedInUser();
+    GivrUser user = GivrUser.getLoggedInUser();
 
     if (user.getUserId().equals("")) {
       throw new IllegalArgumentException("Error: unable to register organization if user is not logged in.");

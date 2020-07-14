@@ -46,7 +46,7 @@ public class ListOrganizationsServlet extends HttpServlet {
    * If no parameters are included, it will return a default list of organizations
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    GivrUser currentUser = GivrUser.getCurrentLoggedInUser();
+    GivrUser currentUser = GivrUser.getLoggedInUser();
 
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);

@@ -53,7 +53,7 @@ public class EditOrganizationServlet extends HttpServlet {
         return;
     }
     
-    GivrUser user = GivrUser.getCurrentLoggedInUser();
+    GivrUser user = GivrUser.getLoggedInUser();
 
     OrganizationUpdater organizationUpdater = new OrganizationUpdater(organizationEntity);
     long millisecondSinceEpoch = Instant.now().toEpochMilli();
