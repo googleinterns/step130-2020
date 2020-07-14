@@ -217,7 +217,7 @@
 
 .filter-tag-label {
   font-family:'Courier New', Courier, monospace;
-  color: hsl(64, 100%, 88%);
+  color: hsl(61, 97%, 88%);
   font-size: 15px;
 }
 
@@ -230,3 +230,11 @@
   border: 2px solid #ccc;
   border-radius: 50%
 }
+
+#no-results-found {
+  display: flex;
+  justify-content: center;
+  color: rgb(109, 101, 101);
+  font-size: 20px;
+}
+

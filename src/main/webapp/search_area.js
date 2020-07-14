@@ -129,6 +129,12 @@ class SearchArea {
 
       this.organizationListArea.appendChild(newOrganization.getOrganization());
     });
+    if (this.organizationObjectsList.length === 0) {
+      const noResultsFoundMessage = document.createElement("div");
+      noResultsFoundMessage.setAttribute("id", "no-results-found");
+      noResultsFoundMessage.textContent = "No results found for current filters.";
+      this.organizationListArea.appendChild(noResultsFoundMessage);
+    }
   }
 
   async getListOfOrganizations() {
