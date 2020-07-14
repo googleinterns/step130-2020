@@ -41,7 +41,6 @@ class SearchArea {
     this.forOrganizationsPage = forOrganizationsPage;
     this.filterParams = new URLSearchParams();
     this.organizationObjectsList = [];
-    this.filterTagsList = [];
 
     this.zipcodeFormArea = document.createElement("div");
     this.form = document.createElement("form");
