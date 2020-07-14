@@ -76,8 +76,13 @@ public final class GivrUser {
     Filter queryFilter = new FilterPredicate(propertyName, FilterOperator.EQUAL, propertyValue);
     Query query = new Query("User").setFilter(queryFilter);
     PreparedQuery preparedQuery = datastore.prepare(query);
-    Entity entity = preparedQuery.asSingleEntity();
 
+    Entity entity = null;
+    try {
+      entity = preparedQuery.asSingleEntity();
+    } catch(PreparedQuery.TooManyResultsException exception) {
+      exception.printStackTrace();
+    }
     return entity; // Entity can be null.
   }
 
