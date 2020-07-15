@@ -27,13 +27,16 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Transaction;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.Object;
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 
 public final class GivrUser {
 
+  private static Logger logger = Logger.getLogger("GivrUser Logger");
   private String id;
   private boolean isMaintainer;
   private boolean isLoggedIn;
@@ -81,7 +84,7 @@ public final class GivrUser {
     try {
       entity = preparedQuery.asSingleEntity();
     } catch(PreparedQuery.TooManyResultsException exception) {
-      exception.printStackTrace();
+      logger.log(Level.SEVERE, "Multiple User entities found with property name: " + propertyName + " and property value: " + propertyValue + ".");
     }
     return entity; // Entity can be null.
   }
@@ -95,20 +98,10 @@ public final class GivrUser {
       throw new Error("User with " + identifyingProperty + ": " + identifyingValue + " was not found.");
     }
 
-    Transaction txn = datastore.beginTransaction();
-    try {
-      for (Map.Entry<String, Object> entry: updatePropertyNamesAndValues.entrySet()) {
-        entity.setProperty(entry.getKey(), entry.getValue());
-      }
-
-      datastore.put(txn, entity);
-      txn.commit();
-    } finally {
-      if (txn.isActive()) {
-        txn.rollback();
-        throw new Error("Datastore Update has failed.");
-      }
+    for (Map.Entry<String, Object> entry: updatePropertyNamesAndValues.entrySet()) {
+      entity.setProperty(entry.getKey(), entry.getValue());
     }
+    datastore.put(entity);
   }
 
   public static GivrUser getUserById(String userId) {
