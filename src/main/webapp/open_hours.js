@@ -51,7 +51,7 @@ class TimeOption {
     this.dayOptionArea.appendChild(this.dayOpenInput);
 
     this.dayClosedLabel = document.createElement("label");
-    this.dayClosedLabel.textContent = "Closed";
+    this.dayClosedLabel.textContent = " Closed";
     this.dayOptionArea.appendChild(this.dayClosedLabel);
     this.dayClosedInput = document.createElement("input");
     this.dayClosedInput.setAttribute("type", "radio");
