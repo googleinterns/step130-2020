@@ -5,7 +5,7 @@
  
   <groupId>com.google.sps</groupId>
   <artifactId>portfolio</artifactId>
-  <version>1</version>
+  <version>1.9.64</version>
   <packaging>war</packaging>
 
   <properties>
@@ -31,7 +31,7 @@
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
-      <version>1.9.59</version>
+      <version>1.9.64</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
