@@ -249,3 +249,8 @@
   font-size: 20px;
 }
 
+#add-maintainer-popup-modal {
+  display: flex;
+  justify-content: center;
+  color: white;
+}
