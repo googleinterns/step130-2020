@@ -199,7 +199,7 @@ class SearchArea {
     if (urlParamKey === "zipcode") {
       this.filterParams.delete("zipcode");
     } else {
-      if (this.filterParams.getAll("filterParam").length === 0) {
+      if (this.filterParams.getAll("filterParam").length === 1) {
         /* If only 1 filter param, delete the array */
         this.filterParams.delete("filterParam");
       } else {
