@@ -16,23 +16,6 @@ class TimeOption {
     this.forRegistration = forRegistration;
     this.organization = organization;
     this.optionArea = document.getElementById("hours-option-area");
-    if(organization != null) {
-      if(day == "Monday") {
-        this.organizationIsOpen = organization.mondayIsOpen;
-      } else if(day == "Tuesday") {
-        this.organizationIsOpen = organization.tuesdayIsOpen;
-      } else if(day == "Wednesday") {
-        this.organizationIsOpen = organization.wednesdayIsOpen;
-      } else if(day == "Thursday") {
-        this.organizationIsOpen = organization.thursdayIsOpen;
-      } else if(day == "Friday") {
-        this.organizationIsOpen = organization.fridayIsOpen;
-      } else if(day == "Saturday") {
-        this.organizationIsOpen = organization.saturdayIsOpen;
-      } else if(day == "Sunday") {
-        this.organizationIsOpen = organization.sundayIsOpen;
-      }
-    }
 
     this.dayOptionArea = document.createElement("div");
     this.dayOptionArea.classList.add("day-option-area");
