@@ -74,6 +74,7 @@ class SearchArea {
     this.filterInputArea.setAttribute("placeholder", "Filter Results");
     this.filterInputArea.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
+        /* When the user hits enter in the filter input area, it is added as a param */
         this.setUrlParamValue("filterParam", this.filterInputArea.value);
         this.filterInputArea.value = "";
       }
