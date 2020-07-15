@@ -195,4 +195,3 @@ public final class ListOrgServletTest {
     Assert.assertArrayEquals(expectedList.toArray(), this.datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
 }
- 
