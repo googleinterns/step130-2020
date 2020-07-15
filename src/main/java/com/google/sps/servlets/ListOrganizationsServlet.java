@@ -18,6 +18,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
+import java.util.Arrays;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -74,13 +77,25 @@ public class ListOrganizationsServlet extends HttpServlet {
   public static Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
     Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
 
-    ArrayList<Filter> filterCollection = new ArrayList<Filter>();
+    ArrayList filterCollection = new ArrayList<>();
 
     String zipcode  = "";
     boolean queryForZipcode = false;
     if (request.getParameter("zipcode") != null) {
       zipcode = request.getParameter("zipcode");
       queryForZipcode = true;
+    }
+
+    ArrayList<String> filterParams = new ArrayList<String>();
+    boolean queryForFilters = false;
+    if (request.getParameterValues("filterParam") != null) {
+      queryForFilters = true;
+      Collections.addAll(filterParams, request.getParameterValues("filterParam"));
+      System.out.println("-----------------------------------------------");
+      for (String param : filterParams) {
+        System.out.println("One of the filter params is: " + param);
+      }
+      System.out.println("-----------------------------------------------");
     }
 
     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
@@ -105,17 +120,32 @@ public class ListOrganizationsServlet extends HttpServlet {
       filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
     }
 
+    if (queryForFilters) {
+      for (String filterParam : filterParams) {
+        ArrayList individualFilterCollection = new ArrayList<>();
+        /* These filters are joined by an OR operator, so if any of them yield a match it will add that entity to the query */
+        individualFilterCollection.add(new FilterPredicate("orgName", FilterOperator.EQUAL, filterParam));
+        individualFilterCollection.add(new FilterPredicate("orgPhoneNum", FilterOperator.EQUAL, filterParam));
+        individualFilterCollection.add(new FilterPredicate("orgStreetAddress", FilterOperator.EQUAL, filterParam));
+        individualFilterCollection.add(new FilterPredicate("resourceCategories", FilterOperator.EQUAL, filterParam));
+        //TODO: Add a "city" field to the address area. right now you can only query by org address if it is a direct match
+
+        /* Creates a composite OR filter for each filterParam */
+        CompositeFilter compositeORFilter = new CompositeFilter(CompositeFilterOperator.OR, individualFilterCollection);
+        filterCollection.add(compositeORFilter); // This filter collection can contain filter AND composite filter types
+      }
+    }
+
     if (filterCollection.size() >= 2) {
       /* Composite Filter only works with 2 or more filters. */
+      System.out.println("DOING THIS FILTER");
       CompositeFilter combinedQueryFilter = new CompositeFilter(CompositeFilterOperator.AND, filterCollection);
       query.setFilter(combinedQueryFilter);
     } else if (filterCollection.size() == 1) {
       /* If a filter exists but it can't be composite, normal one is applied */
-      query.setFilter(filterCollection.get(0));
+      System.out.println("DOING THIS ONE INSTEAD");
+      query.setFilter((Filter) filterCollection.get(0));
     }
-
-    // TODO(): Repeat this functionality for the filtering keywords from the datalist
-
     return query;
   }
 
