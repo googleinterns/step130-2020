@@ -39,8 +39,6 @@ class User {
   }
 
   createAddMaintainerPopup() {
-    const navBar = document.getElementById("nav-bar");
-
     const emailForm = document.createElement('form');
     emailForm.setAttribute("method", "POST");
     emailForm.setAttribute("id", "add-maintainer-email-form");
@@ -61,14 +59,13 @@ class User {
     popupCloseButton.classList.add("popup-close-button");
     popupCloseButton.textContent = "X";
     popupCloseButton.addEventListener("click", () => {
-      emailForm.classList.add("hide-popup");
-      emailForm.classList.remove("show-popup");
+      emailForm.remove();
     });
     emailForm.appendChild(popupCloseButton);
 
     emailForm.setAttribute("action", "/add-maintainer");
 
-    navBar.appendChild(emailForm);
+    return emailForm;
   }
 
   rebuildNavBar(isModerator) {
@@ -85,28 +82,22 @@ class User {
     registrationLink.textContent = "Register Organization";
     navBar.appendChild(registrationLink);
 
-    // TODO: CHANGE to this.isMaintainer
-    if(!this.isMaintainer) {
+    if(this.isMaintainer) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "Organizations";
       navBar.appendChild(organizationsLink);
 
-      this.createAddMaintainerPopup();
-      document.getElementById("add-maintainer-email-form").classList.add("hide-popup");
-
+      const addMaintainerPopup = this.createAddMaintainerPopup();
       const addMaintainerLabel = document.createElement("a");
       addMaintainerLabel.textContent = "Add Maintainer";
       addMaintainerLabel.addEventListener("click", () => {
-        const emailForm = document.getElementById("add-maintainer-email-form");
-        emailForm.classList.add("show-popup");
-        emailForm.classList.remove("hide-popup");
+        navBar.appendChild(addMaintainerPopup);
+        addMaintainerPopup.classList.add("show-popup");
+        addMaintainerPopup.classList.remove("hide-popup");
       });
       navBar.appendChild(addMaintainerLabel);
-
-
-      // this.maintainerAddForm = this.addMaintainerAddForm();
-      // navBar.appendChild(this.maintainerAddForm);
+      
     } else if (isModerator) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");

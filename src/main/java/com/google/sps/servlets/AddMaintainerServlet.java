@@ -53,9 +53,9 @@ public class AddMaintainerServlet extends HttpServlet {
     // User can add another Maintainer only if they are a Maintainer.
     String newMaintainerEmail = request.getParameter("userEmail");
 
-    Entity entity = GivrUser.getUserFromDatastoreWithProperty("userEmail", currUser.getUserEmail());
+    Entity entity = GivrUser.getUserFromDatastoreWithProperty("userEmail", newMaintainerEmail);
     if (entity != null) {
-      changeMaintainerStatus(newMaintainerEmail, currUser.getUserId());
+      changeMaintainerStatus(newMaintainerEmail);
     } else {
       addNewMaintainerToDatastore(newMaintainerEmail);
     }
@@ -73,11 +73,10 @@ public class AddMaintainerServlet extends HttpServlet {
     datastore.put(newUserEntity);
   }
 
-  public void changeMaintainerStatus(String email, String userId) {
+  public void changeMaintainerStatus(String email) {
     boolean isMaintainer = true;
     Map<String, Object> propertyNamesAndValuesToUpdate = new HashMap<String, Object>();
     propertyNamesAndValuesToUpdate.put("isMaintainer", isMaintainer);
-    propertyNamesAndValuesToUpdate.put("userId", userId);
     GivrUser.updateUserInDatastore("userEmail", email, propertyNamesAndValuesToUpdate);
   }
 }
