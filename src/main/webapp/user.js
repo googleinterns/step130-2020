@@ -28,14 +28,10 @@ class User {
 
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.isMaintainer;
+      console.log(this.isMaintainer);
 
       // TODO(): add isModerator check
-      if (!this.isMaintainer) {
-        this.rebuildNavBar(/*isModerator*/ false);
-      }
-      else {
-        this.rebuildNavBar(/*isModerator*/ false);
-      }
+      this.rebuildNavBar(/*isModerator*/ false);
     }  else {
       const loginLink = document.getElementById("login-url");
       loginLink.textContent = "Log In";
@@ -43,6 +39,25 @@ class User {
     }
   }
 
+  addMaintainerAddForm() {
+    const emailForm = document.createElement('form');
+    emailForm.setAttribute("method", "POST");
+    
+    const emailInputElement = document.createElement("input");
+    emailInputElement.setAttribute("type", "text");
+    emailInputElement.setAttribute("id", "userEmail");
+    emailInputElement.setAttribute("name", "userEmail");
+    emailForm.appendChild(emailInputElement);
+
+    const submitButton = document.createElement("input");
+    submitButton.textContent = "Submit";
+    submitButton.setAttribute("type", "submit");
+    emailForm.appendChild(submitButton);
+
+    emailForm.setAttribute("action", "/add-maintainer");
+    
+    return emailForm;
+  }
 
   rebuildNavBar(isModerator) {
     const navBar = document.getElementById("nav-bar");
@@ -58,11 +73,14 @@ class User {
     registrationLink.textContent = "Register Organization";
     navBar.appendChild(registrationLink);
 
-    if(this.isMaintainer) {
+    if(!this.isMaintainer) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "Organizations";
       navBar.appendChild(organizationsLink);
+
+      this.maintainerAddForm = this.addMaintainerAddForm();
+      navBar.appendChild(this.maintainerAddForm);
     } else if (isModerator) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
