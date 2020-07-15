@@ -137,7 +137,7 @@ public final class ListOrgServletTest {
     expectedList.add(masterEntityList.get(0));
  
     /* This user is a maintainer, meaning they see everything */
-    GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "");
+    GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "testemail@gmail.com");
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
     when(mockRequest.getParameter("zipcode")).thenReturn(null);
@@ -159,7 +159,7 @@ public final class ListOrgServletTest {
     expectedList.add(masterEntityList.get(1));
  
     /* This user is not a maintainer, so they only see approved orgs*/
-    GivrUser mockUser = new GivrUser("testId", false, true, "google.com", "");
+    GivrUser mockUser = new GivrUser("testId", false, true, "google.com", "testemail@gmail.com");
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
     when(mockRequest.getParameter("zipcode")).thenReturn(null);
@@ -180,7 +180,7 @@ public final class ListOrgServletTest {
     expectedList.add(masterEntityList.get(4));
     expectedList.add(masterEntityList.get(1));
  
-    GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "");
+    GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "testemail@gmail.com");
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
     when(mockRequest.getParameter("zipcode")).thenReturn("02763");
