@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
- 
- 
+
+
 package com.google.sps;
  
 import static org.mockito.Mockito.*;
@@ -37,6 +37,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
  
@@ -123,7 +124,7 @@ public final class ListOrgServletTest {
   public void tearDown() {
     helper.tearDown();
   }
- 
+
   @Test
   public void testQueryWithNoFilter() {
     /* Because there are no filters, all entities are returned in reverse time order. */
@@ -137,7 +138,11 @@ public final class ListOrgServletTest {
     expectedList.add(masterEntityList.get(0));
  
     /* This user is a maintainer, meaning they see everything */
+<<<<<<< HEAD
     GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "testemail@gmail.com");
+=======
+    GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "");
+>>>>>>> 19c4359... add styling
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
     when(mockRequest.getParameter("zipcode")).thenReturn(null);
@@ -148,6 +153,7 @@ public final class ListOrgServletTest {
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
+
   @Test
   public void testQueryAsNormalUser() {
  
@@ -159,7 +165,11 @@ public final class ListOrgServletTest {
     expectedList.add(masterEntityList.get(1));
  
     /* This user is not a maintainer, so they only see approved orgs*/
+<<<<<<< HEAD
     GivrUser mockUser = new GivrUser("testId", false, true, "google.com", "testemail@gmail.com");
+=======
+    GivrUser mockUser = new GivrUser("testId", false, true, "google.com", "");
+>>>>>>> 19c4359... add styling
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
     when(mockRequest.getParameter("zipcode")).thenReturn(null);
@@ -170,7 +180,7 @@ public final class ListOrgServletTest {
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
- 
+
  @Test
   public void testZipcodeFilter() {
  
@@ -180,7 +190,11 @@ public final class ListOrgServletTest {
     expectedList.add(masterEntityList.get(4));
     expectedList.add(masterEntityList.get(1));
  
+<<<<<<< HEAD
     GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "testemail@gmail.com");
+=======
+    GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "");
+>>>>>>> 19c4359... add styling
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
     when(mockRequest.getParameter("zipcode")).thenReturn("02763");
@@ -193,4 +207,3 @@ public final class ListOrgServletTest {
     Assert.assertArrayEquals(expectedList.toArray(), this.datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
 }
- 

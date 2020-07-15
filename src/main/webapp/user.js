@@ -39,6 +39,9 @@ class User {
   }
 
   createAddMaintainerPopup() {
+    const addMaintainerModal = document.createElement("div");
+    addMaintainerModal.setAttribute("id", "add-maintainer-popup-modal");
+
     const emailForm = document.createElement('form');
     emailForm.setAttribute("method", "POST");
     emailForm.setAttribute("id", "add-maintainer-email-form");
@@ -63,13 +66,13 @@ class User {
     popupCloseButton.classList.add("popup-close-button");
     popupCloseButton.textContent = "X";
     popupCloseButton.addEventListener("click", () => {
-      emailForm.remove();
+      addMaintainerModal.remove();
     });
     emailForm.appendChild(popupCloseButton);
 
     emailForm.setAttribute("action", "/add-maintainer");
 
-    return emailForm;
+    return addMaintainerModal;
   }
 
   rebuildNavBar(isModerator) {
@@ -86,7 +89,8 @@ class User {
     registrationLink.textContent = "Register Organization";
     navBar.appendChild(registrationLink);
 
-    if(this.isMaintainer) {
+    // TODO: FIX THIS BACK TO THISISMAINTAINER
+    if (!this.isMaintainer) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "Organizations";
