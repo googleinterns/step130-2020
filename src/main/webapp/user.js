@@ -42,7 +42,11 @@ class User {
     const emailForm = document.createElement('form');
     emailForm.setAttribute("method", "POST");
     emailForm.setAttribute("id", "add-maintainer-email-form");
-    
+
+    const emailInputLabel = document.createElement("div");
+    emailInputLabel.textContent = "New Maintainer's Email:";
+    emailForm.appendChild(emailInputLabel);
+
     const emailInputElement = document.createElement("input");
     emailInputElement.setAttribute("type", "text");
     emailInputElement.setAttribute("id", "maintainer-email-entry");
