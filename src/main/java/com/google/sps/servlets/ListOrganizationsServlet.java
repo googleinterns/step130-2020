@@ -91,11 +91,6 @@ public class ListOrganizationsServlet extends HttpServlet {
     if (request.getParameterValues("filterParam") != null) {
       queryForFilters = true;
       Collections.addAll(filterParams, request.getParameterValues("filterParam"));
-      System.out.println("-----------------------------------------------");
-      for (String param : filterParams) {
-        System.out.println("One of the filter params is: " + param);
-      }
-      System.out.println("-----------------------------------------------");
     }
 
     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
@@ -138,12 +133,10 @@ public class ListOrganizationsServlet extends HttpServlet {
 
     if (filterCollection.size() >= 2) {
       /* Composite Filter only works with 2 or more filters. */
-      System.out.println("DOING THIS FILTER");
       CompositeFilter combinedQueryFilter = new CompositeFilter(CompositeFilterOperator.AND, filterCollection);
       query.setFilter(combinedQueryFilter);
     } else if (filterCollection.size() == 1) {
       /* If a filter exists but it can't be composite, normal one is applied */
-      System.out.println("DOING THIS ONE INSTEAD");
       query.setFilter((Filter) filterCollection.get(0));
     }
     return query;
