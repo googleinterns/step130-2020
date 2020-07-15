@@ -50,18 +50,17 @@ import com.google.appengine.api.users.User;
 @RunWith(JUnit4.class)
 public final class GivrUserTest {
 
-  private final LocalServiceTestHelper userServiceHelper = new LocalServiceTestHelper(new LocalUserServiceTestConfig()).setEnvIsAdmin(true).setEnvIsLoggedIn(true);
-
-  private final LocalServiceTestHelper datastoreServiceHelper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+  private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), new LocalDatastoreServiceTestConfig());
 
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+  private UserService userService = UserServiceFactory.getUserService();
 
   private ArrayList<Entity> listOfEntities = new ArrayList<>();
 
   @Before
   public void setUp() {
-    userServiceHelper.setUp();
-    datastoreServiceHelper.setUp();
+    helper.setUp();
 
     Entity user0 = new Entity("User");
     user0.setProperty("userId", "User0");
@@ -80,10 +79,9 @@ public final class GivrUserTest {
 
   @After
   public void tearDown() {
-    userServiceHelper.tearDown();
-    datastoreServiceHelper.tearDown();
+    helper.tearDown();
   }
-
+/*
   @Test
   public void getUserFromDatastoreWithPropertyTest() {
     String propertyName = "userEmail";
@@ -94,28 +92,28 @@ public final class GivrUserTest {
     Entity expectedEntity = listOfEntities.get(1);
 
     Assert.assertEquals(expectedEntity, actualEntity);
+  }*/
+
+  @Test
+  public void getCurrentLoggedInUserTestWhenNotLoggedIn() {
+    UserService userService = UserServiceFactory.getUserService();
+
+    UserService mockUserService = mock(UserService.class);
+
+    when(mockUserService.isUserLoggedIn()).thenReturn(false);
+    when(mockUserService.createLoginURL("/")).thenReturn("loginLinkHere.com");
+
+    GivrUser actualUser = GivrUser.getCurrentLoggedInUser();
+
+    System.out.print("UserId: " + actualUser.getUserId() + "\n"
+    + "User Email: " + actualUser.getUserEmail() + "\n"
+    + "User Maintainer Status: " + actualUser.isMaintainer());
+    // GivrUser expectedUser = new GivrUser("", false, false, "logoutLinkHere.com", "");
+
+    Assert.assertEquals(1, 0);
+
+    // Assert.assertEquals(expectedUser, actualUser);
   }
-
-  // @Test
-  // public void getCurrentLoggedInUserTestWhenNotLoggedIn() {
-  //   // UserService mockUserService = mock(UserService.class);
-  //   // UserServiceFactory mockUserServiceFactory = mock(UserServiceFactory.class);
-
-  //   // when(UserServiceFactory.getUserService()).thenReturn(userService);
-
-  //   UserService userService = UserServiceFactory.getUserService();
-
-  //   when(userService.isUserLoggedIn()).thenReturn(false);
-  //   when(userService.createLoginURL("/")).thenReturn("loginLinkHere.com");
-  //   // when(mockUserService.getCurrentUser().getUserId()).thenReturn("User0");
-
-  //   GivrUser actualUser = GivrUser.getCurrentLoggedInUser();
-  //   GivrUser expectedUser = new GivrUser("User0", false, false, "logoutLinkHere.com", "");
-
-  //   // Assert.assertEquals(1, 0);
-
-  //   Assert.assertEquals(expectedUser, actualUser);
-  // }
 
   /*@Test
   public void getCurrentLoggedInUserTestWhenLoggedIn() {
