@@ -79,7 +79,7 @@
 }
 
 #filter-datalist {
-    float: right;
+  float: right;
 }
 
 #organization-list {
@@ -119,7 +119,7 @@
 }
 
 .organization-popup-name {
-    margin: 2% auto;
+  margin: 2% auto;
 }
 
 .organization-popup-phone,
@@ -128,20 +128,24 @@
 .organization-popup-email,
 .organization-popup-url-link,
 .organization-popup-description {
-    margin: 2% 0;
+  margin: 2% 0;
 }
 
 .hide-popup,
 .hide-edit-modal {
-    display: none;
+  display: none;
 }
 
 .show-popup,
 .show-edit-modal {
-    display: block;
+  display: block;
 }
 
 .popup-close-button {
+  cursor: pointer;
+}
+
+#add-maintainer-label {
   cursor: pointer;
 }
 
@@ -153,8 +157,8 @@
 }
 
 #registration-form-area {
-    width: 60%;
-    margin: 0 auto;
+  width: 60%;
+  margin: 0 auto;
 }
 
 .registration-entry {
