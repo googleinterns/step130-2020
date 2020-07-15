@@ -205,8 +205,8 @@
 .filter-tag-area {
   display: flex;
   justify-content: space-around;
-  border: 3px solid purple;
-  background-color: rgba(158, 52, 235, 0.80);
+  border: 3px solid rgb(121, 121, 121);
+  background-color: rgba(216, 216, 216, 0.8);
   border-radius: 10px;
   resize: horizontal;
   float:left;

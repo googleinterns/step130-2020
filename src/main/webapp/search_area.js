@@ -93,7 +93,7 @@ class SearchArea {
     this.organizationSearchArea.appendChild(this.filterInputArea);
 
     this.activeFilterArea = document.createElement("div");
-    this.activeFilterArea.setAttribute("class", "filter-holder"); //REMOVE THIS LINE
+    this.activeFilterArea.setAttribute("class", "filter-holder");
     this.organizationSearchArea.appendChild(this.activeFilterArea);
 
     this.organizationListArea = document.createElement("div");
