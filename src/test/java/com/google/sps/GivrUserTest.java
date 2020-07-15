@@ -96,26 +96,27 @@ public final class GivrUserTest {
     Assert.assertEquals(expectedEntity, actualEntity);
   }
 
-  // @Test
-  // public void getCurrentLoggedInUserTestWhenNotLoggedIn() {
-  //   // UserService mockUserService = mock(UserService.class);
-  //   // UserServiceFactory mockUserServiceFactory = mock(UserServiceFactory.class);
+  /*
+  @Test
+  public void getCurrentLoggedInUserTestWhenNotLoggedIn() {
+    // UserService mockUserService = mock(UserService.class);
+    // UserServiceFactory mockUserServiceFactory = mock(UserServiceFactory.class);
 
-  //   // when(UserServiceFactory.getUserService()).thenReturn(userService);
+    // when(UserServiceFactory.getUserService()).thenReturn(userService);
 
-  //   UserService userService = UserServiceFactory.getUserService();
+    UserService userService = UserServiceFactory.getUserService();
 
-  //   when(userService.isUserLoggedIn()).thenReturn(false);
-  //   when(userService.createLoginURL("/")).thenReturn("loginLinkHere.com");
-  //   // when(mockUserService.getCurrentUser().getUserId()).thenReturn("User0");
+    when(userService.isUserLoggedIn()).thenReturn(false);
+    when(userService.createLoginURL("/")).thenReturn("loginLinkHere.com");
+    // when(mockUserService.getCurrentUser().getUserId()).thenReturn("User0");
 
-  //   GivrUser actualUser = GivrUser.getCurrentLoggedInUser();
-  //   GivrUser expectedUser = new GivrUser("User0", false, false, "logoutLinkHere.com", "");
+    GivrUser actualUser = GivrUser.getCurrentLoggedInUser();
+    GivrUser expectedUser = new GivrUser("User0", false, false, "logoutLinkHere.com", "");
 
-  //   // Assert.assertEquals(1, 0);
+    // Assert.assertEquals(1, 0);
 
-  //   Assert.assertEquals(expectedUser, actualUser);
-  // }
+    Assert.assertEquals(expectedUser, actualUser);
+  }*/
 
   /*@Test
   public void getCurrentLoggedInUserTestWhenLoggedIn() {
