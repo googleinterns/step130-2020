@@ -131,12 +131,14 @@
 }
 
 .hide-popup,
-.hide-edit-modal {
+.hide-edit-modal,
+.hide-time-area {
     display: none;
 }
 
 .show-popup,
-.show-edit-modal {
+.show-edit-modal,
+.show-time-area {
     display: block;
 }
 
