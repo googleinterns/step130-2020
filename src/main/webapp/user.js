@@ -67,11 +67,13 @@ class User {
     popupCloseButton.textContent = "X";
     popupCloseButton.addEventListener("click", () => {
       addMaintainerModal.remove();
+      document.getElementById("modal-popup-background").remove();
     });
     emailForm.appendChild(popupCloseButton);
 
     emailForm.setAttribute("action", "/add-maintainer");
 
+    addMaintainerModal.appendChild(emailForm);
     return addMaintainerModal;
   }
 
@@ -89,8 +91,7 @@ class User {
     registrationLink.textContent = "Register Organization";
     navBar.appendChild(registrationLink);
 
-    // TODO: FIX THIS BACK TO THISISMAINTAINER
-    if (!this.isMaintainer) {
+    if (this.isMaintainer) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "Organizations";
@@ -101,7 +102,12 @@ class User {
       addMaintainerLabel.textContent = "Add Maintainer";
       addMaintainerLabel.setAttribute("id", "add-maintainer-label");
       addMaintainerLabel.addEventListener("click", () => {
-        navBar.appendChild(addMaintainerPopup);
+        const addMaintainerPopupBackground = document.createElement("div");
+        addMaintainerPopupBackground.setAttribute("id", "modal-popup-background");
+        addMaintainerPopupBackground.classList.add("add-maintainer-popup-modal-background");
+        addMaintainerPopupBackground.appendChild(addMaintainerPopup);
+        document.getElementById("help-near-me-content").appendChild(addMaintainerPopupBackground);
+
         addMaintainerPopup.classList.add("show-popup");
         addMaintainerPopup.classList.remove("hide-popup");
       });

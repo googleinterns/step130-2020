@@ -269,8 +269,21 @@
   flex-flow: row nowrap;
 }
 
-#add-maintainer-popup-modal {
+.add-maintainer-popup-modal-background {
   display: flex;
   justify-content: center;
-  color: white;
+  z-index: 1;
+  background-color: rgba(0,0,0,0.4);
+  position: absolute;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+#add-maintainer-popup-modal {
+  margin: auto;
+  padding: 10px;
+  background-color: white;
+  background-clip: content-box;
+  box-shadow: inset 0 0 0 10px white;
 }
