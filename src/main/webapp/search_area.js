@@ -41,7 +41,6 @@ class SearchArea {
     this.forOrganizationsPage = forOrganizationsPage;
     this.filterParams = new URLSearchParams();
     this.organizationObjectsList = [];
-    this.filterTagsList = [];
 
     this.zipcodeFormArea = document.createElement("div");
     this.form = document.createElement("form");
@@ -148,7 +147,6 @@ class SearchArea {
   }
 
   async setUrlParamValue(urlParamKey, urlParamValue) {   
-    
     /* New query value is not added if it is a duplicate or empty/null */
     if (this.filterParams.getAll("filterParam").includes(urlParamValue) ||
         this.filterParams.getAll("zipcode").includes(urlParamValue) ||
@@ -197,7 +195,6 @@ class SearchArea {
   }
 
   async removeFilterTag(urlParamKey, urlParamValue, filterTag) {
-
     if (urlParamKey === "zipcode") {
       this.filterParams.delete("zipcode");
     } else {
