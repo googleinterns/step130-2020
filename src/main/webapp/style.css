@@ -217,7 +217,7 @@
 
 .filter-tag-label {
   font-family:'Courier New', Courier, monospace;
-  color: hsl(61, 97%, 88%);
+  color: rgb(18, 16, 13);
   font-size: 15px;
 }
 
@@ -225,7 +225,7 @@
   cursor:pointer;
   font-size: 10px;
   float:right;
-  color: rgb(255, 254, 254);
+  color: rgb(18, 16, 13);
   padding: 2px;
   border: 2px solid #ccc;
   border-radius: 50%
