@@ -21,11 +21,14 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.sps.data.GivrUser;
-import com.google.sps.servlets.AddMaintainerServlet.java;
+import com.google.sps.servlets.AddMaintainerServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -37,6 +40,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import java.io.IOException;
 
 /** */
 @RunWith(JUnit4.class)
@@ -46,30 +50,25 @@ public final class AddMaintainerServletTest {
 
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-  @Mock
-  HttpServletRequest mockRequest;
-
-  @Mock
-  HttpServletResponse mockResponse;
+  private ArrayList<Entity> listOfUsers = new ArrayList<>();
 
   @Before
   public void setUp() {
     helper.setUp();
 
-    MockitoAnnotations.initMocks(this);
-
     Entity user0 = new Entity("User");
-    user0.setProperty("userId", "");
+    user0.setProperty("userId", "User0");
     user0.setProperty("isMaintainer", true);
     user0.setProperty("userEmail", "jennb206+test0@gmail.com");
     datastore.put(user0);
+    listOfUsers.add(user0);
 
     Entity user1 = new Entity("User");
-    user1.setProperty("userId", "");
-    user1.setProperty("isMaintainer", true);
+    user1.setProperty("userId", "User1");
+    user1.setProperty("isMaintainer", false);
     user1.setProperty("userEmail", "jennb206+test1@gmail.com");
     datastore.put(user1);
-    
+    listOfUsers.add(user1);
   }
 
   @After
@@ -80,27 +79,49 @@ public final class AddMaintainerServletTest {
   /**
   * When AddMaintainerServlet is called by a non-Maintainer, servlet should throw an error.
   */
-  @Test
-  public void Add_InvokedByNonMaintainer_ShouldSendError() {
-    mockRequest = mock(HttpServletRequest.class);
-    GivrUser mockCurrentUser = new GivrUser("testId", false, true, "", "jennb206+mockCurrentUser@gmail.com");
-    
-    when(mockRequest.getParameter("userEmail")).thenReturn("jennb206+test0@gmail.com");
-    when(GivrUser.getCurrentLoggedInUser()).thenReturn(mockCurrentUser);
-
-    AddMaintainerServlet servlet = new AddMaintainerServlet();
-    servlet.doPost(mockRequest, mockResponse);
-
-    int actualResponseStatus = mockResponse.getStatus();
-    int expectedResponseStatus = HttpServletResponse.SC_NOT_FOUND;
-
-    Assert.assertEquals(expectedResponseStatus, actualResponseStatus);
-  }
-
   // @Test
-  // public void testRequestReturnsCorrect() {
+  // public void Add_InvokedByNonMaintainer_ShouldSendError() {
+  //   HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+  //   HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+
+  //   // GivrUser mockCurrentUser = new GivrUser("testId", false, true, "", "jennb206+mockCurrentUser@gmail.com");
+
+  //   GivrUser mockGivrUser = mock(new GivrUser("testId", false, true, "", "jennb206+mockCurrentUser@gmail.com"));
+    
+  //   when(mockRequest.getParameter("userEmail")).thenReturn("jennb206+test0@gmail.com");
+  //   when(mockGivrUser.getCurrentLoggedInUser()).thenReturn(new GivrUser("testId", false, true, "", "jennb206+mockCurrentUser@gmail.com"));
+
+  //   AddMaintainerServlet servlet = mock(AddMaintainerServlet.class);
+  //   try {
+  //     servlet.doPost(mockRequest, mockResponse);
+  //   } catch(Exception exception) {
+
+  //   }
     
 
+  //   int actualResponseStatus = mockResponse.getStatus();
+  //   int expectedResponseStatus = HttpServletResponse.SC_NOT_FOUND;
+
+  //   Assert.assertEquals(expectedResponseStatus, actualResponseStatus);
   // }
+
+  @Test
+  public void ChangeMaintainerStatus() {
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+
+    Assert.assertEquals(listOfUsers.get(1), datastore.prepare(new Query("User").setFilter(new FilterPredicate("userId", FilterOperator.EQUAL, "User1"))).asSingleEntity());
+
+    AddMaintainerServlet servlet = mock(AddMaintainerServlet.class);
+
+    servlet.changeMaintainerStatus("jennb206+test1@gmail.com", "User1");
+
+    Entity user2 = new Entity("User");
+    user2.setProperty("userId", "User1");
+    user2.setProperty("isMaintainer", true);
+    user2.setProperty("userEmail", "jennb206+test1@gmail.com");
+
+    //Assert.assertEquals(user2, datastore.prepare(new Query("User").setFilter(new FilterPredicate("userId", FilterOperator.EQUAL, "User1"))).asSingleEntity());
+  }
       
 }

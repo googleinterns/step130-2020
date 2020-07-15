@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.lang.Object;
 
-public final class GivrUser {
+public class GivrUser {
 
   private String id;
   private boolean isMaintainer;
@@ -153,5 +153,21 @@ public final class GivrUser {
       return getUserById(userService.getCurrentUser().getUserId());
     }
     return new GivrUser("" /* userId */, false /* isMaintainer */, false /* isLoggedIn */, url /* loginURL */, "" /* userEmail */);
+  }
+
+  public boolean equals(Object userObject) {
+    GivrUser user = (GivrUser) userObject;
+    if (this == user) {
+      return true;
+    }
+
+    if (this.getUserId().equals(user.getUserId())) {
+      return true;
+    }
+
+    if (this.getUserEmail().equals(user.getUserEmail())) {
+      return true;
+    }
+    return false;
   }
 }
