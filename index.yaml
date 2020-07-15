@@ -1,6 +1,73 @@
 indexes:
 
 - kind: Distributor
+  properties:
+  - name: isApproved
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  properties:
+  - name: resourceCategories
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  properties:
+  - name: orgPhoneNum
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  properties:
+  - name: orgStreetAddress
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  properties:
+  - name: orgName
+  - name: orgPhoneNum
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  properties:
+  - name: isApproved
+  - name: orgName
+  - name: orgPhoneNum
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  properties:
+  - name: isApproved
+  - name: orgPhoneNum
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  properties:
+  - name: isApproved
+  - name: orgStreetAddress
+  - name: creationTimeStampMillis
+    direction: desc
+
+
+- kind: Distributor
+  properties:
+  - name: orgZipCode
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  properties:
+  - name: isApproved
+  - name: moderatorList
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
   ancestor: no  
   properties:
   - name: isApproved
@@ -8,4 +75,15 @@ indexes:
   - name: orgZipCode
   - name: creationTimeStampMillis
     direction: desc
-  
+
+- kind: Distributor
+  ancestor: no  
+  properties:
+  - name: orgStreetAddress
+  - name: orgPhoneNum
+  - name: orgName
+  - name: isApproved
+  - name: moderatorList
+  - name: orgZipCode
+  - name: creationTimeStampMillis
+    direction: desc

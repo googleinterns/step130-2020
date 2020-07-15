@@ -74,13 +74,15 @@ class SearchArea {
     this.filterInputArea.setAttribute("placeholder", "Filter Results");
     this.filterInputArea.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
+        /* When the user hits enter in the filter input area, it is added as a param */
         this.setUrlParamValue("filterParam", this.filterInputArea.value);
+        this.filterInputArea.value = "";
       }
     });
 
     this.filterDataList = document.createElement("datalist");
     this.filterDataList.setAttribute("id", "filter-datalist");
-    this.filterOptions = ["Foods", "Clothing", "Shelter"];
+    this.filterOptions = ["Food", "Clothing", "Shelter"];
     for (const value of this.filterOptions) {
       const option = document.createElement("option");
       option.value = value;
@@ -89,6 +91,10 @@ class SearchArea {
 
     this.filterInputArea.appendChild(this.filterDataList);
     this.organizationSearchArea.appendChild(this.filterInputArea);
+
+    this.activeFilterArea = document.createElement("div");
+    this.activeFilterArea.setAttribute("class", "filter-holder");
+    this.organizationSearchArea.appendChild(this.activeFilterArea);
 
     this.organizationListArea = document.createElement("div");
     this.organizationListArea.setAttribute("id", "organization-list");
@@ -123,6 +129,12 @@ class SearchArea {
 
       this.organizationListArea.appendChild(newOrganization.getOrganization());
     });
+    if (this.organizationObjectsList.length === 0) {
+      const noResultsFoundMessage = document.createElement("div");
+      noResultsFoundMessage.setAttribute("id", "no-results-found");
+      noResultsFoundMessage.textContent = "No results found for current filters.";
+      this.organizationListArea.appendChild(noResultsFoundMessage);
+    }
   }
 
   async getListOfOrganizations() {
@@ -135,13 +147,69 @@ class SearchArea {
     this.organizationObjectsList = await response.json();
   }
 
-  async setUrlParamValue(urlParamKey, urlParamValue) {
-    /* if the param is a zipcode, replace any existing one. Otherwise, add it to existing params */    
+  async setUrlParamValue(urlParamKey, urlParamValue) {   
+    /* New query value is not added if it is a duplicate or empty/null */
+    if (this.filterParams.getAll("filterParam").includes(urlParamValue) ||
+        this.filterParams.getAll("zipcode").includes(urlParamValue) ||
+        (urlParamValue === null) || (urlParamValue.trim() === "")) {
+      return;
+    }
+    
+    /* if the param is a zipcode, remove tag of any existing one & set new one*/ 
     if (urlParamKey === "zipcode") {
+      if (this.filterParams.get("zipcode")) {
+        /* If there is a zipcode being displayed, remove its tag so both aren't displayed */
+        this.removeFilterTag("zipcode", this.filterParams.get("zipcode"), document.getElementById("zipcodeTag"));
+      }
       this.filterParams.set(urlParamKey, urlParamValue);      
     } else {
       this.filterParams.append(urlParamKey, urlParamValue);      
     }
+    this.form.reset();
+    this.addFilterTag(urlParamKey, urlParamValue);
+    this.organizationObjectsList = [];
+    this.organizationListArea.innerHTML = "";
+    await this.getListOfOrganizations();
+    this.renderListOfOrganizations();
+  }
+
+  addFilterTag(urlParamKey, urlParamValue) {
+    let filterTagArea = document.createElement("div");
+    filterTagArea.setAttribute("class", "filter-tag-area");
+    /* ID is given to zipcode tag so it can be removed if new one is added */
+    if (urlParamKey === "zipcode") {
+      filterTagArea.setAttribute("id", "zipcodeTag");
+    }
+
+    let filterTagLabel = document.createElement("div");
+    filterTagLabel.textContent = urlParamValue;
+    filterTagLabel.setAttribute("class", "filter-tag-label");
+    filterTagArea.appendChild(filterTagLabel);
+
+    let filterTagClose = document.createElement("div");
+    filterTagClose.addEventListener('click', () => this.removeFilterTag(urlParamKey, urlParamValue, filterTagArea));
+    filterTagClose.textContent = 'X';
+    filterTagClose.setAttribute("class", "filter-tag-close");
+    filterTagArea.appendChild(filterTagClose);
+
+    this.activeFilterArea.appendChild(filterTagArea);
+  }
+
+  async removeFilterTag(urlParamKey, urlParamValue, filterTag) {
+    if (urlParamKey === "zipcode") {
+      this.filterParams.delete("zipcode");
+    } else {
+      if (this.filterParams.getAll("filterParam").length === 1) {
+        /* If only 1 filter param, delete the array */
+        this.filterParams.delete("filterParam");
+      } else {
+        /* If not, just remove specified element */
+        let filterArray = this.filterParams.getAll("filterParam");
+        filterArray.splice(filterArray.indexOf(urlParamValue), 1);
+        this.filterParams.set("filterParam", filterArray);
+      }
+    }
+    this.activeFilterArea.removeChild(filterTag);
     this.organizationObjectsList = [];
     this.organizationListArea.innerHTML = "";
     await this.getListOfOrganizations();

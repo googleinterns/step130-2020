@@ -37,6 +37,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
  
@@ -123,7 +124,7 @@ public final class ListOrgServletTest {
   public void tearDown() {
     helper.tearDown();
   }
- 
+
   @Test
   public void testQueryWithNoFilter() {
     /* Because there are no filters, all entities are returned in reverse time order. */
@@ -148,6 +149,7 @@ public final class ListOrgServletTest {
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
+
   @Test
   public void testQueryAsNormalUser() {
  
@@ -170,7 +172,7 @@ public final class ListOrgServletTest {
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
- 
+
  @Test
   public void testZipcodeFilter() {
  
