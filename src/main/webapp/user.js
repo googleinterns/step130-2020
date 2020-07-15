@@ -91,6 +91,7 @@ class User {
       const addMaintainerPopup = this.createAddMaintainerPopup();
       const addMaintainerLabel = document.createElement("a");
       addMaintainerLabel.textContent = "Add Maintainer";
+      addMaintainerLabel.setAttribute("id", "add-maintainer-label");
       addMaintainerLabel.addEventListener("click", () => {
         navBar.appendChild(addMaintainerPopup);
         addMaintainerPopup.classList.add("show-popup");
