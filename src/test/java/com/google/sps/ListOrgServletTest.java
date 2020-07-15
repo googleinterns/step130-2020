@@ -126,8 +126,7 @@ public final class ListOrgServletTest {
  
   @Test
   public void testQueryWithNoFilter() {
-    /* For this test, all of the entities need to be returned because there are no filter limits,
-     * but the master list must be reversed since the query returns them in descending order*/
+    /* Because there are no filters, all entities are returned in reverse time order. */
     ArrayList<Entity> expectedList = new ArrayList<Entity>();
     expectedList.add(masterEntityList.get(6));
     expectedList.add(masterEntityList.get(5));
