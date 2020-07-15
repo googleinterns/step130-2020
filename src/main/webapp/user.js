@@ -28,7 +28,6 @@ class User {
 
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.isMaintainer;
-      console.log(this.isMaintainer);
 
       // TODO(): add isModerator check
       this.rebuildNavBar(/*isModerator*/ false);
@@ -39,24 +38,37 @@ class User {
     }
   }
 
-  addMaintainerAddForm() {
+  createAddMaintainerPopup() {
+    const navBar = document.getElementById("nav-bar");
+
     const emailForm = document.createElement('form');
     emailForm.setAttribute("method", "POST");
+    emailForm.setAttribute("id", "add-maintainer-email-form");
     
     const emailInputElement = document.createElement("input");
     emailInputElement.setAttribute("type", "text");
-    emailInputElement.setAttribute("id", "userEmail");
+    emailInputElement.setAttribute("id", "maintainer-email-entry");
     emailInputElement.setAttribute("name", "userEmail");
     emailForm.appendChild(emailInputElement);
 
     const submitButton = document.createElement("input");
     submitButton.textContent = "Submit";
     submitButton.setAttribute("type", "submit");
+    submitButton.setAttribute("class", "gray-button");
     emailForm.appendChild(submitButton);
 
+    const popupCloseButton = document.createElement("div");
+    popupCloseButton.classList.add("popup-close-button");
+    popupCloseButton.textContent = "X";
+    popupCloseButton.addEventListener("click", () => {
+      emailForm.classList.add("hide-popup");
+      emailForm.classList.remove("show-popup");
+    });
+    emailForm.appendChild(popupCloseButton);
+
     emailForm.setAttribute("action", "/add-maintainer");
-    
-    return emailForm;
+
+    navBar.appendChild(emailForm);
   }
 
   rebuildNavBar(isModerator) {
@@ -73,14 +85,28 @@ class User {
     registrationLink.textContent = "Register Organization";
     navBar.appendChild(registrationLink);
 
+    // TODO: CHANGE to this.isMaintainer
     if(!this.isMaintainer) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "Organizations";
       navBar.appendChild(organizationsLink);
 
-      this.maintainerAddForm = this.addMaintainerAddForm();
-      navBar.appendChild(this.maintainerAddForm);
+      this.createAddMaintainerPopup();
+      document.getElementById("add-maintainer-email-form").classList.add("hide-popup");
+
+      const addMaintainerLabel = document.createElement("a");
+      addMaintainerLabel.textContent = "Add Maintainer";
+      addMaintainerLabel.addEventListener("click", () => {
+        const emailForm = document.getElementById("add-maintainer-email-form");
+        emailForm.classList.add("show-popup");
+        emailForm.classList.remove("hide-popup");
+      });
+      navBar.appendChild(addMaintainerLabel);
+
+
+      // this.maintainerAddForm = this.addMaintainerAddForm();
+      // navBar.appendChild(this.maintainerAddForm);
     } else if (isModerator) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");

@@ -45,6 +45,7 @@
   margin: 40px 50px 20px 50px;
 }
 
+#maintainer-email-entry,
 #zipcode-entry {
   width: 20%;
   margin: 8px 0;
@@ -259,3 +260,7 @@
   font-size: 20px;
 }
 
+#add-maintainer-email-form {
+  display: flex;
+  flex-flow: row nowrap;
+}
