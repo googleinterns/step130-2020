@@ -181,16 +181,16 @@ class SearchArea {
       filterTagArea.setAttribute("id", "zipcodeTag");
     }
 
-    let filterTagLabel = document.createElement("div");
-    filterTagLabel.textContent = urlParamValue;
-    filterTagLabel.setAttribute("class", "filter-tag-label");
-    filterTagArea.appendChild(filterTagLabel);
-
     let filterTagClose = document.createElement("div");
     filterTagClose.addEventListener('click', () => this.removeFilterTag(urlParamKey, urlParamValue, filterTagArea));
     filterTagClose.textContent = 'X';
     filterTagClose.setAttribute("class", "filter-tag-close");
     filterTagArea.appendChild(filterTagClose);
+
+    let filterTagLabel = document.createElement("div");
+    filterTagLabel.textContent = urlParamValue;
+    filterTagLabel.setAttribute("class", "filter-tag-label");
+    filterTagArea.appendChild(filterTagLabel);
 
     this.activeFilterArea.appendChild(filterTagArea);
   }
