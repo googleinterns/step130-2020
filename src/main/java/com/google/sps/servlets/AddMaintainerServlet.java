@@ -60,6 +60,7 @@ public class AddMaintainerServlet extends HttpServlet {
       addNewMaintainerToDatastore(newMaintainerEmail);
     }
     response.setStatus(HttpServletResponse.SC_OK);
+    response.sendRedirect("/index.html");
   }
 
   public void addNewMaintainerToDatastore(String email) {
