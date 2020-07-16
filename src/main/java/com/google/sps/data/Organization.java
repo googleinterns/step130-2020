@@ -30,6 +30,7 @@ public final class Organization {
   private long lastEditedTimeStampMillis;
   private boolean isApproved;
   private String urlLink;
+  private ArrayList<String> resourceCategories;
   private ArrayList<String> moderators;
 
   /* An Organization Object takes in an entity and assigns all of its fields based on the entity's
@@ -47,6 +48,7 @@ public final class Organization {
     this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
     this.isApproved = (boolean) entity.getProperty("isApproved");
     this.urlLink = (String) entity.getProperty("orgUrl");
+    this.resourceCategories = (ArrayList) entity.getProperty("resourceCategories");
     this.moderators = (ArrayList) entity.getProperty("moderatorList");
   }
 }

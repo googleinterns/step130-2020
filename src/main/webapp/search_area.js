@@ -82,7 +82,7 @@ class SearchArea {
 
     this.filterDataList = document.createElement("datalist");
     this.filterDataList.setAttribute("id", "filter-datalist");
-    this.filterOptions = ["Foods", "Clothing", "Shelter"];
+    this.filterOptions = ["Food", "Clothing", "Shelter"];
     for (const value of this.filterOptions) {
       const option = document.createElement("option");
       option.value = value;
