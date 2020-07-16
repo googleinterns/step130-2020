@@ -97,8 +97,6 @@ class User {
       organizationsLink.textContent = "Organizations";
       navBar.appendChild(organizationsLink);
 
-
-
       const addMaintainerPopup = this.createAddMaintainerPopup();
       const addMaintainerLabel = document.createElement("a");
       addMaintainerLabel.textContent = "Add Maintainer";
