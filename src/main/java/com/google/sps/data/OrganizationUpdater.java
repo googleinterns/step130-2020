@@ -20,12 +20,11 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Arrays;
-import java.text.SimpleDateFormat;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.sps.data.GivrUser;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 
 public final class OrganizationUpdater {
 
@@ -44,7 +43,12 @@ public final class OrganizationUpdater {
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
     boolean isMaintainer = user.isMaintainer();
-    boolean isModerator = user.isModerator(this.entity.getKey().getId());
+    boolean isModerator = false;
+    
+    user.setModeratingOrgs();
+    if (user.getModeratingOrgs().size() > 0) {
+      isModerator = true;
+    }
 
     requiresMaintainer.add("isApproved");
     requiresModerator.add("moderatorList");
@@ -53,14 +57,12 @@ public final class OrganizationUpdater {
     properties.put("org-name", "orgName");
     properties.put("org-email", "orgEmail");
     properties.put("org-street-address", "orgStreetAddress");
-    properties.put("org-zip-code", "orgZipCode");
     properties.put("org-phone-num", "orgPhoneNum");
     properties.put("org-url", "orgUrl");
     properties.put("org-description","orgDescription");
     properties.put("approval", "isApproved");
     properties.put("moderator-list", "moderatorList");
 
-    // Updates entity properties from form
     for(Map.Entry<String, String> entry : properties.entrySet()) {
       String propertyKey = entry.getValue();
       boolean propertyRequiresMaintainer = requiresMaintainer.contains(propertyKey);
@@ -69,7 +71,7 @@ public final class OrganizationUpdater {
 
       // if updating for registering an organization then do not want to consider fields that require maintainer or moderator permissions
       if(forRegistration && propertyRequiresAuth) {
-        continue;
+          continue;
       }
       // will only get approval param is a maintainer sent the request
       if(propertyRequiresMaintainer && !isMaintainer) {
@@ -98,10 +100,6 @@ public final class OrganizationUpdater {
 
       setOrganizationProperty(propertyKey, formValue);
     }
-
-    // Updates non form properties such as change history, lastEditTimeStamp, etc
-    updateNonFormProperties(user, forRegistration, historyUpdate);
-
   }
 
   private String getParameterOrThrow(HttpServletRequest request, String formKey) {
@@ -133,38 +131,31 @@ public final class OrganizationUpdater {
     // TODO(): Implement correct way of getting user by email once that is decided on
     for(String email : emails) {
       GivrUser newUser = GivrUser.getUserByEmail(email);
-      userIds.add(newUser.getUserId());
+      String userId = newUser.getUserId();
+      // If failed will return "" (?) and user will be added to the invited moderator property 
+      // and not the offical list
+      if(userId.equals("")) {
+        Set<String> invitedModerators = new HashSet((HashSet)this.entity.getProperty("invitedModerators"));
+        invitedModerators.add(email);
+      } else {
+        userIds.add(newUser.getUserId());
+      }
     }
     return userIds;
   }
 
-  private void updateNonFormProperties(GivrUser user, boolean forRegistration, EmbeddedEntity historyUpdate) {
-    /* MillisecondSinceEpoch represent the number of milliseconds that have passed since
-     * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
-     * of time that is independent of their time zone */
-    long millisecondSinceEpoch = (long) historyUpdate.getProperty("changeTimeStampMillis");
+  private void updateInvitedModerator(GivrUser user) {
+    // Will be called if an invited moderator logs in, will be removing them from the 
+    // invited moderator set and adding there user id to the moderator list
+    Set<String> invitedModerators = (HashSet) this.entity.getProperty("invitedModerators");
+    String userEmail = user.getUserEmail();
 
-    if(forRegistration) {
-      // Setting moderatorList here instead of organizationUpdater because that will handle the form submission
-      // and this servlet will handle the rest of the instantiation
-      ArrayList<String> moderatorList = new ArrayList<String>();
-      moderatorList.add(user.getUserId());
-
-      /* This implementation stores history entries as embedded entities instead of custom objects
-      * because it is much simpler that way */
-      ArrayList changeHistory = new ArrayList<>();
-      changeHistory.add(historyUpdate);
-
-      this.entity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
-      this.entity.setProperty("isApproved", false);
-      this.entity.setProperty("moderatorList", moderatorList);
-      this.entity.setProperty("changeHistory", changeHistory);
-    } else {
-      ArrayList<EmbeddedEntity> changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
-      changeHistory.add(historyUpdate);
-      this.entity.setProperty("changeHistory", changeHistory);
+    if(invitedModerators.contains(userEmail)) {
+        invitedModerators.remove(userEmail);
+        ArrayList<String> moderatorList = (ArrayList) this.entity.getProperty("moderatorList");
+        moderatorList.add(user.getUserId());
+        this.entity.setProperty("moderatorList", moderatorList);
+        this.entity.setProperty("invitedModerators", invitedModerators);
     }
-    
-    this.entity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
   }
 }

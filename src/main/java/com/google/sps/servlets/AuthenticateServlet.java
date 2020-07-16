@@ -80,6 +80,10 @@ public class AuthenticateServlet extends HttpServlet {
 
     GivrUser user = GivrUser.getCurrentLoggedInUser();
 
+    if (!user.isMaintainer()) {
+      user.setModeratingOrgs();
+    }
+
     Entity userWithId = GivrUser.getUserFromDatastoreWithProperty("userId", user.getUserId());
     if (userWithId == null) {
       MaybeUpdateUserByEmailInDatastore(user);

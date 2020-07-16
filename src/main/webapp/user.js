@@ -29,13 +29,13 @@ class User {
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.isMaintainer;
 
-      // TODO(): add isModerator check
-      if (!this.isMaintainer) {
-        this.rebuildNavBar(/*isModerator*/ false);
+      if (loginData.moderatingOrgs.length === 0) {
+        this.isModerator = false;
+      } else {
+        this.isModerator = true;
       }
-      else {
-        this.rebuildNavBar(/*isModerator*/ false);
-      }
+      this.rebuildNavBar();
+
     }  else {
       const loginLink = document.getElementById("login-url");
       loginLink.textContent = "Log In";
@@ -43,8 +43,7 @@ class User {
     }
   }
 
-
-  rebuildNavBar(isModerator) {
+  rebuildNavBar() {
     const navBar = document.getElementById("nav-bar");
     navBar.textContent = "";
 
@@ -63,7 +62,7 @@ class User {
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "Organizations";
       navBar.appendChild(organizationsLink);
-    } else if (isModerator) {
+    } else if (this.isModerator) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "My Organizations";

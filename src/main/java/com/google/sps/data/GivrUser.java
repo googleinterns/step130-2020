@@ -25,14 +25,15 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.lang.Object;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-
 
 public final class GivrUser {
 
@@ -42,13 +43,15 @@ public final class GivrUser {
   private boolean isLoggedIn;
   private String url;
   private String email;
+  private ArrayList<Long> moderatingOrgs = new ArrayList<Long>(); // Organizations have IDs of type long.
 
-  public GivrUser(String id, boolean isMaintainer, boolean isLoggedIn, String url, String email) {
+  public GivrUser(String id, boolean isMaintainer, boolean isLoggedIn, String url, String email, ArrayList<Long> moderatingOrgs) {
     this.id = id;
     this.isMaintainer = isMaintainer;
     this.isLoggedIn = isLoggedIn;
     this.url = url;
     this.email = email;
+    this.moderatingOrgs = moderatingOrgs;
   }
 
   public String getUserId() {
@@ -67,9 +70,8 @@ public final class GivrUser {
     return this.isLoggedIn;
   }
 
-  // TODO(): get correct moderator status for organization
-  public boolean isModerator(long organizationId) {
-      return false;
+  public ArrayList<Long> getModeratingOrgs() {
+    return this.moderatingOrgs;
   }
 
   // Gets User with propertyName, propertyValue exists within Datastore.
@@ -104,6 +106,30 @@ public final class GivrUser {
     datastore.put(entity);
   }
 
+  public void setModeratingOrgs() {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    this.moderatingOrgs = new ArrayList<Long>();
+
+    Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
+
+    // TODO(): Check in invitedModeratorList as well.
+
+    Filter filter = null;
+    try {
+      filter = new FilterPredicate("moderatorList", FilterOperator.IN, this.email);
+    } catch (IllegalArgumentException exception) {
+      logger.log(Level.WARNING, "User is not a Moderator of any organization.");
+    }
+
+    PreparedQuery preparedQuery = datastore.prepare(query.setFilter(filter));
+
+    for (Entity entity: preparedQuery.asIterable()) {
+      long id = (long) entity.getKey().getId();
+      this.moderatingOrgs.add(id);
+    }
+  }
+
   public static GivrUser getUserById(String userId) {
     Entity entity = getUserFromDatastoreWithProperty("userId", userId);
 
@@ -116,7 +142,7 @@ public final class GivrUser {
       userEmail = (String) entity.getProperty("userEmail");
     }
 
-    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */, userEmail);
+    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */, userEmail, new ArrayList<Long>());
     return user;
   }
 
@@ -133,7 +159,7 @@ public final class GivrUser {
       userId = (String) entity.getProperty("userId");
       isMaintainer = (boolean) entity.getProperty("isMaintainer");
     }
-    return new GivrUser(userId, isMaintainer, isLoggedIn, loginURL, email);
+    return new GivrUser(userId, isMaintainer, isLoggedIn, loginURL, email, new ArrayList<Long>());
   }
 
   // The email returned in the GivrUser object is the value in the Datastore.
@@ -145,6 +171,6 @@ public final class GivrUser {
     if (isUserLoggedIn) {
       return getUserById(userService.getCurrentUser().getUserId());
     }
-    return new GivrUser("" /* userId */, false /* isMaintainer */, false /* isLoggedIn */, url /* loginURL */, "" /* userEmail */);
+    return new GivrUser("" /* userId */, false /* isMaintainer */, false /* isLoggedIn */, url /* loginURL */, "" /* userEmail */, new ArrayList<Long>());
   }
 }
