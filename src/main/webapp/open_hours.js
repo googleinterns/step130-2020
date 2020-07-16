@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function() {
+  // Looks for the hours-option-area in dom and will append the option to enter times 
+  // for when the organization is open on every day of the week
   if(document.getElementById("registration-form-area")) {
   const mondayTimeOption = new TimeOption("Monday", true, null);
   const tuesdayTimeOption = new TimeOption("Tuesday", true, null);
@@ -22,11 +24,13 @@ class TimeOption {
     this.timeInputArea = document.createElement("div");
 
     this.dayLabel = document.createElement("label");
-    this.dayLabel.textContent = `${this.day}: `;
+    this.dayLabel.textContent = `${this.day}:`;
+    this.dayLabel.classList.add("day-label");
     this.dayOptionArea.appendChild(this.dayLabel);
 
     this.dayOpenLabel = document.createElement("label");
     this.dayOpenLabel.textContent = "Open";
+    this.dayOpenLabel.classList.add("day-open-label");
     this.dayOptionArea.appendChild(this.dayOpenLabel);
     this.dayOpenInput = document.createElement("input");
     this.dayOpenInput.setAttribute("type", "radio");
@@ -34,7 +38,8 @@ class TimeOption {
     this.dayOptionArea.appendChild(this.dayOpenInput);
 
     this.dayClosedLabel = document.createElement("label");
-    this.dayClosedLabel.textContent = " Closed";
+    this.dayClosedLabel.textContent = "Closed";
+    this.dayClosedLabel.classList.add("day-closed-label");
     this.dayOptionArea.appendChild(this.dayClosedLabel);
     this.dayClosedInput = document.createElement("input");
     this.dayClosedInput.setAttribute("type", "radio");
