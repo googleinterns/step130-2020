@@ -106,7 +106,9 @@ class User {
         addMaintainerPopupBackground.setAttribute("id", "modal-popup-background");
         addMaintainerPopupBackground.classList.add("add-maintainer-popup-modal-background");
         addMaintainerPopupBackground.appendChild(addMaintainerPopup);
-        document.getElementById("help-near-me-content").appendChild(addMaintainerPopupBackground);
+
+        const mainContent = document.getElementById("help-near-me-content") ? document.getElementById("help-near-me-content") : document.getElementById("organizations-content");
+        mainContent.appendChild(addMaintainerPopupBackground);
 
         addMaintainerPopup.classList.add("show-popup");
         addMaintainerPopup.classList.remove("hide-popup");
