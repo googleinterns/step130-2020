@@ -44,7 +44,7 @@ public final class OrganizationUpdater {
     Map<String, String> properties = new HashMap<String,String>();
     boolean isMaintainer = user.isMaintainer();
     boolean isModerator = false;
-    
+
     user.setModeratingOrgs();
     if (user.getModeratingOrgs().size() > 0) {
       isModerator = true;
@@ -128,7 +128,6 @@ public final class OrganizationUpdater {
   private ArrayList<String> translateEmailsToIds(ArrayList<String> emails) {
     ArrayList<String> userIds = new ArrayList<String>();
     
-    // TODO(): Implement correct way of getting user by email once that is decided on
     for(String email : emails) {
       GivrUser newUser = GivrUser.getUserByEmail(email);
       String userId = newUser.getUserId();
@@ -144,18 +143,18 @@ public final class OrganizationUpdater {
     return userIds;
   }
 
-  private void updateInvitedModerator(GivrUser user) {
+  public void updateInvitedModerator(GivrUser user) {
     // Will be called if an invited moderator logs in, will be removing them from the 
-    // invited moderator set and adding there user id to the moderator list
+    // Invited moderator set and adding there user id to the moderator list
     Set<String> invitedModerators = (HashSet) this.entity.getProperty("invitedModerators");
     String userEmail = user.getUserEmail();
 
     if(invitedModerators.contains(userEmail)) {
-        invitedModerators.remove(userEmail);
-        ArrayList<String> moderatorList = (ArrayList) this.entity.getProperty("moderatorList");
-        moderatorList.add(user.getUserId());
-        this.entity.setProperty("moderatorList", moderatorList);
-        this.entity.setProperty("invitedModerators", invitedModerators);
+      invitedModerators.remove(userEmail);
+      ArrayList<String> moderatorList = (ArrayList) this.entity.getProperty("moderatorList");
+      moderatorList.add(user.getUserId());
+      this.entity.setProperty("moderatorList", moderatorList);
+      this.entity.setProperty("invitedModerators", invitedModerators);
     }
   }
 }
