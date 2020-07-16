@@ -133,13 +133,15 @@
 }
 
 .hide-popup,
-.hide-edit-modal {
-  display: none;
+.hide-edit-modal,
+.hide-time-area {
+    display: none;
 }
 
 .show-popup,
-.show-edit-modal {
-  display: block;
+.show-edit-modal,
+.show-time-area {
+    display: block;
 }
 
 .popup-close-button {
@@ -271,4 +273,8 @@
   display: flex;
   width: 30%;
   height: 5%;
+}
+
+.day-option-area {
+  margin: 5px 0px 5px 0px;
 }
