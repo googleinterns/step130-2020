@@ -82,12 +82,18 @@ class Organization {
     popupUrlLinkElement.setAttribute("href", this.organization.urlLink);
     popupUrlLinkElement.textContent = this.organization.urlLink;
 
+    const popupHoursElement = document.createElement('div');
+    popupHoursElement.classList.add("organization-popup-hours");
+    this.organization.hoursOpen.forEach((day) => {
+      popupHoursElement.appendChild(this.createOpenHoursText(day));
+    });
+
     const popupDescriptionElement = document.createElement('div');
     popupDescriptionElement.classList.add("organization-popup-description");
     popupDescriptionElement.textContent = this.organization.description;
 
     const popupEditElement = document.createElement('button');
-    if(this.forOrganizationsPage) {
+    if (this.forOrganizationsPage) {
       popupEditElement.classList.add("enter-button");
       popupEditElement.textContent = "Edit";
       popupEditElement.addEventListener('click', () => {
@@ -107,14 +113,15 @@ class Organization {
     this.popupElement.appendChild(popupZipcodeElement);
     this.popupElement.appendChild(popupEmailElement);
     this.popupElement.appendChild(popupUrlLinkElement);
+    this.popupElement.appendChild(popupHoursElement);
     this.popupElement.appendChild(popupDescriptionElement);
-    if(this.forOrganizationsPage) {
+    if (this.forOrganizationsPage) {
       this.popupElement.appendChild(popupEditElement);
     }
     return this.popupElement;
   }
 
- editOrganization(organization) {
+  editOrganization(organization) {
     // all entry fields will be prepopulated with the current values for user experience
 
     // TODO(): Convert user ids to emails
@@ -267,7 +274,7 @@ class Organization {
         approvedButton.setAttribute("checked", "checked");
       }
       editForm.appendChild(approvedButton);
-      
+
       // page break for styling purposes
       editForm.appendChild(document.createElement("br"));
 
@@ -301,6 +308,55 @@ class Organization {
   }
 
   convertIdsToEmails(moderators) {
-      return "placeholder";
+    return "placeholder";
+  }
+
+  createOpenHoursText(day) {
+    // organization.hoursOpen[index(1-7 for day of week)].propertyMap.
+    // fromToPairs.value[index(how many set of hours for that day )].propertyMap.from/to
+    const dayTimeArea = document.createElement("div");
+    dayTimeArea.classList.add("day-time-area");
+
+    const dayTimeText = document.createElement("p");
+    dayTimeText.textContent = `${day.propertyMap.day}: `;
+
+
+    if (day.propertyMap.isOpen === "true") {
+      let fromToString = null;
+      const numPairs = day.propertyMap.fromToPairs.value.length;
+      for (let i = 0; i < numPairs; i++) {
+        let from = this.parseTime(day.propertyMap.fromToPairs.value[i].propertyMap.from);
+        let to = this.parseTime(day.propertyMap.fromToPairs.value[i].propertyMap.to);
+        if (numPairs - 1 != i) {
+          fromToString = `${from} - ${to}, \n`;
+        }
+        else {
+          fromToString = `${from} -  ${to} \n`;
+        }
+        dayTimeText.textContent += fromToString;
+      }
+    }
+    else {
+      dayTimeText.textContent += `Closed`;
+    }
+
+    dayTimeArea.appendChild(dayTimeText);
+    return dayTimeArea;
+  }
+
+  parseTime(time) {
+    const hoursAndMinutes = time.split(":");
+    let AMOrPM = null;
+    let hours = parseInt(hoursAndMinutes[0]);
+    let minutes = parseInt(hoursAndMinutes[1]);
+
+    if (hours >= 12) {
+      AMOrPM = "PM";
+      hours -= 12;
+    }
+    else {
+      AMOrPM = "AM";
+    }
+    return `${hours.toString()}:${minutes.toString()} ${AMOrPM}`;
   }
 }
