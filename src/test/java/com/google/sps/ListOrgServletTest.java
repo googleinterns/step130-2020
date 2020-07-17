@@ -37,7 +37,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
  
@@ -149,7 +148,6 @@ public final class ListOrgServletTest {
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
-
   @Test
   public void testQueryAsNormalUser() {
  
@@ -172,7 +170,6 @@ public final class ListOrgServletTest {
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
-
  @Test
   public void testZipcodeFilter() {
  
@@ -195,4 +192,3 @@ public final class ListOrgServletTest {
     Assert.assertArrayEquals(expectedList.toArray(), this.datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
 }
- 
