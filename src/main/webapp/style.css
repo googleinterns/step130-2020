@@ -59,11 +59,6 @@
   font-size: 20px;
 }
 
-#filter-input-area {
-  margin: 3% auto;
-  height: 30px;
-}
-
 .gray-button {
   border: 1px solid #ccc;
   background-color: #A9A9A9;
@@ -203,6 +198,10 @@
   padding-bottom: 10px;
 }
 
+.filter-input-area {
+  float:left;
+}
+
 .filter-tag-area {
   display: flex;
   justify-content: space-around;
@@ -216,19 +215,24 @@
   padding: 5px 20px;
 }
 
-.filter-tag-label {
-  font-family:'Courier New', Courier, monospace;
-  color: rgb(18, 16, 13);
-  font-size: 15px;
+#add-filter-button {
+  cursor:pointer;
+  float: none;
+  width: 20%;
+  margin-bottom: 10px;
+}
+
+#filter-entry {
+  flex-direction: row-reverse;
 }
 
 .filter-tag-close {
   cursor:pointer;
   font-size: 10px;
-  float:right;
   color: rgb(18, 16, 13);
   padding: 2px;
   border: 2px solid #ccc;
+  margin-right: 0px;
   border-radius: 50%
 }
 
