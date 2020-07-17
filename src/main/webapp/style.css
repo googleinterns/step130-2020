@@ -132,12 +132,14 @@
 }
 
 .hide-popup,
-.hide-edit-modal {
+.hide-edit-modal,
+.hide-time-area {
     display: none;
 }
 
 .show-popup,
-.show-edit-modal {
+.show-edit-modal,
+.show-time-area {
     display: block;
 }
 
@@ -196,6 +198,33 @@
   padding: 20px;
   border: 1px solid #888;
   width: 70%;
+}
+
+.day-option-area {
+  margin: 5px 0px 5px 0px;
+}
+
+.day-label {
+  margin-right: 10px;
+}
+
+.day-closed-label {
+  margin-left: 10px;
+}
+
+.add-more-time-button,
+.remove-more-time-button {
+  font-size: 25px;
+  cursor: pointer;
+  margin: auto 10px;
+}
+
+.add-more-time-button {
+  color: #4285F4;
+}
+
+.remove-more-time-button {
+  color: #DB4437;
 }
 
 .filter-holder {
