@@ -85,7 +85,7 @@ class SearchArea {
   renderListOfOrganizations() {
     this.organizationObjectsList.forEach((organization) => {
       const newOrganization = new Organization(organization, this.isMaintainer, this.forOrganizationsPage);
- 
+
       newOrganization.organizationElement.addEventListener('organization-selected', () => {
         const organizationPopupArea = document.getElementById("organization-popup-area");
         organizationPopupArea.textContent = "";
@@ -93,14 +93,14 @@ class SearchArea {
         organizationPopupArea.classList.add("show-popup");
         organizationPopupArea.classList.remove("hide-popup");
       });
- 
+
       newOrganization.closeButtonElement.addEventListener('organization-close', () => {
       //  Remove the popup from the DOM.
         document.getElementById("organization-popup-area").classList.add("hide-popup");
         document.getElementById("organization-popup-area").classList.remove("show-popup");
         newOrganization.popupElement.remove();
       });
- 
+
       this.organizationListArea.appendChild(newOrganization.getOrganization());
     });
     if (this.organizationObjectsList.length === 0) {
@@ -110,7 +110,7 @@ class SearchArea {
       this.organizationListArea.appendChild(noResultsFoundMessage);
     }
   }
- 
+
   async getListOfOrganizations() {
     let response;
     if (this.filterParams) {
@@ -120,14 +120,14 @@ class SearchArea {
     }
     this.organizationObjectsList = await response.json();
   }
- 
+
   async setUrlParamValue(urlParamKey, urlParamValue) {
     /* New query value is not added if it is a duplicate or empty/null */
     if (this.filterParams.getAll(urlParamKey).includes(urlParamValue) ||
         (urlParamValue === null) || (urlParamValue.trim() === "")) {
       return;
     }
-    
+
     /* if the param is a zipcode, remove tag of any existing one & set new one*/ 
     if (urlParamKey === "zipcode") {
       if (this.filterParams.get("zipcode")) {
