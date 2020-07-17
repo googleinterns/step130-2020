@@ -207,6 +207,22 @@ class Organization {
     orgPhoneEntry.classList.add("edit-entry");
     editForm.appendChild(orgPhoneEntry);
 
+    // label and entry area for organization zipcode
+    const orgZipcodeLabel = document.createElement("label");
+    orgZipcodeLabel.setAttribute("for", "zipcode");
+    orgZipcodeLabel.setAttribute("id", "zipcode-label");
+    orgZipcodeLabel.textContent = "Zipcode: ";
+    editForm.appendChild(orgZipcodeLabel);
+
+    const orgZipcodeEntry = document.createElement("input");
+    orgZipcodeEntry.setAttribute("type", "text");
+    orgZipcodeEntry.setAttribute("id", "zipcode");
+    orgZipcodeEntry.setAttribute("pattern", "[0-9]{5}");
+    orgZipcodeEntry.setAttribute("value", `${organization.zipcode}`);
+    orgZipcodeEntry.setAttribute("name", "org-zip-code");
+    orgZipcodeEntry.classList.add("edit-entry");
+    editForm.appendChild(orgZipcodeEntry);
+
     // label and entry area for organization url-link
     const orgUrlLinkLabel = document.createElement("label");
     orgUrlLinkLabel.setAttribute("for", "url-link");
@@ -236,6 +252,21 @@ class Organization {
     orgDescriptionEntry.classList.add("edit-entry");
     orgDescriptionEntry.textContent = organization.description;
     editForm.appendChild(orgDescriptionEntry);
+
+    // label and entry area for organization resource category list
+    const orgResourceCategoryListLabel = document.createElement("label");
+    orgResourceCategoryListLabel.setAttribute("for", "org-resource-category");
+    orgResourceCategoryListLabel.setAttribute("id", "resource-category-list-label");
+    orgResourceCategoryListLabel.textContent = "Resource Categories: ";
+    editForm.appendChild(orgResourceCategoryListLabel);
+
+    const orgResourceCategory = document.createElement("textarea");
+    orgResourceCategory.setAttribute("type", "text");
+    orgResourceCategory.setAttribute("id", "org-resource-category");
+    orgResourceCategory.setAttribute("name", "org-resource-category");
+    orgResourceCategory.classList.add("edit-entry");
+    orgResourceCategory.textContent = JSON.stringify(organization.resourceCategories);
+    editForm.appendChild(orgResourceCategory);
 
     // label and entry area for organization moderator list
     const orgModeratorListLabel = document.createElement("label");
