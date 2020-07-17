@@ -65,12 +65,12 @@
   height: 30px;
 }
 
-.gray-button {
+.enter-button {
   border: 1px solid #ccc;
-  background-color: #A9A9A9;
+  background-color: #f5f5f5;
+  color: #404040;
   border-radius: 4px;
   font-family:'Courier New', Courier, monospace;
-  color: #ffffff;
   font-size: 15px;
   cursor: pointer;
   width: 100px;
@@ -133,13 +133,15 @@
 }
 
 .hide-popup,
-.hide-edit-modal {
-  display: none;
+.hide-edit-modal,
+.hide-time-area {
+    display: none;
 }
 
 .show-popup,
-.show-edit-modal {
-  display: block;
+.show-edit-modal,
+.show-time-area {
+    display: block;
 }
 
 .popup-close-button {
@@ -206,6 +208,32 @@
 #add-maintainer-email-form {
   display: flex;
   flex-flow: row nowrap;
+
+.day-option-area {
+  margin: 5px 0px 5px 0px;
+}
+
+.day-label {
+  margin-right: 10px;
+}
+
+.day-closed-label {
+  margin-left: 10px;
+}
+
+.add-more-time-button,
+.remove-more-time-button {
+  font-size: 25px;
+  cursor: pointer;
+  margin: auto 10px;
+}
+
+.add-more-time-button {
+  color: #4285F4;
+}
+
+.remove-more-time-button {
+  color: #DB4437;
 }
 
 .filter-holder {
@@ -216,36 +244,29 @@
 .filter-tag-area {
   display: flex;
   justify-content: space-around;
-  border: 3px solid rgb(121, 121, 121);
-  background-color: rgba(216, 216, 216, 0.8);
-  border-radius: 10px;
+  border-radius: 15px;
+  border: 2px solid #000000;
   resize: horizontal;
-  float:left;
+  float: left;
   white-space: nowrap;
   margin-left: 10px;
   padding: 5px 20px;
 }
 
 .filter-tag-label {
-  font-family:'Courier New', Courier, monospace;
-  color: rgb(18, 16, 13);
   font-size: 15px;
 }
 
 .filter-tag-close {
-  cursor:pointer;
-  font-size: 10px;
-  float:right;
-  color: rgb(18, 16, 13);
-  padding: 2px;
-  border: 2px solid #ccc;
-  border-radius: 50%
+  cursor: pointer;
+  font-size: 15px;
+  margin-right: 10px;
+  float: right;
 }
 
 #no-results-found {
   display: flex;
   justify-content: center;
-  color: rgb(109, 101, 101);
   font-size: 20px;
 }
 

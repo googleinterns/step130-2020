@@ -61,7 +61,7 @@ class SearchArea {
 
     this.zipcodeSubmit = document.createElement("input");
     this.zipcodeSubmit.setAttribute("type", "submit");
-    this.zipcodeSubmit.setAttribute("class", "gray-button");
+    this.zipcodeSubmit.setAttribute("class", "enter-button");
     this.zipcodeSubmit.addEventListener('click', () => this.setUrlParamValue("zipcode", this.form.zipcode.value));
     this.form.appendChild(this.zipcodeSubmit);
 
@@ -181,16 +181,16 @@ class SearchArea {
       filterTagArea.setAttribute("id", "zipcodeTag");
     }
 
-    let filterTagLabel = document.createElement("div");
-    filterTagLabel.textContent = urlParamValue;
-    filterTagLabel.setAttribute("class", "filter-tag-label");
-    filterTagArea.appendChild(filterTagLabel);
-
     let filterTagClose = document.createElement("div");
     filterTagClose.addEventListener('click', () => this.removeFilterTag(urlParamKey, urlParamValue, filterTagArea));
     filterTagClose.textContent = 'X';
     filterTagClose.setAttribute("class", "filter-tag-close");
     filterTagArea.appendChild(filterTagClose);
+
+    let filterTagLabel = document.createElement("div");
+    filterTagLabel.textContent = urlParamValue;
+    filterTagLabel.setAttribute("class", "filter-tag-label");
+    filterTagArea.appendChild(filterTagLabel);
 
     this.activeFilterArea.appendChild(filterTagArea);
   }
