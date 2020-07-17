@@ -23,6 +23,7 @@ public final class Organization {
   private String name;
   private String email;
   private String address;
+  private String zipcode;
   private String description;
   private String phoneNum;
   private long creationTimeStampMillis;
@@ -39,6 +40,7 @@ public final class Organization {
     this.name = (String) entity.getProperty("orgName");
     this.email = (String) entity.getProperty("orgEmail");
     this.address = (String) entity.getProperty("orgStreetAddress");
+    this.zipcode = (String) entity.getProperty("orgZipCode");
     this.description = (String) entity.getProperty("orgDescription");
     this.phoneNum = (String) entity.getProperty("orgPhoneNum");
     this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");

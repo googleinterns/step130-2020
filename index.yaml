@@ -1,10 +1,11 @@
 indexes:
 
 - kind: Distributor
-  ancestor: no
+  ancestor: no  
   properties:
-  - name: creationTimeStampMillis
-    direction: desc
   - name: isApproved
   - name: moderatorList
+  - name: orgZipCode
+  - name: creationTimeStampMillis
+    direction: desc
   
