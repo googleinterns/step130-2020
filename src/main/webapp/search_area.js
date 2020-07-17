@@ -151,17 +151,17 @@ class FilterTagArea {
  
   constructor(searchArea) {
     this.parentSearchArea = searchArea;
- 
+
     /* Active filter area holds the add filter button, the new filter text box, and any active filters */
     this.activeFilterArea = document.createElement("div");
     this.activeFilterArea.setAttribute("class", "filter-holder");
- 
+
     /* filterEntryArea is displayed when the user clicks add filter. It first asks for a type of filter, 
        then asks the user to enter the keyword for that filter type */
     this.filterEntryArea = document.createElement("div");
     this.filterEntryArea.setAttribute("class", "filter-tag-area");
     this.filterEntryArea.setAttribute("id", "filter-entry");
- 
+
     this.filterEntryClose = document.createElement("div");
     this.filterEntryClose.textContent = 'X';
     this.filterEntryClose.setAttribute("class", "filter-tag-close");
@@ -169,7 +169,7 @@ class FilterTagArea {
       this.filterEntryArea.textContent = "";
       this.activeFilterArea.removeChild(this.filterEntryArea)
     });
- 
+
     /* The user selects the type of property they want to filter by in filterTypeInput*/
     this.filterTypeInput = document.createElement("input");
     this.filterTypeInput.setAttribute("list", "filter-datalist");
@@ -184,7 +184,7 @@ class FilterTagArea {
         this.filterEntryArea.appendChild(this.filterParamLabel);
       }
     });
- 
+
     this.filterDataList = document.createElement("datalist");
     this.filterDataList.setAttribute("id", "filter-datalist");
     this.optionMap = new Map();
@@ -196,7 +196,7 @@ class FilterTagArea {
       option.value = optionKey;
       this.filterDataList.appendChild(option);
     }
- 
+
     /* After the type has been chosen, the actual filter param is entered here */
     this.filterParamInput = document.createElement("input");
     this.filterParamInput.setAttribute("class", "filter-input-area");
@@ -213,7 +213,7 @@ class FilterTagArea {
         this.activeFilterArea.removeChild(this.filterEntryArea);
       }
     });
- 
+
     /* This button does not move- when clicked it opens a filter entry area */
     this.addFilterButton = document.createElement("div");
     this.addFilterButton.setAttribute("class", "filter-tag-area");
@@ -226,10 +226,10 @@ class FilterTagArea {
       this.activeFilterArea.appendChild(this.filterEntryArea);
     });
     this.activeFilterArea.appendChild(this.addFilterButton);
- 
+
     this.parentSearchArea.organizationSearchArea.appendChild(this.activeFilterArea);
   }
- 
+
   addFilterTag(urlParamKey, urlParamValue) {
     let filterTagArea = document.createElement("div");
     filterTagArea.setAttribute("class", "filter-tag-area");
@@ -248,10 +248,10 @@ class FilterTagArea {
     filterTagClose.textContent = 'X';
     filterTagClose.setAttribute("class", "filter-tag-close");
     filterTagArea.appendChild(filterTagClose);
- 
+
     this.activeFilterArea.appendChild(filterTagArea);
   }
- 
+
   async removeFilterTag(urlParamKey, urlParamValue, filterTag) {
     if (urlParamKey === "zipcode") {
       this.parentSearchArea.filterParams.delete("zipcode");
