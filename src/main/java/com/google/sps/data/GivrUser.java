@@ -154,13 +154,14 @@ public class GivrUser {
       return true;
     }
 
-    if (this.getUserId().equals(user.getUserId())) {
-      return true;
+    if (!this.getUserEmail().equals(user.getUserEmail())) {
+      return false;
+    }
+    
+    if (!this.getUserId().equals(user.getUserId())) {
+      return false;
     }
 
-    if (this.getUserEmail().equals(user.getUserEmail())) {
-      return true;
-    }
-    return false;
+    return true;
   }
 }
