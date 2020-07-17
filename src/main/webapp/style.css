@@ -208,5 +208,20 @@
 }
 
 .day-closed-label {
-    margin-left: 10px;
+  margin-left: 10px;
+}
+
+.add-more-time-button,
+.remove-more-time-button {
+  font-size: 25px;
+  cursor: pointer;
+  margin: auto 10px;
+}
+
+.add-more-time-button {
+  color: #4285F4;
+}
+
+.remove-more-time-button {
+  color: #DB4437;
 }

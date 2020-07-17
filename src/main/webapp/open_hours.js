@@ -1,14 +1,14 @@
 document.addEventListener("DOMContentLoaded", async function() {
   // Looks for the hours-option-area in dom and will append the option to enter times 
   // for when the organization is open on every day of the week
-  if(document.getElementById("registration-form-area")) {
-  const mondayTimeOption = new TimeOption("Monday", true, null);
-  const tuesdayTimeOption = new TimeOption("Tuesday", true, null);
-  const wednesdayTimeOption = new TimeOption("Wednesday", true, null);
-  const thursdayTimeOption = new TimeOption("Thursday", true, null);
-  const fridayTimeOption = new TimeOption("Friday", true, null);
-  const saturdayTimeOption = new TimeOption("Saturday", true, null);
-  const sundayTimeOption = new TimeOption("Sunday", true, null);
+  if (document.getElementById("registration-form-area")) {
+    const mondayTimeOption = new TimeOption("Monday", true, null);
+    const tuesdayTimeOption = new TimeOption("Tuesday", true, null);
+    const wednesdayTimeOption = new TimeOption("Wednesday", true, null);
+    const thursdayTimeOption = new TimeOption("Thursday", true, null);
+    const fridayTimeOption = new TimeOption("Friday", true, null);
+    const saturdayTimeOption = new TimeOption("Saturday", true, null);
+    const sundayTimeOption = new TimeOption("Sunday", true, null);
   }
 });
 
@@ -34,7 +34,7 @@ class TimeOption {
     this.dayOptionArea.appendChild(this.dayOpenLabel);
     this.dayOpenInput = document.createElement("input");
     this.dayOpenInput.setAttribute("type", "radio");
-    this.dayOpenInput.setAttribute("name",`${this.day}-isOpen`);
+    this.dayOpenInput.setAttribute("name", `${this.day}-isOpen`);
     this.dayOptionArea.appendChild(this.dayOpenInput);
 
     this.dayClosedLabel = document.createElement("label");
@@ -61,15 +61,23 @@ class TimeOption {
 
     this.dayFromInput = document.createElement("input");
     this.dayFromInput.setAttribute("type", "time");
-    this.dayFromInput.setAttribute("name", `${this.day}-from-time`);
+    this.dayFromInput.setAttribute("name", `${this.day}-from-times`);
     this.dayToInput = document.createElement("input");
     this.dayToInput.setAttribute("type", "time");
-    this.dayToInput.setAttribute("name", `${this.day}-to-time`);
+    this.dayToInput.setAttribute("name", `${this.day}-to-times`);
+
+    this.addMoreInput = document.createElement("a");
+    this.addMoreInput.textContent = "+";
+    this.addMoreInput.classList.add("add-more-time-button");
+    this.addMoreInput.onclick = () => {
+      this.addTimeInputOption();
+    }
 
     this.timeInputArea.appendChild(this.dayFromInput);
     this.timeInputArea.appendChild(this.dayToInput);
+    this.timeInputArea.appendChild(this.addMoreInput);
     this.dayOptionArea.appendChild(this.timeInputArea);
-    
+
     this.radioElements.forEach((elem) => {
       elem.addEventListener("change", () => {
         if (this.dayOpenInput.checked) {
@@ -82,6 +90,37 @@ class TimeOption {
       });
     });
     this.optionArea.appendChild(this.dayOptionArea);
+  }
+
+  addTimeInputOption() {
+    const newTimeInputArea = document.createElement("div");
+    const dayFromInput = document.createElement("input");
+    dayFromInput.setAttribute("type", "time");
+    dayFromInput.setAttribute("name", `${this.day}-from-times`);
+    const dayToInput = document.createElement("input");
+    dayToInput.setAttribute("type", "time");
+    dayToInput.setAttribute("name", `${this.day}-to-times`);
+
+    const addMoreInput = document.createElement("a");
+    addMoreInput.classList.add("add-more-time-button");
+    addMoreInput.textContent = "+";
+    addMoreInput.onclick = () => {
+      this.addTimeInputOption();
+    }
+
+    const removeInput = document.createElement("a");
+    removeInput.textContent = "-";
+    removeInput.classList.add("remove-more-time-button");
+    removeInput.onclick = () => {
+      newTimeInputArea.remove();
+    }
+
+    newTimeInputArea.appendChild(dayFromInput);
+    newTimeInputArea.appendChild(dayToInput);
+    newTimeInputArea.appendChild(addMoreInput);
+    newTimeInputArea.appendChild(removeInput);
+    this.timeInputArea.appendChild(newTimeInputArea);
+
   }
 }
 
