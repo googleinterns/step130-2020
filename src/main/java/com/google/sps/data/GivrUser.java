@@ -25,6 +25,8 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.CompositeFilter;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -113,16 +115,13 @@ public final class GivrUser {
 
     Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
 
-    // TODO(): Check in invitedModeratorList as well.
+    ArrayList<Filter> individualFilterCollection = new ArrayList<Filter>();
+    CompositeFilter compositeORFilter = new CompositeFilter(CompositeFilterOperator.OR, individualFilterCollection);
 
-    Filter filter = null;
-    try {
-      filter = new FilterPredicate("moderatorList", FilterOperator.IN, this.email);
-    } catch (IllegalArgumentException exception) {
-      logger.log(Level.WARNING, "User is not a Moderator of any organization.");
-    }
+    individualFilterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, this.id));
+    individualFilterCollection.add(new FilterPredicate("invitedModerators", FilterOperator.EQUAL, this.email));
 
-    PreparedQuery preparedQuery = datastore.prepare(query.setFilter(filter));
+    PreparedQuery preparedQuery = datastore.prepare(query.setFilter(compositeORFilter));
 
     for (Entity entity: preparedQuery.asIterable()) {
       this.moderatingOrgs.add(entity);
