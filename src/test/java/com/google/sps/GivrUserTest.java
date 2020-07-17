@@ -35,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.After;
@@ -52,11 +54,11 @@ import com.google.gson.Gson;
 public final class GivrUserTest {
 
   // private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), new LocalDatastoreServiceTestConfig());
-  private final LocalServiceTestHelper helper;
+  private LocalServiceTestHelper helper;
 
-  private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+  // private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-  private UserService userService = UserServiceFactory.getUserService();
+  // private UserService userService = UserServiceFactory.getUserService();
 
   private ArrayList<Entity> listOfEntities = new ArrayList<>();
 
@@ -90,15 +92,79 @@ public final class GivrUserTest {
     listOfEntities.add(user1); */
   // }
 
-  @After
-  public void tearDown() {
-    helper.tearDown();
-  }
+  // @After
+  // public void tearDown() {
+  //   helper.tearDown();
+  // }
+
+  // @Test
+  // public void getUserFromDatastoreWithPropertyTest() {
+  //   helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+  //   helper.setUp();
+  //   Entity user0 = new Entity("User");
+  //   user0.setProperty("userId", "User0");
+  //   user0.setProperty("isMaintainer", true);
+  //   user0.setProperty("userEmail", "jennb206+test0@gmail.com");
+  //   datastore.put(user0);
+  //   listOfEntities.add(user0);
+
+  //   Entity user1 = new Entity("User");
+  //   user1.setProperty("userId", "User1");
+  //   user1.setProperty("isMaintainer", false);
+  //   user1.setProperty("userEmail", "jennb206+test1@gmail.com");
+  //   datastore.put(user1);
+  //   listOfEntities.add(user1);
+  //   String propertyName = "userEmail";
+  //   String propertyValue = "jennb206+test1@gmail.com";
+
+  //   Entity actualEntity = GivrUser.getUserFromDatastoreWithProperty(propertyName, propertyValue);
+
+  //   Entity expectedEntity = listOfEntities.get(1);
+
+  //   Assert.assertEquals(expectedEntity, actualEntity);
+  // }
+
+  // @Test
+  // public void getCurrentLoggedInUserTestWhenNotLoggedIn() {
+  //   helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig());
+  //   helper.setEnvIsLoggedIn(false);
+  //   helper.setUp();
+  //   GivrUser actualUser = GivrUser.getCurrentLoggedInUser();
+  //   GivrUser expectedUser = new GivrUser("", false, false, "logoutLinkHere.com", "");
+
+  //   Assert.assertEquals(expectedUser, actualUser);
+  // }
 
   @Test
-  public void getUserFromDatastoreWithPropertyTest() {
-    helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+  public void getCurrentLoggedInUserTestWhenLoggedIn() {
+    LocalUserServiceTestConfig userServiceConfig = new LocalUserServiceTestConfig();
+    userServiceConfig.setOAuthEmail("jennb206+test0@gmail.com");
+    userServiceConfig.setOAuthUserId("User0");
+    userServiceConfig.setOAuthAuthDomain("gmail.com");
+    // userServiceConfig.setUp();
+
+    LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
+    // datastoreConfig.setUp();
+
+    helper = new LocalServiceTestHelper(userServiceConfig, datastoreConfig);
     
+
+
+    helper.setEnvIsLoggedIn(true);
+
+    helper.setEnvEmail("jennb206+test0@gmail.com");
+    helper.setEnvAuthDomain("gmail.com");
+
+    Map<String,Object> map = new HashMap<String,Object>();
+
+    map.put("USER_EMAIL", "foo@gmail.com");
+    map.put("USER_ID", "1");
+    helper.setEnvAttributes(map); //userEmail, userId - takes in Map <String, String>
+    helper.setUp();
+
+    UserService userService = UserServiceFactory.getUserService();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
     Entity user0 = new Entity("User");
     user0.setProperty("userId", "User0");
     user0.setProperty("isMaintainer", true);
@@ -112,38 +178,9 @@ public final class GivrUserTest {
     user1.setProperty("userEmail", "jennb206+test1@gmail.com");
     datastore.put(user1);
     listOfEntities.add(user1);
-    String propertyName = "userEmail";
-    String propertyValue = "jennb206+test1@gmail.com";
 
-    Entity actualEntity = GivrUser.getUserFromDatastoreWithProperty(propertyName, propertyValue);
+    System.out.println("hello "  + userService.isUserLoggedIn() + " " + userService.getCurrentUser().getUserId());
 
-    Entity expectedEntity = listOfEntities.get(1);
-
-    Assert.assertEquals(expectedEntity, actualEntity);
-  }
-
-  @Test
-  public void getCurrentLoggedInUserTestWhenNotLoggedIn() {
-    helper.setEnvIsLoggedIn(false);
-
-    GivrUser actualUser = GivrUser.getCurrentLoggedInUser();
-    GivrUser expectedUser = new GivrUser("", false, false, "logoutLinkHere.com", "");
-
-    Assert.assertEquals(expectedUser, actualUser);
-  }
-
-  @Test
-  public void getCurrentLoggedInUserTestWhenLoggedIn() {
-    helper.setEnvIsLoggedIn(true);
-    helper.setEnvEmail("jennb206+test0@gmail.com");
-    helper.setEnvAuthDomain("gmail.com");
-    // helper.setEnv
-
-    // when(mockUserService.isUserLoggedIn()).thenReturn(true);
-    // when(mockUserService.getCurrentUser()).thenReturn(new User("jennb206+test0@gmail.com", "gmail.com", "User0"));
-
-
-    System.out.println(userService.isUserLoggedIn() + " " + userService.getCurrentUser().getUserId());
     GivrUser actualUser = GivrUser.getCurrentLoggedInUser();
     GivrUser expectedUser = new GivrUser("User0", true, true, "", "jennb206+test0@gmail.com");
 
@@ -158,7 +195,7 @@ public final class GivrUserTest {
     } else {
       System.out.println("Users do not equal each other");
     }
-    // Assert.assertEquals(expectedUser, actualUser); 
+    Assert.assertEquals(expectedUser, actualUser); 
     //PROBLEM here, actual user is returning wrong info
   }
 }
