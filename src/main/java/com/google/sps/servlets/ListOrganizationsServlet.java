@@ -79,7 +79,7 @@ public class ListOrganizationsServlet extends HttpServlet {
   public static Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
     Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
 
-    ArrayList filterCollection = new ArrayList<>();
+    ArrayList<Filter> filterCollection = new ArrayList<Filter>();
 
     String zipcode  = "";
     boolean queryForZipcode = false;
@@ -144,7 +144,7 @@ public class ListOrganizationsServlet extends HttpServlet {
       query.setFilter(combinedQueryFilter);
     } else if (filterCollection.size() == 1) {
       /* If a filter exists but it can't be composite, normal one is applied */
-      query.setFilter((Filter) filterCollection.get(0));
+      query.setFilter(filterCollection.get(0));
     }
     return query;
   }
