@@ -350,13 +350,28 @@ class Organization {
     let hours = parseInt(hoursAndMinutes[0]);
     let minutes = parseInt(hoursAndMinutes[1]);
 
-    if (hours >= 12) {
+    if (hours > 12) {
       AMOrPM = "PM";
       hours -= 12;
-    }
-    else {
+    } else if (hours == 12) {
+        AMOrPM ="PM";
+    } else if (hours == 0) {
+        AMOrPM = "AM";
+        hours = 12;
+    } else {
       AMOrPM = "AM";
     }
-    return `${hours.toString()}:${minutes.toString()} ${AMOrPM}`;
+    
+    let hoursString = hours.toString();
+    let minutesString = minutes.toString();
+    console.log(hoursString);
+    console.log(minutesString);
+    if(hours < 10) {
+      hoursString = `0${hours.toString()}`;
+    }
+    if (minutes < 10) {
+      minutesString = `0${minutes.toString()}`;
+    }
+    return `${hoursString}:${minutesString} ${AMOrPM}`;
   }
 }
