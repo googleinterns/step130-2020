@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
 }
-
+ 
 #help-near-me-content a,
 #organizations-content a {
   color: #666666;
@@ -14,7 +14,7 @@
   border-bottom: 3px solid transparent;
   margin: 0 20px;
 }
-
+ 
 #help-near-me-content a:hover,
 #organizations-content a:hover {
   border-bottom: 3px solid #666666;
@@ -26,25 +26,25 @@
   justify-content: space-between;
   font-size: 36px;
 }
-
+ 
 #nav-bar {
   display: flex;
   justify-content: center;
   font-size: 28px;
   margin: 1% 0 2% 0;
 }
-
+ 
 #site-title {
   justify-content: center;
   margin-bottom: 10px;
 }
-
+ 
 #zipcode-form {
   display: flex;
   justify-content: center;
   margin: 40px 50px 20px 50px;
 }
-
+ 
 #zipcode-entry {
   width: 20%;
   margin: 8px 0;
@@ -53,41 +53,36 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
-
+ 
 #zipcode-label {
   margin: auto 2px auto 0;
   font-size: 20px;
 }
-
-#filter-input-area {
-  margin: 3% auto;
-  height: 30px;
-}
-
-.enter-button {
+ 
+.gray-button {
   border: 1px solid #ccc;
-  background-color: #f5f5f5;
-  color: #404040;
+  background-color: #A9A9A9;
   border-radius: 4px;
   font-family:'Courier New', Courier, monospace;
+  color: #ffffff;
   font-size: 15px;
   cursor: pointer;
   width: 100px;
   margin-left: 10px;
   padding: 5px 20px;
 }
-
+ 
 #filter-datalist {
     float: right;
 }
-
+ 
 #organization-list {
   margin: 0 auto;
-
+ 
   height: 495px;
   overflow-y: scroll;
 }
-
+ 
 .organization {
   display: flex;
   justify-content: center;
@@ -97,18 +92,18 @@
   padding: 20px;
   cursor: pointer;
 }
-
+ 
 .organization-name,
 .organization-popup-name {
   font-size: 30px;
 }
-
+ 
 #search-area,
 #all-organizations {
   display: flex;
   justify-content: space-around;
 }
-
+ 
 #organization-popup-area {
   width: 50%;
   font-size: 20px;
@@ -116,11 +111,11 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 40px 20px 10px 20px;
 }
-
+ 
 .organization-popup-name {
     margin: 2% auto;
 }
-
+ 
 .organization-popup-phone,
 .organization-popup-address,
 .organization-popup-zipcode,
@@ -130,33 +125,33 @@
 .organization-popup-description {
     margin: 2% 0;
 }
-
+ 
 .hide-popup,
 .hide-edit-modal {
     display: none;
 }
-
+ 
 .show-popup,
 .show-edit-modal {
     display: block;
 }
-
+ 
 .popup-close-button {
   cursor: pointer;
 }
-
+ 
 #registration-form-header{ 
   display: flex;
   margin: 1% auto 2% auto;
   justify-content: space-between;
   font-size: 30px;
 }
-
+ 
 #registration-form-area {
     width: 60%;
     margin: 0 auto;
 }
-
+ 
 .registration-entry {
   width: 100%;
   padding: 12px 20px;
@@ -166,7 +161,7 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
-
+ 
 .edit-entry {
   width: 100%;
   padding: 12px 20px;
@@ -176,7 +171,7 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
-
+ 
 #edit-form-area {
   position: fixed;
   z-index: 1;
@@ -187,7 +182,7 @@
   overflow: auto;
   background-color: rgba(0,0,0,0.4);
 }
-
+ 
 #edit-form-area-content {
   display: flex;
   flex-direction: column;
@@ -197,38 +192,53 @@
   border: 1px solid #888;
   width: 70%;
 }
-
+ 
 .filter-holder {
   overflow: hidden;
   padding-bottom: 10px;
 }
-
+ 
+.filter-input-area {
+  float:left;
+}
+ 
 .filter-tag-area {
   display: flex;
   justify-content: space-around;
-  border-radius: 15px;
-  border: 2px solid #000000;
+  border: 3px solid rgb(121, 121, 121);
+  background-color: rgba(216, 216, 216, 0.8);
+  border-radius: 10px;
   resize: horizontal;
-  float: left;
+  float:left;
   white-space: nowrap;
   margin-left: 10px;
   padding: 5px 20px;
 }
-
-.filter-tag-label {
-  font-size: 15px;
+ 
+#add-filter-button {
+  cursor:pointer;
+  float: none;
+  width: 20%;
+  margin-bottom: 10px;
 }
-
+ 
+#filter-entry {
+  flex-direction: row-reverse;
+}
+ 
 .filter-tag-close {
-  cursor: pointer;
-  font-size: 15px;
-  margin-right: 10px;
-  float: right;
+  cursor:pointer;
+  font-size: 10px;
+  color: rgb(18, 16, 13);
+  padding: 2px;
+  border: 2px solid #ccc;
+  margin-right: 0px;
+  border-radius: 50%
 }
-
+ 
 #no-results-found {
   display: flex;
   justify-content: center;
+  color: rgb(109, 101, 101);
   font-size: 20px;
 }
-
