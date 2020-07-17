@@ -27,8 +27,10 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.CompositeFilter;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -46,7 +48,7 @@ public class ListOrganizationsServlet extends HttpServlet {
    * If no parameters are included, it will return a default list of organizations
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    GivrUser currentUser = GivrUser.getLoggedInUser();
+    GivrUser currentUser = GivrUser.getCurrentLoggedInUser();
 
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
@@ -69,8 +71,17 @@ public class ListOrganizationsServlet extends HttpServlet {
   }
 
   /* This function constructs a query based on the request parameters & user's role */
-  public Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
+  public static Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
     Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
+
+    ArrayList<Filter> filterCollection = new ArrayList<Filter>();
+
+    String zipcode  = "";
+    boolean queryForZipcode = false;
+    if (request.getParameter("zipcode") != null) {
+      zipcode = request.getParameter("zipcode");
+      queryForZipcode = true;
+    }
 
     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
     String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
@@ -79,23 +90,36 @@ public class ListOrganizationsServlet extends HttpServlet {
     // Ternary operator is used to check if userIsMaintainer to protect against null currentUser
     boolean userIsMaintainer = isUserLoggedIn ? currentUser.isMaintainer() : false;
 
+    if (queryForZipcode) {
+      filterCollection.add(new FilterPredicate("orgZipCode", FilterOperator.EQUAL, zipcode));
+    }
+
     if (isUserLoggedIn && displayUserOrgs) {
       /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
       String userId = currentUser.getUserId();
-      query.setFilter(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
+      filterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
     }
 
     if (!userIsMaintainer) {
       /* If the user is not a maintainer, only allow them to see approved orgs */
-      query.setFilter(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
+      filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
     }
 
-    // TODO(): Read through request parameters and for all valid parameters and use them to modify query (filtering)
+    if (filterCollection.size() >= 2) {
+      /* Composite Filter only works with 2 or more filters. */
+      CompositeFilter combinedQueryFilter = new CompositeFilter(CompositeFilterOperator.AND, filterCollection);
+      query.setFilter(combinedQueryFilter);
+    } else if (filterCollection.size() == 1) {
+      /* If a filter exists but it can't be composite, normal one is applied */
+      query.setFilter(filterCollection.get(0));
+    }
+
+    // TODO(): Repeat this functionality for the filtering keywords from the datalist
 
     return query;
   }
 
-  public boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
+  public static boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
     String requestParameter = request.getParameter(key);
     return (requestParameter != null) && (requestParameter.equals("true"));
   }

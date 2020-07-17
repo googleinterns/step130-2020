@@ -35,17 +35,57 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import java.util.HashMap;
+import java.util.Map;
+import java.lang.Object;
 
 @WebServlet("/authenticate")
 public class AuthenticateServlet extends HttpServlet {
+
+  private void MaybeUpdateUserByEmailInDatastore(GivrUser user) {
+    Map<String, Object> propertyNamesAndValuesToUpdate = new HashMap<String, Object>();
+
+    Entity userWithEmail = GivrUser.getUserFromDatastoreWithProperty("userEmail", user.getUserEmail());
+      if (userWithEmail != null) {
+        // User is either a Moderator or Maintainer, that has not logged in.
+        boolean isMaintainer = user.isMaintainer();
+        if (!isMaintainer) { // User is a Moderator.
+
+          // TODO: Update organization.
+        }
+
+        // Update entity with current user's userId.
+        propertyNamesAndValuesToUpdate.put("userId", user.getUserId());
+        GivrUser.updateUserInDatastore("userEmail", user.getUserEmail(), propertyNamesAndValuesToUpdate);
+      }
+  }
+
+  private void MaybeUpdateEmailAddressOfUserIdInDatastore(GivrUser currUser) {
+    Entity entity = GivrUser.getUserFromDatastoreWithProperty("userId", currUser.getUserId());
+    Map<String, Object> propertyNamesAndValuesToUpdate = new HashMap<String, Object>();
+
+    String emailInDatastore = (String) entity.getProperty("userEmail");
+
+    // Ensures that the userEmail is up-to-date.
+    if (!currUser.getUserEmail().equals(emailInDatastore)) {
+      propertyNamesAndValuesToUpdate.put("userEmail", currUser.getUserEmail());
+      GivrUser.updateUserInDatastore("userId", currUser.getUserId(), propertyNamesAndValuesToUpdate);
+    }
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse  response) throws IOException {
     response.setContentType("application/json;");
     Gson gson = new Gson();
 
-    GivrUser user = GivrUser.getLoggedInUser();
+    GivrUser user = GivrUser.getCurrentLoggedInUser();
 
+    Entity userWithId = GivrUser.getUserFromDatastoreWithProperty("userId", user.getUserId());
+    if (userWithId == null) {
+      MaybeUpdateUserByEmailInDatastore(user);
+    } else {
+      MaybeUpdateEmailAddressOfUserIdInDatastore(user);
+    }
     String json = gson.toJson(user);
     response.getWriter().println(json);
   }
