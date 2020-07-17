@@ -120,7 +120,6 @@ class TimeOption {
     newTimeInputArea.appendChild(addMoreInput);
     newTimeInputArea.appendChild(removeInput);
     this.timeInputArea.appendChild(newTimeInputArea);
-
   }
 }
 
