@@ -61,7 +61,7 @@ class SearchArea {
 
     this.zipcodeSubmit = document.createElement("input");
     this.zipcodeSubmit.setAttribute("type", "submit");
-    this.zipcodeSubmit.setAttribute("class", "gray-button");
+    this.zipcodeSubmit.setAttribute("class", "enter-button");
     this.zipcodeSubmit.addEventListener('click', () => this.setUrlParamValue("zipcode", this.form.zipcode.value));
     this.form.appendChild(this.zipcodeSubmit);
 
