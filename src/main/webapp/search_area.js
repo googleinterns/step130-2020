@@ -61,14 +61,40 @@ class SearchArea {
 
     this.zipcodeSubmit = document.createElement("input");
     this.zipcodeSubmit.setAttribute("type", "submit");
-    this.zipcodeSubmit.setAttribute("class", "gray-button");
+    this.zipcodeSubmit.setAttribute("class", "enter-button");
     this.zipcodeSubmit.addEventListener('click', () => this.setUrlParamValue("zipcode", this.form.zipcode.value));
     this.form.appendChild(this.zipcodeSubmit);
 
     this.zipcodeFormArea.appendChild(this.form);
     this.organizationSearchArea.appendChild(this.zipcodeFormArea);
 
-    this.filterTagArea = new FilterTagArea(this);
+    this.filterInputArea = document.createElement("input");
+    this.filterInputArea.setAttribute("list", "filter-datalist");
+    this.filterInputArea.setAttribute("id", "filter-input-area");
+    this.filterInputArea.setAttribute("placeholder", "Filter Results");
+    this.filterInputArea.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        /* When the user hits enter in the filter input area, it is added as a param */
+        this.setUrlParamValue("filterParam", this.filterInputArea.value);
+        this.filterInputArea.value = "";
+      }
+    });
+
+    this.filterDataList = document.createElement("datalist");
+    this.filterDataList.setAttribute("id", "filter-datalist");
+    this.filterOptions = ["Foods", "Clothing", "Shelter"];
+    for (const value of this.filterOptions) {
+      const option = document.createElement("option");
+      option.value = value;
+      this.filterDataList.appendChild(option);
+    }
+
+    this.filterInputArea.appendChild(this.filterDataList);
+    this.organizationSearchArea.appendChild(this.filterInputArea);
+
+    this.activeFilterArea = document.createElement("div");
+    this.activeFilterArea.setAttribute("class", "filter-holder");
+    this.organizationSearchArea.appendChild(this.activeFilterArea);
 
     this.organizationListArea = document.createElement("div");
     this.organizationListArea.setAttribute("id", "organization-list");
@@ -121,9 +147,10 @@ class SearchArea {
     this.organizationObjectsList = await response.json();
   }
 
-  async setUrlParamValue(urlParamKey, urlParamValue) {
+  async setUrlParamValue(urlParamKey, urlParamValue) {   
     /* New query value is not added if it is a duplicate or empty/null */
-    if (this.filterParams.getAll(urlParamKey).includes(urlParamValue) ||
+    if (this.filterParams.getAll("filterParam").includes(urlParamValue) ||
+        this.filterParams.getAll("zipcode").includes(urlParamValue) ||
         (urlParamValue === null) || (urlParamValue.trim() === "")) {
       return;
     }
@@ -139,95 +166,11 @@ class SearchArea {
       this.filterParams.append(urlParamKey, urlParamValue);      
     }
     this.form.reset();
-    this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);
+    this.addFilterTag(urlParamKey, urlParamValue);
     this.organizationObjectsList = [];
     this.organizationListArea.innerHTML = "";
     await this.getListOfOrganizations();
     this.renderListOfOrganizations();
-  }
-}
-
-class FilterTagArea {
-
-  constructor(searchArea) {
-    this.parentSearchArea = searchArea;
-
-    /* Active filter area holds the add filter button, the new filter text box, and any active filters */
-    this.activeFilterArea = document.createElement("div");
-    this.activeFilterArea.setAttribute("class", "filter-holder");
-
-    /* filterEntryArea is displayed when the user clicks add filter. It first asks for a type of filter, 
-       then asks the user to enter the keyword for that filter type */
-    this.filterEntryArea = document.createElement("div");
-    this.filterEntryArea.setAttribute("class", "filter-tag-area");
-    this.filterEntryArea.setAttribute("id", "filter-entry");
-
-    this.filterEntryClose = document.createElement("div");
-    this.filterEntryClose.textContent = 'X';
-    this.filterEntryClose.setAttribute("class", "filter-tag-close");
-    this.filterEntryClose.addEventListener('click', () => {
-      this.filterEntryArea.textContent = "";
-      this.activeFilterArea.removeChild(this.filterEntryArea)
-    });
-
-    /* The user selects the type of property they want to filter by in filterTypeInput*/
-    this.filterTypeInput = document.createElement("input");
-    this.filterTypeInput.setAttribute("list", "filter-datalist");
-    this.filterTypeInput.setAttribute("class", "filter-input-area");
-    this.filterTypeInput.setAttribute("placeholder", "Filter by:");
-    this.filterTypeInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        this.filterParamLabel.textContent = `${this.filterTypeInput.value}:`;
-        this.filterTypeInput.removeChild(this.filterDataList);
-        this.filterEntryArea.removeChild(this.filterTypeInput);
-        this.filterEntryArea.appendChild(this.filterParamInput);
-        this.filterEntryArea.appendChild(this.filterParamLabel);
-      }
-    });
-
-    this.filterDataList = document.createElement("datalist");
-    this.filterDataList.setAttribute("id", "filter-datalist");
-    this.optionMap = new Map();
-    this.optionMap.set("Organization Name", "orgNames");
-    this.optionMap.set("Address", "orgStreetAddresses");
-    this.optionMap.set("Available Resources", "resourceCategories");
-    for (const optionKey of this.optionMap.keys()) {
-      const option = document.createElement("option");
-      option.value = optionKey;
-      this.filterDataList.appendChild(option);
-    }
-
-    /* After the type has been chosen, the actual filter param is entered here */
-    this.filterParamInput = document.createElement("input");
-    this.filterParamInput.setAttribute("class", "filter-input-area");
-    this.filterParamLabel = document.createElement("div");
-    this.filterParamLabel.setAttribute("class", "filter-tag-label");
-    this.filterParamInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        /* If the user enters an unsupported type, it is ignored on the servlet side */
-        this.parentSearchArea.setUrlParamValue(this.optionMap.get(this.filterTypeInput.value), this.filterParamInput.value);
-        this.filterParamInput.value = "";
-        this.filterTypeInput.value = "";
-        this.filterEntryArea.removeChild(this.filterParamInput);
-        this.filterEntryArea.removeChild(this.filterParamLabel);
-        this.activeFilterArea.removeChild(this.filterEntryArea);
-      }
-    });
-
-    /* This button does not move- when clicked it opens a filter entry area */
-    this.addFilterButton = document.createElement("div");
-    this.addFilterButton.setAttribute("class", "filter-tag-area");
-    this.addFilterButton.setAttribute("id", "add-filter-button");
-    this.addFilterButton.textContent = "+ Add Filter";
-    this.addFilterButton.addEventListener('click', () => {
-      this.filterTypeInput.appendChild(this.filterDataList);
-      this.filterEntryArea.appendChild(this.filterEntryClose);
-      this.filterEntryArea.appendChild(this.filterTypeInput);
-      this.activeFilterArea.appendChild(this.filterEntryArea);
-    });
-    this.activeFilterArea.appendChild(this.addFilterButton);
-
-    this.parentSearchArea.organizationSearchArea.appendChild(this.activeFilterArea);
   }
 
   addFilterTag(urlParamKey, urlParamValue) {
@@ -238,38 +181,38 @@ class FilterTagArea {
       filterTagArea.setAttribute("id", "zipcodeTag");
     }
 
-    let filterTagLabel = document.createElement("div");
-    filterTagLabel.textContent = urlParamValue;
-    filterTagLabel.setAttribute("class", "filter-tag-label");
-    filterTagArea.appendChild(filterTagLabel);
-
     let filterTagClose = document.createElement("div");
     filterTagClose.addEventListener('click', () => this.removeFilterTag(urlParamKey, urlParamValue, filterTagArea));
     filterTagClose.textContent = 'X';
     filterTagClose.setAttribute("class", "filter-tag-close");
     filterTagArea.appendChild(filterTagClose);
 
+    let filterTagLabel = document.createElement("div");
+    filterTagLabel.textContent = urlParamValue;
+    filterTagLabel.setAttribute("class", "filter-tag-label");
+    filterTagArea.appendChild(filterTagLabel);
+
     this.activeFilterArea.appendChild(filterTagArea);
   }
 
   async removeFilterTag(urlParamKey, urlParamValue, filterTag) {
     if (urlParamKey === "zipcode") {
-      this.parentSearchArea.filterParams.delete("zipcode");
+      this.filterParams.delete("zipcode");
     } else {
-      if (this.parentSearchArea.filterParams.getAll(urlParamKey).length === 1) {
+      if (this.filterParams.getAll("filterParam").length === 1) {
         /* If only 1 filter param, delete the array */
-        this.parentSearchArea.filterParams.delete(urlParamKey);
+        this.filterParams.delete("filterParam");
       } else {
         /* If not, just remove specified element */
-        let filterArray = this.parentSearchArea.filterParams.getAll(urlParamKey);
+        let filterArray = this.filterParams.getAll("filterParam");
         filterArray.splice(filterArray.indexOf(urlParamValue), 1);
-        this.parentSearchArea.filterParams.set(urlParamKey, filterArray);
+        this.filterParams.set("filterParam", filterArray);
       }
     }
     this.activeFilterArea.removeChild(filterTag);
-    this.parentSearchArea.organizationObjectsList = [];
-    this.parentSearchArea.organizationListArea.innerHTML = "";
-    await this.parentSearchArea.getListOfOrganizations();
-    this.parentSearchArea.renderListOfOrganizations();
+    this.organizationObjectsList = [];
+    this.organizationListArea.innerHTML = "";
+    await this.getListOfOrganizations();
+    this.renderListOfOrganizations();
   }
 }
