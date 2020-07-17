@@ -271,4 +271,6 @@
   display: flex;
   width: 30%;
   height: 5%;
+  font-family: 'Courier New', Courier, monospace;
+  color: #666666;
 }

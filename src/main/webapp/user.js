@@ -107,8 +107,7 @@ class User {
         addMaintainerPopupBackground.classList.add("add-maintainer-popup-modal-background");
         addMaintainerPopupBackground.appendChild(addMaintainerPopup);
 
-        const mainContent = document.getElementById("help-near-me-content") ? document.getElementById("help-near-me-content") : document.getElementById("organizations-content");
-        mainContent.appendChild(addMaintainerPopupBackground);
+        document.body.prepend(addMaintainerPopupBackground);
 
         addMaintainerPopup.classList.add("show-popup");
         addMaintainerPopup.classList.remove("hide-popup");
