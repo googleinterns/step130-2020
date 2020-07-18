@@ -70,9 +70,7 @@ public final class OrganizationUpdater {
     properties.put("approval", "isApproved");
     properties.put("moderator-list", "moderatorList");
 
-    updateOpenHoursProperty(request);
-
-    // Updates entity properties from form
+    // Updates most entity properties from form
     for(Map.Entry<String, String> entry : properties.entrySet()) {
       String propertyKey = entry.getValue();
       boolean propertyRequiresMaintainer = requiresMaintainer.contains(propertyKey);
@@ -110,6 +108,9 @@ public final class OrganizationUpdater {
 
       setOrganizationProperty(propertyKey, formValue);
     }
+
+    // updates open hours property separate since it is more complex
+    updateOpenHoursProperty(request);
 
     // Updates non form properties such as change history, lastEditTimeStamp, etc
     updateNonFormProperties(user, forRegistration, historyUpdate);
@@ -190,17 +191,19 @@ public final class OrganizationUpdater {
 
   private void updateOpenHoursProperty(HttpServletRequest request) {
     ArrayList<EmbeddedEntity> hoursOpen = new ArrayList<EmbeddedEntity>();
-    ArrayList<String> dayOptionFromTimes = new ArrayList<String>();
-    ArrayList<String> dayOptionToTimes = new ArrayList<String>();
 
     for (DayOfWeek currDay : DayOfWeek.values()) {
       EmbeddedEntity dayOption = new EmbeddedEntity();
+      ArrayList<String> dayOptionFromTimes = new ArrayList<String>();
+      ArrayList<String> dayOptionToTimes = new ArrayList<String>();
       dayOption.setProperty("day", currDay.toString());
       String isOpen = getParameterOrThrow(request, currDay.toString() + "-isOpen");
       if(isOpen.equals("open")) {
         dayOption.setProperty("isOpen", "true");
         dayOptionFromTimes = getParameterValuesOrThrow(request, currDay.toString() + "-from-times");
         dayOptionToTimes = getParameterValuesOrThrow(request, currDay.toString() + "-to-times");
+
+        // create from to pairs as embedded entity to support multiple time ranges for a day
         ArrayList<EmbeddedEntity> fromToPairs = createFromToPairs(dayOptionFromTimes, dayOptionToTimes);
         dayOption.setProperty("fromToPairs", fromToPairs);
       } else {

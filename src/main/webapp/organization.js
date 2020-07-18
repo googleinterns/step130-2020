@@ -320,13 +320,18 @@ class Organization {
     const dayTimeText = document.createElement("p");
     dayTimeText.textContent = `${day.propertyMap.day}: `;
 
-
     if (day.propertyMap.isOpen === "true") {
       let fromToString = null;
       const numPairs = day.propertyMap.fromToPairs.value.length;
+
+      // creates from to text in the form of hh:mm - hh:mm
       for (let i = 0; i < numPairs; i++) {
+        
+        // parses it from 24 hour format to 12 hour format
         let from = this.parseTime(day.propertyMap.fromToPairs.value[i].propertyMap.from);
         let to = this.parseTime(day.propertyMap.fromToPairs.value[i].propertyMap.to);
+
+        // adds a comma if it is not the last pair in the list
         if (numPairs - 1 != i) {
           fromToString = `${from} - ${to}, \n`;
         }
@@ -364,11 +369,7 @@ class Organization {
     
     let hoursString = hours.toString();
     let minutesString = minutes.toString();
-    console.log(hoursString);
-    console.log(minutesString);
-    if(hours < 10) {
-      hoursString = `0${hours.toString()}`;
-    }
+  
     if (minutes < 10) {
       minutesString = `0${minutes.toString()}`;
     }
