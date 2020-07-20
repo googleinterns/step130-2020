@@ -46,7 +46,7 @@ public final class OrganizationUpdater {
     boolean isMaintainer = user.isMaintainer();
     boolean isModerator = false;
 
-    user.setModeratingOrgs();
+    // Gets moderator status from checking its moderatingOrgs size.
     if (user.getModeratingOrgs().size() > 0) {
       isModerator = true;
     }
