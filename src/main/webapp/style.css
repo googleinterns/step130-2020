@@ -133,14 +133,12 @@
 }
 
 .hide-popup,
-.hide-edit-modal,
-.hide-time-area {
+.hide-edit-modal {
     display: none;
 }
 
 .show-popup,
-.show-edit-modal,
-.show-time-area {
+.show-edit-modal {
     display: block;
 }
 
