@@ -35,12 +35,50 @@ class User {
         this.isModerator = true;
       }
       this.rebuildNavBar();
-
     }  else {
       const loginLink = document.getElementById("login-url");
       loginLink.textContent = "Log In";
       loginLink.setAttribute("href", loginData.url);
     }
+  }
+
+  createAddMaintainerPopup() {
+    const addMaintainerModal = document.createElement("div");
+    addMaintainerModal.setAttribute("id", "add-maintainer-popup-modal");
+
+    const emailForm = document.createElement('form');
+    emailForm.setAttribute("method", "POST");
+    emailForm.setAttribute("id", "add-maintainer-email-form");
+
+    const popupCloseButton = document.createElement("div");
+    popupCloseButton.classList.add("add-maintainer-popup-close-button");
+    popupCloseButton.textContent = "X";
+    popupCloseButton.addEventListener("click", () => {
+      addMaintainerModal.remove();
+      document.getElementById("modal-popup-background").remove();
+    });
+    emailForm.appendChild(popupCloseButton);
+
+    const emailInputLabel = document.createElement("div");
+    emailInputLabel.textContent = "New Maintainer's Email:";
+    emailForm.appendChild(emailInputLabel);
+
+    const emailInputElement = document.createElement("input");
+    emailInputElement.setAttribute("type", "text");
+    emailInputElement.setAttribute("id", "maintainer-email-entry");
+    emailInputElement.setAttribute("name", "userEmail");
+    emailForm.appendChild(emailInputElement);
+
+    const submitButton = document.createElement("input");
+    submitButton.textContent = "Submit";
+    submitButton.setAttribute("type", "submit");
+    submitButton.setAttribute("class", "enter-button");
+    emailForm.appendChild(submitButton);
+
+    emailForm.setAttribute("action", "/add-maintainer");
+
+    addMaintainerModal.appendChild(emailForm);
+    return addMaintainerModal;
   }
 
   rebuildNavBar() {
@@ -57,11 +95,28 @@ class User {
     registrationLink.textContent = "Register Organization";
     navBar.appendChild(registrationLink);
 
-    if(this.isMaintainer) {
+    if (!this.isMaintainer) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "Organizations";
       navBar.appendChild(organizationsLink);
+
+      const addMaintainerPopup = this.createAddMaintainerPopup();
+      const addMaintainerLabel = document.createElement("a");
+      addMaintainerLabel.textContent = "Add Maintainer";
+      addMaintainerLabel.setAttribute("id", "add-maintainer-label");
+      addMaintainerLabel.addEventListener("click", () => {
+        const addMaintainerPopupBackground = document.createElement("div");
+        addMaintainerPopupBackground.setAttribute("id", "modal-popup-background");
+        addMaintainerPopupBackground.classList.add("add-maintainer-popup-modal-background");
+        addMaintainerPopupBackground.appendChild(addMaintainerPopup);
+
+        document.body.prepend(addMaintainerPopupBackground);
+
+        addMaintainerPopup.classList.add("show-popup");
+        addMaintainerPopup.classList.remove("hide-popup");
+      });
+      navBar.appendChild(addMaintainerLabel);
     } else if (this.isModerator) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
