@@ -363,11 +363,12 @@ class Organization {
         let to = this.parseTime(organizationDay.propertyMap.fromToPairs.value[i].propertyMap.to);
 
         // adds a comma if it is not the last pair in the list
+        fromToString = `${from} - ${to}`;
         if (numPairs - 1 != i) {
-          fromToString = `${from} - ${to}, \n`;
+          fromToString += `, \n`;
         }
         else {
-          fromToString = `${from} -  ${to} \n`;
+          fromToString += `\n`;
         }
         dayTimeText.textContent += fromToString;
       }

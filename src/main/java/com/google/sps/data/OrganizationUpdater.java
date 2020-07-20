@@ -187,11 +187,11 @@ public final class OrganizationUpdater {
       this.entity.setProperty("isApproved", false);
       this.entity.setProperty("moderatorList", moderatorList);
       this.entity.setProperty("changeHistory", changeHistory);
-    } else {
-      ArrayList<EmbeddedEntity> changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
-      changeHistory.add(historyUpdate);
-      this.entity.setProperty("changeHistory", changeHistory);
-    }
+      } else {
+        ArrayList<EmbeddedEntity> changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
+        changeHistory.add(historyUpdate);
+        this.entity.setProperty("changeHistory", changeHistory);
+      }
     
     this.entity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
   }
@@ -201,11 +201,11 @@ public final class OrganizationUpdater {
 
     for (DayOfWeek currDay : DayOfWeek.values()) {
       EmbeddedEntity dayOption = new EmbeddedEntity();
-      ArrayList<String> dayOptionFromTimes = new ArrayList<String>();
-      ArrayList<String> dayOptionToTimes = new ArrayList<String>();
       dayOption.setProperty("day", currDay.toString());
       String isOpen = getParameterOrThrow(request, currDay.toString() + "-isOpen");
       if(isOpen.equals("open")) {
+        ArrayList<String> dayOptionFromTimes = new ArrayList<String>();
+        ArrayList<String> dayOptionToTimes = new ArrayList<String>();
         dayOption.setProperty("isOpen", true);
         dayOptionFromTimes = getParameterValuesOrThrow(request, currDay.toString() + "-from-times");
         dayOptionToTimes = getParameterValuesOrThrow(request, currDay.toString() + "-to-times");
@@ -224,6 +224,9 @@ public final class OrganizationUpdater {
 
   private ArrayList<EmbeddedEntity> createFromToPairs(ArrayList<String> dayOptionFromTimes, ArrayList<String> dayOptionToTimes) {
     ArrayList<EmbeddedEntity> pairs = new ArrayList<EmbeddedEntity>();
+    if(dayOptionFromTimes.size() != dayOptionToTimes.size()) {
+      throw new IllegalArgumentException("Form value cannot be null");
+    }
     for(int i = 0; i < dayOptionFromTimes.size(); i++) {
       EmbeddedEntity fromToPair = new EmbeddedEntity();
       fromToPair.setProperty("from", dayOptionFromTimes.get(i));
