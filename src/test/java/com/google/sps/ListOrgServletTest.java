@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
- 
- 
+
+
 package com.google.sps;
  
 import static org.mockito.Mockito.*;
@@ -37,6 +37,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
  
@@ -123,7 +124,7 @@ public final class ListOrgServletTest {
   public void tearDown() {
     helper.tearDown();
   }
- 
+
   @Test
   public void testQueryWithNoFilter() {
     /* Because there are no filters, all entities are returned in reverse time order. */
@@ -148,6 +149,7 @@ public final class ListOrgServletTest {
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
+
   @Test
   public void testQueryAsNormalUser() {
  
@@ -170,7 +172,7 @@ public final class ListOrgServletTest {
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
- 
+
  @Test
   public void testZipcodeFilter() {
  
@@ -193,4 +195,3 @@ public final class ListOrgServletTest {
     Assert.assertArrayEquals(expectedList.toArray(), this.datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
 }
- 
