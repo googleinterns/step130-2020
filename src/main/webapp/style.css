@@ -133,12 +133,14 @@
 }
 
 .hide-popup,
-.hide-edit-modal {
+.hide-edit-modal,
+.hide-time-area {
     display: none;
 }
 
 .show-popup,
-.show-edit-modal {
+.show-edit-modal,
+.show-time-area  {
     display: block;
 }
 
@@ -206,6 +208,7 @@
 #add-maintainer-email-form {
   display: flex;
   flex-flow: row nowrap;
+}
 
 .day-option-area {
   margin: 5px 0px 5px 0px;
