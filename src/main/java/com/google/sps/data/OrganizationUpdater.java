@@ -167,10 +167,14 @@ public final class OrganizationUpdater {
       ArrayList changeHistory = new ArrayList<>();
       changeHistory.add(historyUpdate);
 
+      // Upon initial creation of an organization, the list of invitedModerators will be empty.
+      Set<String> invitedModerators = new HashSet<String>();
+
       this.entity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
       this.entity.setProperty("isApproved", false);
       this.entity.setProperty("moderatorList", moderatorList);
       this.entity.setProperty("changeHistory", changeHistory);
+      this.entity.setProperty("invitedModerators", invitedModerators);
     } else {
       ArrayList<EmbeddedEntity> changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
       changeHistory.add(historyUpdate);
@@ -186,7 +190,11 @@ public final class OrganizationUpdater {
     Set<String> invitedModerators = (HashSet) this.entity.getProperty("invitedModerators");
     String userEmail = user.getUserEmail();
 
-    if(invitedModerators.contains(userEmail)) {
+    if (invitedModerators == null) {
+      return;
+    }
+
+    if(!invitedModerators.isEmpty() && invitedModerators.contains(userEmail)) {
         invitedModerators.remove(userEmail);
         ArrayList<String> moderatorList = (ArrayList) this.entity.getProperty("moderatorList");
         moderatorList.add(user.getUserId());

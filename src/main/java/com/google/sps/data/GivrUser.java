@@ -54,6 +54,17 @@ public final class GivrUser {
     this.url = url;
     this.email = email;
     this.moderatingOrgs = moderatingOrgs;
+
+    if (!this.isMaintainer) {
+        setModeratingOrgs();
+        ArrayList<Entity> orgList = getModeratingOrgs();
+        if (orgList.size() > 0) {
+          for (int i = 0; i < orgList.size(); i++) {
+            OrganizationUpdater organizationUpdater = new OrganizationUpdater(orgList.get(i));
+            organizationUpdater.updateInvitedModerator(this);
+          }
+        }
+      }
   }
 
   public String getUserId() {
@@ -116,10 +127,11 @@ public final class GivrUser {
     Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
 
     ArrayList<Filter> individualFilterCollection = new ArrayList<Filter>();
-    CompositeFilter compositeORFilter = new CompositeFilter(CompositeFilterOperator.OR, individualFilterCollection);
 
     individualFilterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, this.id));
     individualFilterCollection.add(new FilterPredicate("invitedModerators", FilterOperator.EQUAL, this.email));
+
+    CompositeFilter compositeORFilter = new CompositeFilter(CompositeFilterOperator.OR, individualFilterCollection);
 
     PreparedQuery preparedQuery = datastore.prepare(query.setFilter(compositeORFilter));
 

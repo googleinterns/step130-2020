@@ -82,17 +82,6 @@ public class AuthenticateServlet extends HttpServlet {
 
     GivrUser user = GivrUser.getCurrentLoggedInUser();
 
-    if (!user.isMaintainer()) {
-      user.setModeratingOrgs();
-      if (user.getModeratingOrgs().size() > 0) {
-        ArrayList<Entity> orgList = user.getModeratingOrgs();
-        orgList.forEach((org) -> {
-          OrganizationUpdater organizationUpdater = new OrganizationUpdater(org);
-          organizationUpdater.updateInvitedModerator(user);
-        });
-      }
-    } 
-
     Entity userWithId = GivrUser.getUserFromDatastoreWithProperty("userId", user.getUserId());
     if (userWithId == null) {
       MaybeUpdateUserByEmailInDatastore(user);
