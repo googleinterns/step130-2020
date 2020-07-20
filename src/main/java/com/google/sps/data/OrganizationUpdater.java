@@ -111,7 +111,7 @@ public final class OrganizationUpdater {
 
   private String getParameterOrThrow(HttpServletRequest request, String formKey) {
     String result = request.getParameter(formKey);
-    if(result.isEmpty() || result == null) {
+    if(result == null || result.isEmpty()) {
       throw new IllegalArgumentException("Form value cannot be null");
     }
     return result;
