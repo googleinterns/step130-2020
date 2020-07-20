@@ -196,6 +196,22 @@ class Organization {
     orgAddressEntry.classList.add("edit-entry");
     editForm.appendChild(orgAddressEntry);
 
+    // label and entry area for organization zipcode
+    const orgZipcodeLabel = document.createElement("label");
+    orgZipcodeLabel.setAttribute("for", "zipcode");
+    orgZipcodeLabel.setAttribute("id", "zipcode-label");
+    orgZipcodeLabel.textContent = "Zipcode: ";
+    editForm.appendChild(orgZipcodeLabel);
+
+    const orgZipcodeEntry = document.createElement("input");
+    orgZipcodeEntry.setAttribute("type", "text");
+    orgZipcodeEntry.setAttribute("id", "zipcode");
+    orgZipcodeEntry.setAttribute("pattern", "[0-9]{5}");
+    orgZipcodeEntry.setAttribute("value", `${organization.zipcode}`);
+    orgZipcodeEntry.setAttribute("name", "org-zip-code");
+    orgZipcodeEntry.classList.add("edit-entry");
+    editForm.appendChild(orgZipcodeEntry);
+
     // label and entry area for organization phone
     const orgPhoneLabel = document.createElement("label");
     orgPhoneLabel.setAttribute("for", "phone");
@@ -226,6 +242,21 @@ class Organization {
     orgUrlLinkEntry.setAttribute("name", "org-url");
     orgUrlLinkEntry.classList.add("edit-entry");
     editForm.appendChild(orgUrlLinkEntry);
+
+    const orgOpenHoursLabel = document.createElement("label");
+    orgOpenHoursLabel.setAttribute("id", "hours-open-label");
+    orgOpenHoursLabel.textContent = "Organization Hours: ";
+    editForm.appendChild(orgOpenHoursLabel);
+
+    const orgOpenHoursArea = document.createElement("div");
+    orgOpenHoursArea.setAttribute("id", "hours-option-area");
+
+    //creates time input options for each day
+    for(let i = 0; i < 7; i++) {
+        const day = organization.hoursOpen[i].propertyMap.day;
+        const timeOption = new TimeOption(day, false, organization.hoursOpen[i], orgOpenHoursArea);
+    }
+    editForm.appendChild(orgOpenHoursArea);
 
     // label and entry area for organization description
     const orgDescriptionLabel = document.createElement("label");
@@ -311,25 +342,25 @@ class Organization {
     return "placeholder";
   }
 
-  createOpenHoursText(day) {
+  createOpenHoursText(organizationDay) {
     // organization.hoursOpen[index(1-7 for day of week)].propertyMap.
     // fromToPairs.value[index(how many set of hours for that day )].propertyMap.from/to
     const dayTimeArea = document.createElement("div");
     dayTimeArea.classList.add("day-time-area");
 
     const dayTimeText = document.createElement("p");
-    dayTimeText.textContent = `${day.propertyMap.day}: `;
+    dayTimeText.textContent = `${organizationDay.propertyMap.day}: `;
 
-    if (day.propertyMap.isOpen === "true") {
+    if (organizationDay.propertyMap.isOpen) {
       let fromToString = null;
-      const numPairs = day.propertyMap.fromToPairs.value.length;
+      const numPairs = organizationDay.propertyMap.fromToPairs.value.length;
 
       // creates from to text in the form of hh:mm - hh:mm
       for (let i = 0; i < numPairs; i++) {
         
         // parses it from 24 hour format to 12 hour format
-        let from = this.parseTime(day.propertyMap.fromToPairs.value[i].propertyMap.from);
-        let to = this.parseTime(day.propertyMap.fromToPairs.value[i].propertyMap.to);
+        let from = this.parseTime(organizationDay.propertyMap.fromToPairs.value[i].propertyMap.from);
+        let to = this.parseTime(organizationDay.propertyMap.fromToPairs.value[i].propertyMap.to);
 
         // adds a comma if it is not the last pair in the list
         if (numPairs - 1 != i) {

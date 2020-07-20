@@ -130,6 +130,13 @@ public final class OrganizationUpdater {
     if(results.isEmpty() || results == null) {
       throw new IllegalArgumentException("Form value cannot be null");
     }
+
+    // checks if there is a value that is empty which means a blank time range was submitted
+    for(int i = 0; i < results.size(); i++) {
+      if(results.get(i).equals("")) {
+        throw new IllegalArgumentException("Form value cannot be null");
+      }
+    }
     return results;
   }
 
@@ -199,7 +206,7 @@ public final class OrganizationUpdater {
       dayOption.setProperty("day", currDay.toString());
       String isOpen = getParameterOrThrow(request, currDay.toString() + "-isOpen");
       if(isOpen.equals("open")) {
-        dayOption.setProperty("isOpen", "true");
+        dayOption.setProperty("isOpen", true);
         dayOptionFromTimes = getParameterValuesOrThrow(request, currDay.toString() + "-from-times");
         dayOptionToTimes = getParameterValuesOrThrow(request, currDay.toString() + "-to-times");
 
