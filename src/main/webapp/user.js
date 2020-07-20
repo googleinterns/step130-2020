@@ -46,6 +46,15 @@ class User {
     emailForm.setAttribute("method", "POST");
     emailForm.setAttribute("id", "add-maintainer-email-form");
 
+    const popupCloseButton = document.createElement("div");
+    popupCloseButton.classList.add("add-maintainer-popup-close-button");
+    popupCloseButton.textContent = "X";
+    popupCloseButton.addEventListener("click", () => {
+      addMaintainerModal.remove();
+      document.getElementById("modal-popup-background").remove();
+    });
+    emailForm.appendChild(popupCloseButton);
+
     const emailInputLabel = document.createElement("div");
     emailInputLabel.textContent = "New Maintainer's Email:";
     emailForm.appendChild(emailInputLabel);
@@ -59,17 +68,8 @@ class User {
     const submitButton = document.createElement("input");
     submitButton.textContent = "Submit";
     submitButton.setAttribute("type", "submit");
-    submitButton.setAttribute("class", "gray-button");
+    submitButton.setAttribute("class", "enter-button");
     emailForm.appendChild(submitButton);
-
-    const popupCloseButton = document.createElement("div");
-    popupCloseButton.classList.add("popup-close-button");
-    popupCloseButton.textContent = "X";
-    popupCloseButton.addEventListener("click", () => {
-      addMaintainerModal.remove();
-      document.getElementById("modal-popup-background").remove();
-    });
-    emailForm.appendChild(popupCloseButton);
 
     emailForm.setAttribute("action", "/add-maintainer");
 
