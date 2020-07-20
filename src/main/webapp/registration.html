@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<title>Givr</title>
   <link rel="stylesheet" href="style.css">
+  <script src="open_hours.js"></script>
 </head>
 
 <!-- This is a prototype of the register organization page
@@ -30,9 +31,11 @@
 				<input class = "registration-entry" type = "text" name = "org-resource-category"/>
 				<label>Organization Website Link: </label>
 				<input class = "registration-entry" type = "text" name = "org-url"/>
+        <label> Organization Hours: </label>	
+				<div id="hours-option-area"></div>
 				<label>Organization Description: </label>
 				<textarea class = "registration-entry" name ="org-description" maxlength = "180"></textarea>
-				<input class = "gray-button" type="submit"/>
+				<input class = "enter-button" type="submit"/>
 	    </form>
 		</div>
 	</div>
