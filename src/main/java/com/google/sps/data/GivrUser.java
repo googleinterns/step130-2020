@@ -104,18 +104,19 @@ public final class GivrUser {
     datastore.put(entity);
   }
 
-  public static GivrUser getUserById(String userId) {
-    Entity entity = getUserFromDatastoreWithProperty("userId", userId);
+  public static GivrUser getUserByIdOrEmail(String userId, String userEmail) {
+    Entity entityRetrievedWithId = getUserFromDatastoreWithProperty("userId", userId);
+    Entity entityRetrievedWithEmail = getUserFromDatastoreWithProperty("userEmail", userEmail);
 
     boolean isMaintainer = false;
     boolean isLoggedIn = true;
-    String userEmail = "";
 
-    if (entity != null) {
-      isMaintainer = (boolean) entity.getProperty("isMaintainer");
-      userEmail = (String) entity.getProperty("userEmail");
+    if (entityRetrievedWithId != null) {
+      isMaintainer = (boolean) entityRetrievedWithId.getProperty("isMaintainer");
+    } else if (entityRetrievedWithEmail != null) {
+      isMaintainer = (boolean) entityRetrievedWithEmail.getProperty("isMaintainer");
     }
-
+    
     GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */, userEmail);
     return user;
   }
@@ -143,7 +144,7 @@ public final class GivrUser {
     String url = userService.createLoginURL("/");
     
     if (isUserLoggedIn) {
-      return getUserById(userService.getCurrentUser().getUserId());
+      return getUserByIdOrEmail(userService.getCurrentUser().getUserId(), userService.getCurrentUser().getEmail());
     }
     return new GivrUser("" /* userId */, false /* isMaintainer */, false /* isLoggedIn */, url /* loginURL */, "" /* userEmail */);
   }
