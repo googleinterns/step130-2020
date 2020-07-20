@@ -53,8 +53,6 @@ class Organization {
   }
 
   createOrganizationPopup() {
-    // TODO(): get current user using givr user to determine if they are moderator or maintainer
-    const isModerator = true;
 
     this.popupElement = document.createElement("div");
     this.popupElement.classList.add("organization-popup");
@@ -90,7 +88,7 @@ class Organization {
 
     const popupEditElement = document.createElement('button');
     if(this.forOrganizationsPage) {
-      popupEditElement.classList.add("gray-button");
+      popupEditElement.classList.add("enter-button");
       popupEditElement.textContent = "Edit";
       popupEditElement.addEventListener('click', () => {
         const editFormArea = document.getElementById("edit-form-area");
@@ -294,7 +292,7 @@ class Organization {
 
     const editFormSubmit = document.createElement("input");
     editFormSubmit.setAttribute("type", "submit");
-    editFormSubmit.setAttribute("class", "gray-button");
+    editFormSubmit.setAttribute("class", "enter-button");
     editForm.appendChild(editFormSubmit);
 
     editFormAreaContent.appendChild(editForm);
