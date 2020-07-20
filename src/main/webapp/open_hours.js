@@ -16,22 +16,25 @@ document.addEventListener("DOMContentLoaded", async function() {
   // Looks for the hours-option-area in dom and will append the option to enter times 
   // for when the organization is open on every day of the week
   if (document.getElementById("registration-form-area")) {
-    const mondayTimeOption = new TimeOption("Monday", true, null);
-    const tuesdayTimeOption = new TimeOption("Tuesday", true, null);
-    const wednesdayTimeOption = new TimeOption("Wednesday", true, null);
-    const thursdayTimeOption = new TimeOption("Thursday", true, null);
-    const fridayTimeOption = new TimeOption("Friday", true, null);
-    const saturdayTimeOption = new TimeOption("Saturday", true, null);
-    const sundayTimeOption = new TimeOption("Sunday", true, null);
+    const optionArea = document.getElementById("hours-option-area");
+    const mondayTimeOption = new TimeOption("Monday", true, null, optionArea);
+    const tuesdayTimeOption = new TimeOption("Tuesday", true, null, optionArea);
+    const wednesdayTimeOption = new TimeOption("Wednesday", true, null, optionArea);
+    const thursdayTimeOption = new TimeOption("Thursday", true, null, optionArea);
+    const fridayTimeOption = new TimeOption("Friday", true, null, optionArea);
+    const saturdayTimeOption = new TimeOption("Saturday", true, null, optionArea);
+    const sundayTimeOption = new TimeOption("Sunday", true, null, optionArea);
   }
 });
 
 class TimeOption {
-  constructor(day, forRegistration, organization) {
+  // organization.hoursOpen[index(1-7 for day of week)].propertyMap.
+  // fromToPairs.value[index(how many set of hours for that day )].propertyMap.from/to
+  constructor(day, forRegistration, organizationDay, optionArea) {
     this.day = day;
     this.forRegistration = forRegistration;
-    this.organization = organization;
-    this.optionArea = document.getElementById("hours-option-area");
+    this.organizationDay = organizationDay;
+    this.optionArea = optionArea;
 
     this.dayOptionArea = document.createElement("div");
     this.dayOptionArea.classList.add("day-option-area");
@@ -49,6 +52,7 @@ class TimeOption {
     this.dayOpenInput = document.createElement("input");
     this.dayOpenInput.setAttribute("type", "radio");
     this.dayOpenInput.setAttribute("name", `${this.day}-isOpen`);
+    this.dayOpenInput.setAttribute("value", "open");
     this.dayOptionArea.appendChild(this.dayOpenInput);
 
     this.dayClosedLabel = document.createElement("label");
@@ -58,14 +62,14 @@ class TimeOption {
     this.dayClosedInput = document.createElement("input");
     this.dayClosedInput.setAttribute("type", "radio");
     this.dayClosedInput.setAttribute("name", `${this.day}-isOpen`);
+    this.dayClosedInput.setAttribute("value", "closed");
     this.dayOptionArea.appendChild(this.dayClosedInput);
 
     this.radioElements = [this.dayOpenInput, this.dayClosedInput];
-
     if (this.forRegistration) {
       this.dayOpenInput.setAttribute("checked", "checked");
       this.timeInputArea.classList.add("show-time-area");
-    } else if (this.organizationIsOpen == false) {
+    } else if (!this.organizationDay.propertyMap.isOpen) {
       this.dayClosedInput.setAttribute("checked", "checked");
       this.timeInputArea.classList.add("hide-time-area");
     } else {
@@ -80,16 +84,33 @@ class TimeOption {
     this.dayToInput.setAttribute("type", "time");
     this.dayToInput.setAttribute("name", `${this.day}-to-times`);
 
+    // for edit page get the number of pairs of time input options to preset the values
+    let numPairs = 0;
+    if (!forRegistration && this.organizationDay.propertyMap.isOpen) {
+      numPairs = this.organizationDay.propertyMap.fromToPairs.value.length;
+
+      // set initial from to pair, if organization is open there is at least one pair
+      this.dayFromInput.setAttribute("value", this.organizationDay.propertyMap.fromToPairs.value[0].propertyMap.from);
+      this.dayToInput.setAttribute("value", this.organizationDay.propertyMap.fromToPairs.value[0].propertyMap.to);
+    }
+
     this.addMoreInput = document.createElement("a");
     this.addMoreInput.textContent = "+";
     this.addMoreInput.classList.add("add-more-time-button");
     this.addMoreInput.onclick = () => {
-      this.addTimeInputOption();
+      this.addTimeInputOption(null, null);
     }
 
     this.timeInputArea.appendChild(this.dayFromInput);
     this.timeInputArea.appendChild(this.dayToInput);
     this.timeInputArea.appendChild(this.addMoreInput);
+
+    // if there are multiple pairs of previously inputted times then adds and sets those values
+    for (let i = 1; i < numPairs; i++) {
+      this.addTimeInputOption(this.organizationDay.propertyMap.fromToPairs.value[i].propertyMap.from,
+        this.organizationDay.propertyMap.fromToPairs.value[i].propertyMap.to);
+    }
+
     this.dayOptionArea.appendChild(this.timeInputArea);
 
     this.radioElements.forEach((elem) => {
@@ -106,7 +127,7 @@ class TimeOption {
     this.optionArea.appendChild(this.dayOptionArea);
   }
 
-  addTimeInputOption() {
+  addTimeInputOption(fromTime, toTime) {
     const newTimeInputArea = document.createElement("div");
     const dayFromInput = document.createElement("input");
     dayFromInput.setAttribute("type", "time");
@@ -114,6 +135,10 @@ class TimeOption {
     const dayToInput = document.createElement("input");
     dayToInput.setAttribute("type", "time");
     dayToInput.setAttribute("name", `${this.day}-to-times`);
+    if (fromTime != null && toTime != null) {
+      dayFromInput.setAttribute("value", fromTime);
+      dayToInput.setAttribute("value", toTime);
+    }
 
     const addMoreInput = document.createElement("a");
     addMoreInput.classList.add("add-more-time-button");
@@ -136,4 +161,3 @@ class TimeOption {
     this.timeInputArea.appendChild(newTimeInputArea);
   }
 }
-
