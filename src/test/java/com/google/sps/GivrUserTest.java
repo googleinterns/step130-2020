@@ -81,6 +81,9 @@ public final class GivrUserTest {
     helper.tearDown();
   }
 
+  /**
+   * Tests method getUserFromDatastoreWithProperty() to correctly retrieve result from querying to Datastore.
+   */
   @Test
   public void getUserFromDatastoreWithPropertyTest() {
     helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
@@ -97,6 +100,9 @@ public final class GivrUserTest {
     Assert.assertEquals(expectedEntity, actualEntity);
   }
 
+  /**
+   * Tests method getCurrentLoggedInUser() to return correct attribute values when user is not logged in.
+   */
   @Test
   public void getCurrentLoggedInUserTestWhenNotLoggedIn() {
     helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig());
@@ -109,6 +115,9 @@ public final class GivrUserTest {
     Assert.assertEquals(expectedUser, actualUser);
   }
 
+  /** 
+   * Tests method getCurrentLoggedInUser() to return correct attribute values when user is logged in.
+   */
   @Test
   public void getCurrentLoggedInUserTestWhenLoggedIn() {
     LocalUserServiceTestConfig userServiceConfig = new LocalUserServiceTestConfig();
