@@ -188,6 +188,22 @@ class Organization {
     orgAddressEntry.setAttribute("name", "org-street-address");
     orgAddressEntry.classList.add("edit-entry");
     editForm.appendChild(orgAddressEntry);
+   
+    // label and entry area for organization zipcode
+    const orgZipcodeLabel = document.createElement("label");
+    orgZipcodeLabel.setAttribute("for", "zipcode");
+    orgZipcodeLabel.setAttribute("id", "zipcode-label");
+    orgZipcodeLabel.textContent = "Zipcode: ";
+    editForm.appendChild(orgZipcodeLabel);
+
+    const orgZipcodeEntry = document.createElement("input");
+    orgZipcodeEntry.setAttribute("type", "text");
+    orgZipcodeEntry.setAttribute("id", "zipcode");
+    orgZipcodeEntry.setAttribute("pattern", "[0-9]{5}");
+    orgZipcodeEntry.setAttribute("value", `${organization.zipcode}`);
+    orgZipcodeEntry.setAttribute("name", "org-zip-code");
+    orgZipcodeEntry.classList.add("edit-entry");
+    editForm.appendChild(orgZipcodeEntry);
 
     // label and entry area for organization phone
     const orgPhoneLabel = document.createElement("label");
