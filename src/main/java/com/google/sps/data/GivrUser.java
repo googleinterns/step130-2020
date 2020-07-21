@@ -45,7 +45,7 @@ public final class GivrUser {
   private boolean isLoggedIn;
   private String url;
   private String email;
-  private ArrayList<Entity> moderatingOrgs;
+  private ArrayList<Entity> moderatingOrgs = new ArrayList<Entity>();
 
   public GivrUser(String id, boolean isMaintainer, boolean isLoggedIn, String url, String email) {
     this.id = id;
