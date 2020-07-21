@@ -134,15 +134,20 @@ public final class OrganizationUpdater {
 
   private ArrayList<String> translateEmailsToIds(ArrayList<String> emails) {
     ArrayList<String> userIds = new ArrayList<String>();
-    
+    Set<String> invitedModerators = new HashSet<String>();
     for(String email : emails) {
       GivrUser newUser = GivrUser.getUserByEmail(email);
       String userId = newUser.getUserId();
       // If failed will return "" (?) and user will be added to the invited moderator property 
       // and not the offical list
       if(userId.equals("")) {
-        Set<String> invitedModerators = new HashSet((HashSet)this.entity.getProperty("invitedModerators"));
+        if (this.entity.getProperty("invitedModerators") != null) {
+          invitedModerators = new HashSet<String>();
+        } else {
+          invitedModerators = (HashSet) this.entity.getProperty("invitedModerators");
+        }
         invitedModerators.add(email);
+        this.entity.setProperty("invitedModerators", invitedModerators);
       } else {
         userIds.add(newUser.getUserId());
       }
