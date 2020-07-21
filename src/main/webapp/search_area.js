@@ -28,8 +28,7 @@ document.addEventListener("DOMContentLoaded", async function() {
   if (document.getElementById('all-organizations')) {
     forOrganizationsPage = true;
     const organizationSearchArea = new SearchArea(document.getElementById('all-organizations'), isMaintainer, forOrganizationsPage);
-    await organizationSearchArea.getListOfOrganizations();
-    organizationSearchArea.renderListOfOrganizations();
+    organizationSearchArea.handleOrganizations();
   }
 });
 
@@ -41,6 +40,8 @@ class SearchArea {
     this.forOrganizationsPage = forOrganizationsPage;
     this.filterParams = new URLSearchParams();
     this.organizationObjectsList = [];
+    this.mostRecentCursor = "none";
+    this.lastResultFound = false;
 
     this.zipcodeFormArea = document.createElement("div");
     this.form = document.createElement("form");
@@ -92,6 +93,11 @@ class SearchArea {
     this.filterInputArea.appendChild(this.filterDataList);
     this.organizationSearchArea.appendChild(this.filterInputArea);
 
+    this.loadMoreButton = document.createElement("div");
+    this.loadMoreButton.setAttribute("class", "load-more-button");
+    this.loadMoreButton.textContent = "See More Results";
+    this.loadMoreButton.addEventListener('click', () => this.handleOrganizations());
+
     this.activeFilterArea = document.createElement("div");
     this.activeFilterArea.setAttribute("class", "filter-holder");
     this.organizationSearchArea.appendChild(this.activeFilterArea);
@@ -104,8 +110,16 @@ class SearchArea {
     this.organizationPopupArea.classList.add("hide-popup");
 
     this.organizationSearchArea.appendChild(this.organizationListArea);
+    this.organizationSearchArea.appendChild(this.loadMoreButton);
     this.searchArea.appendChild(this.organizationSearchArea);
     this.searchArea.appendChild(this.organizationPopupArea);
+  }
+
+  async handleOrganizations() {
+    if (!this.lastResultFound) {
+      await this.getListOfOrganizations();
+      this.renderListOfOrganizations();
+    }
   }
 
   renderListOfOrganizations() {
@@ -129,7 +143,7 @@ class SearchArea {
 
       this.organizationListArea.appendChild(newOrganization.getOrganization());
     });
-    if (this.organizationObjectsList.length === 0) {
+    if ((this.organizationObjectsList.length === 0) && (!this.lastResultFound)) {
       const noResultsFoundMessage = document.createElement("div");
       noResultsFoundMessage.setAttribute("id", "no-results-found");
       noResultsFoundMessage.textContent = "No results found for current filters.";
@@ -140,11 +154,17 @@ class SearchArea {
   async getListOfOrganizations() {
     let response;
     if (this.filterParams) {
-      response = await fetch(`/list-organizations?${this.filterParams.toString()}`);
+      response = await fetch(`/list-organizations?scrs=${this.mostRecentCursor}&${this.filterParams.toString()}`);
     } else {
-      response = await fetch(`/list-organizations`);
+      response = await fetch(`/list-organizations?scrs=${this.mostRecentCursor}`);
     }
     this.organizationObjectsList = await response.json();
+    this.mostRecentCursor = await response.headers.get("Cursor");
+    /* If < 5 results are returned, the end of the given query has been reached */
+    this.lastResultFound = (this.organizationObjectsList.length < 5);
+    if (this.lastResultFound) {
+      this.loadMoreButton.classList.add("hide-load-button");
+    }
   }
 
   async setUrlParamValue(urlParamKey, urlParamValue) {   
@@ -167,10 +187,12 @@ class SearchArea {
     }
     this.form.reset();
     this.addFilterTag(urlParamKey, urlParamValue);
+    this.mostRecentCursor = "none";
+    this.lastResultFound = false;
+    this.loadMoreButton.classList.remove("hide-load-button");
     this.organizationObjectsList = [];
     this.organizationListArea.innerHTML = "";
-    await this.getListOfOrganizations();
-    this.renderListOfOrganizations();
+    this.handleOrganizations();
   }
 
   addFilterTag(urlParamKey, urlParamValue) {
@@ -210,9 +232,11 @@ class SearchArea {
       }
     }
     this.activeFilterArea.removeChild(filterTag);
+    this.mostRecentCursor = "none";
+    this.lastResultFound = false;
+    this.loadMoreButton.classList.remove("hide-load-button");
     this.organizationObjectsList = [];
     this.organizationListArea.innerHTML = "";
-    await this.getListOfOrganizations();
-    this.renderListOfOrganizations();
+    this.handleOrganizations();
   }
 }

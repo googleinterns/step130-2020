@@ -82,13 +82,6 @@
   float: right;
 }
 
-#organization-list {
-  margin: 0 auto;
-
-  height: 495px;
-  overflow-y: scroll;
-}
-
 .organization {
   display: flex;
   justify-content: center;
@@ -300,4 +293,15 @@
   height: 5%;
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
+}
+
+.load-more-button {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.hide-load-button {
+  display: none;
 }
