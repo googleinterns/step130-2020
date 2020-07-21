@@ -45,6 +45,7 @@
   margin: 40px 50px 20px 50px;
 }
 
+#maintainer-email-entry,
 #zipcode-entry {
   width: 20%;
   margin: 8px 0;
@@ -73,7 +74,7 @@
 }
 
 #filter-datalist {
-    float: right;
+  float: right;
 }
 
 #organization-list {
@@ -112,7 +113,7 @@
 }
 
 .organization-popup-name {
-    margin: 2% auto;
+  margin: 2% auto;
 }
 
 .organization-popup-phone,
@@ -122,20 +123,31 @@
 .organization-popup-email,
 .organization-popup-url-link,
 .organization-popup-description {
-    margin: 2% 0;
+  margin: 2% 0;
 }
 
 .hide-popup,
-.hide-edit-modal {
-    display: none;
+.hide-edit-modal,
+.hide-time-area {
+  display: none;
 }
 
 .show-popup,
-.show-edit-modal {
-    display: block;
+.show-edit-modal,
+.show-time-area {
+  display: block;
+}
+
+.add-maintainer-popup-close-button {
+  cursor: pointer;
+  margin-right: 20px;
 }
 
 .popup-close-button {
+  cursor: pointer;
+}
+
+#add-maintainer-label {
   cursor: pointer;
 }
 
@@ -147,8 +159,8 @@
 }
 
 #registration-form-area {
-    width: 60%;
-    margin: 0 auto;
+  width: 60%;
+  margin: 0 auto;
 }
 
 .registration-entry {
@@ -190,6 +202,33 @@
   padding: 20px;
   border: 1px solid #888;
   width: 70%;
+}
+
+.day-option-area {
+  margin: 5px 0px 5px 0px;
+}
+
+.day-label {
+  margin-right: 10px;
+}
+
+.day-closed-label {
+  margin-left: 10px;
+}
+
+.add-more-time-button,
+.remove-more-time-button {
+  font-size: 25px;
+  cursor: pointer;
+  margin: auto 10px;
+}
+
+.add-more-time-button {
+  color: #4285F4;
+}
+
+.remove-more-time-button {
+  color: #DB4437;
 }
 
 .filter-holder {
@@ -240,4 +279,35 @@
   justify-content: center;
   color: rgb(109, 101, 101);
   font-size: 20px;
+}
+
+#add-maintainer-email-form {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.add-maintainer-popup-modal-background {
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+  background-color: rgba(0,0,0,0.4);
+  position: absolute;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+#add-maintainer-popup-modal {
+  margin: auto;
+  padding: 10px;
+  background-color: white;
+  background-clip: content-box;
+  box-shadow: inset 0 0 0 10px white;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  width: 30%;
+  height: 5%;
+  font-family: 'Courier New', Courier, monospace;
+  color: #666666;
 }
