@@ -172,7 +172,6 @@ public final class ListOrgServletTest {
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
-
  @Test
   public void testZipcodeFilter() {
  
