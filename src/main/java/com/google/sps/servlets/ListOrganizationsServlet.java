@@ -56,7 +56,6 @@ public class ListOrganizationsServlet extends HttpServlet {
     String startCursor = request.getParameter("scrs");
     if ((startCursor != null) && (!startCursor.equals("none"))) { //if the given cursor is 'none' no cursor is necessary
       fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
-      System.out.println("START CURSOR HERE");
     }
 
     Query query = getQueryFromParams(request, currentUser);
