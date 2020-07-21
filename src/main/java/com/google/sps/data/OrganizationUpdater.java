@@ -44,12 +44,7 @@ public final class OrganizationUpdater {
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
     boolean isMaintainer = user.isMaintainer();
-    boolean isModerator = false;
-
-    // Gets moderator status from checking its moderatingOrgs size.
-    if (user.getModeratingOrgs().size() > 0) {
-      isModerator = true;
-    }
+    boolean isModerator = isModerator = user.isModeratorOfAnyOrg();
 
     requiresMaintainer.add("isApproved");
     requiresModerator.add("moderatorList");
@@ -119,8 +114,14 @@ public final class OrganizationUpdater {
 
   private void setOrganizationProperty(String propertyKey, String formValue) {
     if(propertyKey.equals("moderatorList")) {
-      ArrayList<String> newModeratorList = translateEmailsToIds(new ArrayList<String> (Arrays.asList(formValue.split("\\s*,\\s*"))));
+      // Separates emails entered into moderatorList form value into IDs for moderatorList and Emails for invitedModerators.
+      ArrayList<String> newModeratorList = new ArrayList<String>();
+      ArrayList<String> newInvitedModerators = new ArrayList<String>();
+
+      retrieveModeratorListAndInvitedModerators(new ArrayList<String> (Arrays.asList(formValue.split("\\s*,\\s*"))), newModeratorList, newInvitedModerators);
+
       this.entity.setProperty("moderatorList", newModeratorList);
+      this.entity.setProperty("invitedModerators", newInvitedModerators);
     } else if(propertyKey.equals("isApproved")) {
       if(formValue.equals("approved")) {
         this.entity.setProperty("isApproved", true);
@@ -132,27 +133,23 @@ public final class OrganizationUpdater {
     }
   }
 
-  private ArrayList<String> translateEmailsToIds(ArrayList<String> emails) {
-    ArrayList<String> userIds = new ArrayList<String>();
-    Set<String> invitedModerators = new HashSet<String>();
+  // Based on the regex parsed list of emails, method will add appropriate userIds or userEmails to moderatorIds or invitedModeratorEmails, respectively.
+  private void retrieveModeratorListAndInvitedModerators(ArrayList<String> emails, ArrayList<String> moderatorIds, ArrayList<String> invitedModeratorEmails) {
     for(String email : emails) {
       GivrUser newUser = GivrUser.getUserByEmail(email);
       String userId = newUser.getUserId();
-      // If failed will return "" (?) and user will be added to the invited moderator property 
-      // and not the offical list
-      if(userId.equals("")) {
-        if (this.entity.getProperty("invitedModerators") != null) {
-          invitedModerators = new HashSet<String>();
+      // UserId can equal "" if that user has never logged in. User email will be added to the invitedModerators list, and not the moderatorList.
+      if (userId.equals("")) {
+        if (this.entity.getProperty("invitedModerators") == null) {
+          invitedModeratorEmails = new ArrayList<String>();
         } else {
-          invitedModerators = (HashSet) this.entity.getProperty("invitedModerators");
+          invitedModeratorEmails = (ArrayList) this.entity.getProperty("invitedModerators");
         }
-        invitedModerators.add(email);
-        this.entity.setProperty("invitedModerators", invitedModerators);
+        invitedModeratorEmails.add(email);
       } else {
-        userIds.add(newUser.getUserId());
+        moderatorIds.add(newUser.getUserId());
       }
     }
-    return userIds;
   }
 
   private void updateNonFormProperties(GivrUser user, boolean forRegistration, EmbeddedEntity historyUpdate) {
@@ -173,7 +170,7 @@ public final class OrganizationUpdater {
       changeHistory.add(historyUpdate);
 
       // Upon initial creation of an organization, the list of invitedModerators will be empty.
-      Set<String> invitedModerators = new HashSet<String>();
+      ArrayList<String> invitedModerators = new ArrayList<String>();
 
       this.entity.setProperty("creationTimeStampMillis", millisecondSinceEpoch);
       this.entity.setProperty("isApproved", false);
@@ -192,14 +189,14 @@ public final class OrganizationUpdater {
   public void updateInvitedModerator(GivrUser user) {
     // Will be called if an invited moderator logs in, will be removing them from the 
     // invited moderator set and adding there user id to the moderator list
-    Set<String> invitedModerators = (HashSet) this.entity.getProperty("invitedModerators");
+    ArrayList<String> invitedModerators = (ArrayList) this.entity.getProperty("invitedModerators");
     String userEmail = user.getUserEmail();
 
     if (invitedModerators == null) {
       return;
     }
 
-    if(!invitedModerators.isEmpty() && invitedModerators.contains(userEmail)) {
+    if(invitedModerators.contains(userEmail)) {
         invitedModerators.remove(userEmail);
         ArrayList<String> moderatorList = (ArrayList) this.entity.getProperty("moderatorList");
         moderatorList.add(user.getUserId());
