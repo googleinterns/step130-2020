@@ -85,10 +85,13 @@ class FilterTagArea {
     this.addFilterButton.setAttribute("id", "add-filter-button");
     this.addFilterButton.textContent = "+ Add Filter";
     this.addFilterButton.addEventListener('click', () => {
-      this.filterTypeInput.appendChild(this.filterDataList);
-      this.filterEntryArea.appendChild(this.filterEntryClose);
-      this.filterEntryArea.appendChild(this.filterTypeInput);
-      this.activeFilterArea.appendChild(this.filterEntryArea);
+      /* If the user is on the second part of entering a filter, add filter is disabled */
+      if (!this.filterEntryArea.contains(this.filterParamInput)) {
+        this.filterTypeInput.appendChild(this.filterDataList);
+        this.filterEntryArea.appendChild(this.filterEntryClose);
+        this.filterEntryArea.appendChild(this.filterTypeInput);
+        this.activeFilterArea.appendChild(this.filterEntryArea);
+      }
     });
     this.activeFilterArea.appendChild(this.addFilterButton);
 
