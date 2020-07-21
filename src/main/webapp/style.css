@@ -82,6 +82,10 @@
   float: right;
 }
 
+#organization-list {
+  margin: 0 auto;
+}
+
 .organization {
   display: flex;
   justify-content: center;
