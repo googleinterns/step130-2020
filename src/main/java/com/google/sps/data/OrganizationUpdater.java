@@ -59,7 +59,7 @@ public final class OrganizationUpdater {
     properties.put("org-description","orgDescription");
     properties.put("approval", "isApproved");
     properties.put("moderator-list", "moderatorList");
-    properties.put("org-resource-category", "resourceCategories");
+    properties.put("org-resource-categories", "resourceCategories");
 
     // Updates entity properties from form
     for(Map.Entry<String, String> entry : properties.entrySet()) {
@@ -124,8 +124,7 @@ public final class OrganizationUpdater {
           this.entity.setProperty("isApproved", false);
       }
     } else if (propertyKey.equals("resourceCategories")) {
-      ArrayList<String> resourceList = new ArrayList<String>();
-      resourceList.add(formValue);
+      ArrayList<String> resourceList = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
       this.entity.setProperty("resourceCategories", resourceList);
     } else {
         this.entity.setProperty(propertyKey, formValue);
