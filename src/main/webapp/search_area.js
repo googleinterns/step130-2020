@@ -82,6 +82,13 @@ class SearchArea {
     this.searchArea.appendChild(this.organizationPopupArea);
   }
 
+  async refreshOrganizationList() {
+    this.organizationObjectsList = [];
+    this.organizationListArea.innerHTML = "";
+    await this.getListOfOrganizations();
+    this.renderListOfOrganizations();
+  }
+
   renderListOfOrganizations() {
     this.organizationObjectsList.forEach((organization) => {
       const newOrganization = new Organization(organization, this.isMaintainer, this.forOrganizationsPage);

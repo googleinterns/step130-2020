@@ -99,29 +99,10 @@ class FilterTagArea {
   }
 
   async addFilterTag(urlParamKey, urlParamValue) {
-    let filterTagArea = document.createElement("div");
-    filterTagArea.setAttribute("class", "filter-tag-area");
-    /* ID is given to zipcode tag so it can be removed if new one is added */
-    if (urlParamKey === "zipcode") {
-      filterTagArea.setAttribute("id", "zipcodeTag");
-    }
- 
-    let filterTagLabel = document.createElement("div");
-    filterTagLabel.textContent = urlParamValue;
-    filterTagLabel.setAttribute("class", "filter-tag-label");
-    filterTagArea.appendChild(filterTagLabel);
- 
-    let filterTagClose = document.createElement("div");
-    filterTagClose.addEventListener('click', () => this.removeFilterTag(urlParamKey, urlParamValue, filterTagArea));
-    filterTagClose.textContent = 'X';
-    filterTagClose.setAttribute("class", "filter-tag-close");
-    filterTagArea.appendChild(filterTagClose);
+    let filterTag = new FilterTag(this, urlParamKey, urlParamValue);
 
-    this.activeFilterArea.appendChild(filterTagArea);
-    this.parentSearchArea.organizationObjectsList = [];
-    this.parentSearchArea.organizationListArea.innerHTML = "";
-    await this.parentSearchArea.getListOfOrganizations();
-    this.parentSearchArea.renderListOfOrganizations();
+    this.activeFilterArea.appendChild(filterTag.filterTagArea);
+    this.parentSearchArea.refreshOrganizationList()
   }
 
   async removeFilterTag(urlParamKey, urlParamValue, filterTag) {
@@ -138,10 +119,7 @@ class FilterTagArea {
         this.parentSearchArea.filterParams.set(urlParamKey, filterArray);
       }
     }
-    this.activeFilterArea.removeChild(filterTag);
-    this.parentSearchArea.organizationObjectsList = [];
-    this.parentSearchArea.organizationListArea.innerHTML = "";
-    await this.parentSearchArea.getListOfOrganizations();
-    this.parentSearchArea.renderListOfOrganizations();
+    this.activeFilterArea.removeChild(filterTag.filterTagArea);
+    this.parentSearchArea.refreshOrganizationList();
   }
 }
