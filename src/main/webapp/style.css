@@ -108,6 +108,11 @@
   justify-content: center;
 }
 
+.organization-popup-address {
+  display: flex;
+  justify-content: center;
+}
+
 .organization-popup-url-link {
   text-decoration: none;
   color: #666666;
