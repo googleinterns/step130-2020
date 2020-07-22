@@ -132,7 +132,6 @@ public final class AddMaintainerServletTest {
 
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
     HttpServletResponse mockResponse = mock(HttpServletResponse.class);
-    // HttpServletResponse response = new HttpServletResponse();
     
     when(mockRequest.getParameter("userEmail")).thenReturn("jennb206+test2@gmail.com");
 
@@ -141,7 +140,6 @@ public final class AddMaintainerServletTest {
     AddMaintainerServlet servlet = new AddMaintainerServlet();
     try {
       servlet.doPost(mockRequest, mockResponse);
-      // servlet.doPost(mockRequest, response);
     } catch(IOException exception) {
       logger.log(Level.SEVERE, "The doPost method in AddMaintainerServlet has failed.");
     }
@@ -153,6 +151,9 @@ public final class AddMaintainerServletTest {
     }
   }
 
+  /**
+   * Tests method addNewMaintainerToDatastore by checking number of entities within Datastore.
+   */
   @Test
   public void addNewMaintainerToDatastoreTest() {
     helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
