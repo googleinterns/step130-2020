@@ -140,9 +140,5 @@ class SearchArea {
     }
     this.form.reset();
     this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);
-    this.organizationObjectsList = [];
-    this.organizationListArea.innerHTML = "";
-    await this.getListOfOrganizations();
-    this.renderListOfOrganizations();
   }
 }

@@ -65,7 +65,7 @@ class FilterTagArea {
     /* After the type has been chosen, the actual filter param is entered here */
     this.filterParamInput = document.createElement("input");
     this.filterParamInput.setAttribute("class", "filter-input-area");
-    this.filterParamLabel = document.createElement("div");
+    this.filterParamLabel = document.createElement("label");
     this.filterParamLabel.setAttribute("class", "filter-tag-label");
     this.filterParamInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
@@ -98,7 +98,7 @@ class FilterTagArea {
     this.parentSearchArea.organizationSearchArea.appendChild(this.activeFilterArea);
   }
 
-  addFilterTag(urlParamKey, urlParamValue) {
+  async addFilterTag(urlParamKey, urlParamValue) {
     let filterTagArea = document.createElement("div");
     filterTagArea.setAttribute("class", "filter-tag-area");
     /* ID is given to zipcode tag so it can be removed if new one is added */
@@ -118,6 +118,10 @@ class FilterTagArea {
     filterTagArea.appendChild(filterTagClose);
 
     this.activeFilterArea.appendChild(filterTagArea);
+    this.parentSearchArea.organizationObjectsList = [];
+    this.parentSearchArea.organizationListArea.innerHTML = "";
+    await this.parentSearchArea.getListOfOrganizations();
+    this.parentSearchArea.renderListOfOrganizations();
   }
 
   async removeFilterTag(urlParamKey, urlParamValue, filterTag) {
