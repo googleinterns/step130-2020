@@ -87,6 +87,7 @@ class Organization {
     popupDescriptionElement.textContent = this.organization.description;
 
     const popupEditElement = document.createElement('button');
+    const popupDeleteElement = document.createElement("button");
     if(this.forOrganizationsPage) {
       popupEditElement.classList.add("enter-button");
       popupEditElement.textContent = "Edit";
@@ -95,6 +96,14 @@ class Organization {
         editFormArea.appendChild(this.editOrganization(this.organization));
         editFormArea.classList.remove("hide-edit-modal");
         editFormArea.classList.add("show-edit-modal")
+      });
+      popupDeleteElement.classList.add("enter-button");
+      popupDeleteElement.textContent = "Delete";
+      popupDeleteElement.addEventListener('click', () => {
+        const deleteFormArea = document.getElementById("delete-form-area");
+        deleteFormArea.appendChild(this.deleteOrganization(this.organization));
+        deleteFormArea.classList.remove("hide-delete-modal");
+        deleteFormArea.classList.add("show-delete-modal")
       });
     }
 
@@ -110,6 +119,7 @@ class Organization {
     this.popupElement.appendChild(popupDescriptionElement);
     if(this.forOrganizationsPage) {
       this.popupElement.appendChild(popupEditElement);
+      this.popupElement.appendChild(popupDeleteElement);
     }
     return this.popupElement;
   }
@@ -220,22 +230,6 @@ class Organization {
     orgPhoneEntry.setAttribute("name", "org-phone-num");
     orgPhoneEntry.classList.add("edit-entry");
     editForm.appendChild(orgPhoneEntry);
-
-    // label and entry area for organization zipcode
-    const orgZipcodeLabel = document.createElement("label");
-    orgZipcodeLabel.setAttribute("for", "zipcode");
-    orgZipcodeLabel.setAttribute("id", "zipcode-label");
-    orgZipcodeLabel.textContent = "Zipcode: ";
-    editForm.appendChild(orgZipcodeLabel);
-
-    const orgZipcodeEntry = document.createElement("input");
-    orgZipcodeEntry.setAttribute("type", "text");
-    orgZipcodeEntry.setAttribute("id", "zipcode");
-    orgZipcodeEntry.setAttribute("pattern", "[0-9]{5}");
-    orgZipcodeEntry.setAttribute("value", `${organization.zipcode}`);
-    orgZipcodeEntry.setAttribute("name", "org-zip-code");
-    orgZipcodeEntry.classList.add("edit-entry");
-    editForm.appendChild(orgZipcodeEntry);
 
     // label and entry area for organization url-link
     const orgUrlLinkLabel = document.createElement("label");
@@ -350,4 +344,50 @@ class Organization {
   convertIdsToEmails(moderators) {
       return "placeholder";
   }
+
+  deleteOrganization(organization) {
+    
+    //use param list to pass in id to servlet
+    const params = new URLSearchParams();
+    params.append("id", organization.id);
+
+    const deleteFormAreaContent = document.createElement("div");
+    deleteFormAreaContent.setAttribute("id", "delete-form-area-content");
+
+    const warningText = document.createElement("div");
+    warningText.setAttribute("id", "delete-warning-text");
+    warningText.textContent = "Are you sure you want to delete this organization?";
+    deleteFormAreaContent.appendChild(warningText);
+
+    const buttonOptionsArea = document.createElement("div");
+    buttonOptionsArea.setAttribute("id", "cancel-delete-buttons-area");
+
+    const cancelButtonElement = document.createElement('button');
+    cancelButtonElement.classList.add("enter-button");
+    cancelButtonElement.textContent = 'Cancel';
+    cancelButtonElement.addEventListener('click', () => {
+      // Remove the popup from the DOM.
+      const deleteFormArea = document.getElementById("delete-form-area");
+      deleteFormArea.classList.remove("show-delete-modal");
+      deleteFormArea.classList.add("hide-delete-modal")
+      deleteFormAreaContent.remove();
+    });
+    buttonOptionsArea.appendChild(cancelButtonElement);
+
+    const deleteButtonElement = document.createElement('button');
+    deleteButtonElement.classList.add("enter-button");
+    deleteButtonElement.textContent = 'Delete';
+    deleteButtonElement.addEventListener('click', () => {
+      fetch('/delete-organization', {method: 'POST', body: params});
+      // Remove the popup from the DOM.
+      const deleteFormArea = document.getElementById("delete-form-area");
+      deleteFormArea.classList.remove("show-delete-modal");
+      deleteFormArea.classList.add("hide-delete-modal")
+      deleteFormAreaContent.remove();
+    });
+    buttonOptionsArea.appendChild(deleteButtonElement);
+    deleteFormAreaContent.appendChild(buttonOptionsArea);
+    return deleteFormAreaContent;
+  }
+
 }

@@ -134,13 +134,15 @@
 
 .hide-popup,
 .hide-edit-modal,
-.hide-time-area {
+.hide-time-area,
+.hide-delete-modal {
   display: none;
 }
 
 .show-popup,
 .show-edit-modal,
-.show-time-area {
+.show-time-area,
+.show-delete-modal {
   display: block;
 }
 
@@ -189,7 +191,8 @@
   box-sizing: border-box;
 }
 
-#edit-form-area {
+#edit-form-area,
+#delete-form-area {
   position: fixed;
   z-index: 1;
   left: 0;
@@ -200,7 +203,8 @@
   background-color: rgba(0,0,0,0.4);
 }
 
-#edit-form-area-content {
+#edit-form-area-content,
+#delete-form-area-content {
   display: flex;
   flex-direction: column;
   background-color: #fefefe;
@@ -208,6 +212,10 @@
   padding: 20px;
   border: 1px solid #888;
   width: 70%;
+}
+
+#delete-form-area-content {
+  margin-top: 200px;
 }
 
 .day-option-area {
@@ -300,4 +308,13 @@
   height: 5%;
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
+}
+
+#cancel-delete-buttons-area {
+  display: flex;
+  justify-content: center;
+}
+
+#delete-warning-text {
+  margin: 0 auto;
 }
