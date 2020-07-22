@@ -23,6 +23,8 @@ public final class Organization {
   private String name;
   private String email;
   private String address;
+  private String city;
+  private String state;
   private String zipcode;
   private String description;
   private String phoneNum;
@@ -40,6 +42,8 @@ public final class Organization {
     this.name = (String) entity.getProperty("orgName");
     this.email = (String) entity.getProperty("orgEmail");
     this.address = (String) entity.getProperty("orgStreetAddress");
+    this.city = (String) entity.getProperty("orgCity");
+    this.state = (String) entity.getProperty("orgState");
     this.zipcode = (String) entity.getProperty("orgZipCode");
     this.description = (String) entity.getProperty("orgDescription");
     this.phoneNum = (String) entity.getProperty("orgPhoneNum");
