@@ -221,7 +221,7 @@ class Organization {
     // label and entry area for organization zipcode
     const orgZipcodeLabel = document.createElement("label");
     orgZipcodeLabel.setAttribute("for", "zipcode");
-    orgZipcodeLabel.setAttribute("id", "zipcode-label");
+    orgZipcodeLabel.setAttribute("id", "zipcode-edit-label");
     orgZipcodeLabel.textContent = "Zipcode: ";
     editForm.appendChild(orgZipcodeLabel);
 
