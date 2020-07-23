@@ -30,13 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 public final class OrganizationUpdater {
 
   enum DayOfWeek {
-  Monday,
-  Tuesday,
-  Wednesday,
-  Thursday,
-  Friday,
-  Saturday,
-  Sunday
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday
   }
 
   private Entity entity;
