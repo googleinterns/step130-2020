@@ -14,11 +14,15 @@
 
 package com.google.sps.servlets;
 
+
+import com.google.appengine.api.datastore.Entity;
+import java.util.ArrayList;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import java.io.IOException;
+import com.google.sps.data.GivrUser;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,11 +34,30 @@ public class DeleteOrganizationServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     long id = Long.parseLong(request.getParameter("id"));
 
     Key DistributorEntityKey = KeyFactory.createKey("Distributor", id);
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Entity organizationEntity = null;
+
+    // try catch for compilation purposes, servlet will not be called without a valid id param
+    try {
+      organizationEntity = datastore.get(DistributorEntityKey);
+    } catch(com.google.appengine.api.datastore.EntityNotFoundException err) {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
+    }
+
+    ArrayList<String> moderators = (ArrayList) organizationEntity.getParameter("moderatorList");
     datastore.delete(DistributorEntityKey);
+
+
+    // After deleting organization from datastore, go through its list of moderators and correctly update the
+    // moderating orgs they are now apart of
+    for(String userId : moderators) {
+        GivrUser user = GivrUser.getUserById(userId);
+        user.setModeratingOrgsAndUpdateOrgs();
+    }
 
     // Redirect back to the HTML page.
     response.sendRedirect("/organizations.html");
