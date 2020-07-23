@@ -253,18 +253,19 @@ class Organization {
 
     // label and entry area for organization resource category list
     const orgResourceCategoryListLabel = document.createElement("label");
-    orgResourceCategoryListLabel.setAttribute("for", "org-resource-category");
+    orgResourceCategoryListLabel.setAttribute("for", "org-resource-categories");
     orgResourceCategoryListLabel.setAttribute("id", "resource-category-list-label");
     orgResourceCategoryListLabel.textContent = "Resource Categories: ";
     editForm.appendChild(orgResourceCategoryListLabel);
 
-    const orgResourceCategory = document.createElement("textarea");
-    orgResourceCategory.setAttribute("type", "text");
-    orgResourceCategory.setAttribute("id", "org-resource-category");
-    orgResourceCategory.setAttribute("name", "org-resource-category");
-    orgResourceCategory.classList.add("edit-entry");
-    orgResourceCategory.textContent = JSON.stringify(organization.resourceCategories);
-    editForm.appendChild(orgResourceCategory);
+    const orgResourceCategories = document.createElement("textarea");
+    orgResourceCategories.setAttribute("type", "text");
+    orgResourceCategories.setAttribute("id", "org-resource-categories");
+    orgResourceCategories.setAttribute("name", "org-resource-categories");
+    orgResourceCategories.classList.add("edit-entry");
+    const resourceArray = organization.resourceCategories;
+    orgResourceCategories.textContent = resourceArray.join(",  ");
+    editForm.appendChild(orgResourceCategories);
 
     // label and entry area for organization moderator list
     const orgModeratorListLabel = document.createElement("label");
