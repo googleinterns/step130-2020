@@ -23,6 +23,8 @@ public final class Organization {
   private String name;
   private String email;
   private String address;
+  private String city;
+  private String state;
   private String zipcode;
   private String description;
   private String phoneNum;
@@ -30,6 +32,7 @@ public final class Organization {
   private long lastEditedTimeStampMillis;
   private boolean isApproved;
   private String urlLink;
+  private ArrayList<String> resourceCategories;
   private ArrayList<String> moderators;
 
   /* An Organization Object takes in an entity and assigns all of its fields based on the entity's
@@ -40,6 +43,8 @@ public final class Organization {
     this.name = (String) entity.getProperty("orgName");
     this.email = (String) entity.getProperty("orgEmail");
     this.address = (String) entity.getProperty("orgStreetAddress");
+    this.city = (String) entity.getProperty("orgCity");
+    this.state = (String) entity.getProperty("orgState");
     this.zipcode = (String) entity.getProperty("orgZipCode");
     this.description = (String) entity.getProperty("orgDescription");
     this.phoneNum = (String) entity.getProperty("orgPhoneNum");
@@ -47,6 +52,7 @@ public final class Organization {
     this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
     this.isApproved = (boolean) entity.getProperty("isApproved");
     this.urlLink = (String) entity.getProperty("orgUrl");
+    this.resourceCategories = (ArrayList) entity.getProperty("resourceCategories");
     this.moderators = (ArrayList) entity.getProperty("moderatorList");
   }
 }

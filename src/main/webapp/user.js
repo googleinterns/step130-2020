@@ -85,21 +85,29 @@ class User {
     const navBar = document.getElementById("nav-bar");
     navBar.textContent = "";
 
+    const siteTitle = document.createElement("div");
+    siteTitle.setAttribute("id", "site-title");
+    siteTitle.textContent = "Givr";
+    navBar.appendChild(siteTitle);
+
+    const navLinksArea = document.createElement("div");
+    navLinksArea.setAttribute("id", "nav-links");
+
     const helpNearMeLink = document.createElement("a");
     helpNearMeLink.setAttribute("href", "index.html");
     helpNearMeLink.textContent = "Help Near Me";
-    navBar.appendChild(helpNearMeLink);
+    navLinksArea.appendChild(helpNearMeLink);
 
     const registrationLink = document.createElement("a");
     registrationLink.setAttribute("href", "registration.html");
     registrationLink.textContent = "Register Organization";
-    navBar.appendChild(registrationLink);
+    navLinksArea.appendChild(registrationLink);
 
     if (this.isMaintainer) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "Organizations";
-      navBar.appendChild(organizationsLink);
+      navLinksArea.appendChild(organizationsLink);
 
       const addMaintainerPopup = this.createAddMaintainerPopup();
       const addMaintainerLabel = document.createElement("a");
@@ -116,13 +124,14 @@ class User {
         addMaintainerPopup.classList.add("show-popup");
         addMaintainerPopup.classList.remove("hide-popup");
       });
-      navBar.appendChild(addMaintainerLabel);
+      navLinksArea.appendChild(addMaintainerLabel);   
     } else if (this.isModerator) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");
       organizationsLink.textContent = "My Organizations";
-      navBar.appendChild(organizationsLink);
+      navLinksArea.appendChild(organizationsLink);
     }
+      navBar.appendChild(navLinksArea);
   }
 }
 
