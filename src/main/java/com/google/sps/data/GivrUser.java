@@ -53,8 +53,6 @@ public final class GivrUser {
     this.isLoggedIn = isLoggedIn;
     this.url = url;
     this.email = email;
-
-    setModeratingOrgsAndUpdateOrgs();
   }
 
   public String getUserId() {
@@ -116,7 +114,14 @@ public final class GivrUser {
     datastore.put(entity);
   }
 
-  public void setModeratingOrgsAndUpdateOrgs() {
+  public void updateModeratingOrgs() {
+    for (int i = 0; i < this.moderatingOrgs.size(); i++) {
+      OrganizationUpdater organizationUpdater = new OrganizationUpdater(this.moderatingOrgs.get(i));
+      organizationUpdater.updateInvitedModerator(this);
+    }
+  }
+
+  public void setModeratingOrgs() {
     // There is no need to set moderatingOrgs for maintainers.
     if (this.isMaintainer) {
       return;
@@ -138,11 +143,6 @@ public final class GivrUser {
 
     for (Entity entity: preparedQuery.asIterable()) {
       this.moderatingOrgs.add(entity);
-    }
-
-    for (int i = 0; i < this.moderatingOrgs.size(); i++) {
-      OrganizationUpdater organizationUpdater = new OrganizationUpdater(this.moderatingOrgs.get(i));
-      organizationUpdater.updateInvitedModerator(this);
     }
   }
 
