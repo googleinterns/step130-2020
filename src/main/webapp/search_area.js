@@ -43,13 +43,14 @@ class SearchArea {
     this.organizationObjectsList = [];
 
     this.zipcodeFormArea = document.createElement("div");
+    this.zipcodeFormArea.setAttribute("id", "zipcode-form-area");
     this.form = document.createElement("form");
     this.form.setAttribute("onsubmit", "return false");
 
     this.zipcodeFormLabel = document.createElement("label");
     this.zipcodeFormLabel.setAttribute("for", "zipcode-entry");
     this.zipcodeFormLabel.setAttribute("id", "zipcode-label");
-    this.zipcodeFormLabel.textContent = "Enter a zipcode: ";
+    this.zipcodeFormLabel.textContent = "Enter Zipcode: ";
     this.form.appendChild(this.zipcodeFormLabel);
 
     this.zipcodeFormEntry = document.createElement("input");
