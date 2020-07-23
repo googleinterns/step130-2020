@@ -21,63 +21,7 @@ class FilterTagArea {
     this.activeFilterArea = document.createElement("div");
     this.activeFilterArea.setAttribute("class", "filter-holder");
 
-    /* filterEntryArea is displayed when the user clicks add filter. It first asks for a type of filter, 
-       then asks the user to enter the keyword for that filter type */
-    this.filterEntryArea = document.createElement("div");
-    this.filterEntryArea.setAttribute("class", "filter-tag-area");
-    this.filterEntryArea.setAttribute("id", "filter-entry");
-
-    this.filterEntryClose = document.createElement("div");
-    this.filterEntryClose.textContent = 'X';
-    this.filterEntryClose.setAttribute("class", "filter-tag-close");
-    this.filterEntryClose.addEventListener('click', () => {
-      this.filterEntryArea.textContent = "";
-      this.activeFilterArea.removeChild(this.filterEntryArea)
-    });
-
-    /* The user selects the type of property they want to filter by in filterTypeInput*/
-    this.filterTypeInput = document.createElement("input");
-    this.filterTypeInput.setAttribute("list", "filter-datalist");
-    this.filterTypeInput.setAttribute("class", "filter-input-area");
-    this.filterTypeInput.setAttribute("placeholder", "Filter by:");
-    this.filterTypeInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        this.filterParamLabel.textContent = `${this.filterTypeInput.value}:`;
-        this.filterTypeInput.removeChild(this.filterDataList);
-        this.filterEntryArea.removeChild(this.filterTypeInput);
-        this.filterEntryArea.appendChild(this.filterParamInput);
-        this.filterEntryArea.appendChild(this.filterParamLabel);
-      }
-    });
-
-    this.filterDataList = document.createElement("datalist");
-    this.filterDataList.setAttribute("id", "filter-datalist");
-    this.optionMap = new Map();
-    this.optionMap.set("Organization Name", "orgNames");
-    this.optionMap.set("Address", "orgStreetAddresses");
-    this.optionMap.set("Available Resources", "resourceCategories");
-    for (const optionKey of this.optionMap.keys()) {
-      const option = document.createElement("option");
-      option.value = optionKey;
-      this.filterDataList.appendChild(option);
-    }
-
-    /* After the type has been chosen, the actual filter param is entered here */
-    this.filterParamInput = document.createElement("input");
-    this.filterParamInput.setAttribute("class", "filter-input-area");
-    this.filterParamLabel = document.createElement("label");
-    this.filterParamLabel.setAttribute("class", "filter-tag-label");
-    this.filterParamInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        /* If the user enters an unsupported type, it is ignored on the servlet side */
-        this.parentSearchArea.setUrlParamValue(this.optionMap.get(this.filterTypeInput.value), this.filterParamInput.value);
-        this.filterParamInput.value = "";
-        this.filterTypeInput.value = "";
-        this.filterEntryArea.removeChild(this.filterParamInput);
-        this.filterEntryArea.removeChild(this.filterParamLabel);
-        this.activeFilterArea.removeChild(this.filterEntryArea);
-      }
-    });
+    this.filterEntry = new FilterEntry(this.activeFilterArea, this.parentSearchArea);
 
     /* This button does not move- when clicked it opens a filter entry area */
     this.addFilterButton = document.createElement("div");
@@ -86,11 +30,8 @@ class FilterTagArea {
     this.addFilterButton.textContent = "+ Add Filter";
     this.addFilterButton.addEventListener('click', () => {
       /* If the user is on the second part of entering a filter, add filter is disabled */
-      if (!this.filterEntryArea.contains(this.filterParamInput)) {
-        this.filterTypeInput.appendChild(this.filterDataList);
-        this.filterEntryArea.appendChild(this.filterEntryClose);
-        this.filterEntryArea.appendChild(this.filterTypeInput);
-        this.activeFilterArea.appendChild(this.filterEntryArea);
+      if (!this.filterEntry.hasFilterField()) {
+        this.filterEntry.setupFilterEntry()
       }
     });
     this.activeFilterArea.appendChild(this.addFilterButton);
@@ -100,7 +41,6 @@ class FilterTagArea {
 
   async addFilterTag(urlParamKey, urlParamValue) {
     let filterTag = new FilterTag(this, urlParamKey, urlParamValue);
-
     this.activeFilterArea.appendChild(filterTag.filterTagArea);
     this.parentSearchArea.refreshOrganizationList()
   }
