@@ -118,10 +118,11 @@ public final class OrganizationUpdater {
   private void setOrganizationProperty(String propertyKey, String formValue) {
     if(propertyKey.equals("moderatorList")) {
       // Separates emails entered into moderatorList form value into IDs for moderatorList and Emails for invitedModerators.
-      ArrayList<String> newModeratorList = new ArrayList<String>();
-      ArrayList<String> newInvitedModerators = new ArrayList<String>();
 
-      retrieveModeratorListAndInvitedModerators(new ArrayList<String> (Arrays.asList(formValue.split("\\s*,\\s*"))), newModeratorList, newInvitedModerators);
+      ArrayList<String> parsedEmailList = new ArrayList<String> (Arrays.asList(formValue.split("\\s*,\\s*")));
+       // Based on the regex parsed list of emails, following methods will add appropriate userIds or userEmails to moderatorIds or invitedModeratorEmails, respectively.
+      ArrayList<String> newModeratorList = findAndRetrieveModeratorList(parsedEmailList);
+      ArrayList<String> newInvitedModerators = findAndRetrieveInvitedModerators(parsedEmailList);
 
       this.entity.setProperty("moderatorList", newModeratorList);
       this.entity.setProperty("invitedModerators", newInvitedModerators);
@@ -129,7 +130,7 @@ public final class OrganizationUpdater {
       if(formValue.equals("approved")) {
         this.entity.setProperty("isApproved", true);
       } else {
-          this.entity.setProperty("isApproved", false);
+        this.entity.setProperty("isApproved", false);
       }
     } else if (propertyKey.equals("resourceCategories")) {
       ArrayList<String> resourceList = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
@@ -139,8 +140,8 @@ public final class OrganizationUpdater {
     }
   }
 
-  // Based on the regex parsed list of emails, method will add appropriate userIds or userEmails to moderatorIds or invitedModeratorEmails, respectively.
-  private void retrieveModeratorListAndInvitedModerators(ArrayList<String> emails, ArrayList<String> moderatorIds, ArrayList<String> invitedModeratorEmails) {
+  private ArrayList<String> findAndRetrieveInvitedModerators(ArrayList<String> emails) {
+    ArrayList<String> invitedModeratorEmails = new ArrayList<String>();
     for(String email : emails) {
       GivrUser newUser = GivrUser.getUserByEmail(email);
       String userId = newUser.getUserId();
@@ -152,10 +153,22 @@ public final class OrganizationUpdater {
           invitedModeratorEmails = (ArrayList) this.entity.getProperty("invitedModerators");
         }
         invitedModeratorEmails.add(email);
-      } else {
+      }
+    }
+    return invitedModeratorEmails;
+  }
+
+  private ArrayList<String> findAndRetrieveModeratorList(ArrayList<String> emails) {
+    ArrayList<String> moderatorIds = new ArrayList<String>();
+    for(String email : emails) {
+      GivrUser newUser = GivrUser.getUserByEmail(email);
+      String userId = newUser.getUserId();
+      // UserId can equal "" if that user has never logged in. User email will be added to the invitedModerators list, and not the moderatorList.
+      if (!userId.equals("")) {
         moderatorIds.add(newUser.getUserId());
       }
     }
+    return moderatorIds;
   }
 
   private void updateNonFormProperties(GivrUser user, boolean forRegistration, EmbeddedEntity historyUpdate) {
@@ -195,19 +208,19 @@ public final class OrganizationUpdater {
   public void updateInvitedModerator(GivrUser user) {
     // Will be called if an invited moderator logs in, will be removing them from the 
     // invited moderator set and adding there user id to the moderator list
+    if (this.entity.getProperty("invitedModerators") == null) {
+      return;
+    }
     ArrayList<String> invitedModerators = (ArrayList) this.entity.getProperty("invitedModerators");
     String userEmail = user.getUserEmail();
 
-    if (invitedModerators == null) {
-      return;
-    }
-
     if(invitedModerators.contains(userEmail)) {
-        invitedModerators.remove(userEmail);
-        ArrayList<String> moderatorList = (ArrayList) this.entity.getProperty("moderatorList");
-        moderatorList.add(user.getUserId());
-        this.entity.setProperty("moderatorList", moderatorList);
-        this.entity.setProperty("invitedModerators", invitedModerators);
+      invitedModerators.remove(userEmail);
+      ArrayList<String> moderatorList = (ArrayList) this.entity.getProperty("moderatorList");
+
+      moderatorList.add(user.getUserId());
+      this.entity.setProperty("moderatorList", moderatorList);
+      this.entity.setProperty("invitedModerators", invitedModerators);
     }
   }
 }
