@@ -7,36 +7,35 @@
   flex-direction: column;
 }
 
-#help-near-me-content a,
-#organizations-content a {
+#nav-links a{
   color: #666666;
   text-decoration: none;
   border-bottom: 3px solid transparent;
   margin: 0 20px;
 }
-
-#help-near-me-content a:hover,
-#organizations-content a:hover {
-  border-bottom: 3px solid #666666;
-}
  
 #site-title {
   display: flex;
-  margin-top: 1%;
-  justify-content: space-between;
-  font-size: 36px;
+  justify-content: center;
+  font-size: 30px;
+  margin: auto 5%;
+}
+
+#nav-links {
+  margin: auto 10%;
 }
 
 #nav-bar {
   display: flex;
-  justify-content: center;
-  font-size: 28px;
-  margin: 1% 0 2% 0;
+  justify-content: space-between;
+  font-size: 22px;
+  height: 70px;
+  margin-bottom: 40px;
+  border-bottom: 3px solid #a6a6a6;
 }
 
-#site-title {
-  justify-content: center;
-  margin-bottom: 10px;
+#zipcode-form-area {
+  margin-left: 150px;
 }
 
 #zipcode-form {
@@ -48,7 +47,7 @@
 #maintainer-email-entry,
 #zipcode-entry {
   width: 20%;
-  margin: 8px 0;
+  padding: 5px;
   display: inline-block;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -74,7 +73,7 @@
   font-size: 15px;
   cursor: pointer;
   width: 100px;
-  margin-left: 10px;
+  margin: 10px 0px 0px 10px;
   padding: 5px 20px;
 }
 
@@ -84,7 +83,7 @@
 
 #organization-list {
   margin: 0 auto;
-
+  width: 700px;
   height: 495px;
   overflow-y: scroll;
 }
@@ -93,8 +92,7 @@
   display: flex;
   justify-content: center;
   margin: 0px 10px 20px 10px;
-  border-radius: 15px;
-  border: 2px solid #000000;
+  border: 2px solid #666666;
   padding: 20px;
   cursor: pointer;
 }
@@ -102,6 +100,26 @@
 .organization-name,
 .organization-popup-name {
   font-size: 30px;
+}
+
+.organization-popup-name {
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+}
+
+.organization-popup-address {
+  display: flex;
+  justify-content: center;
+}
+
+.organization-popup-url-link {
+  text-decoration: none;
+  color: #666666;
+}
+
+.organization-popup-url-link:hover{
+  border-bottom: 3px solid #666666;
 }
 
 #search-area,

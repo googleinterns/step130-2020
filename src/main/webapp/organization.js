@@ -58,33 +58,33 @@ class Organization {
     this.popupElement.classList.add("organization-popup");
 
     const popupNameElement = document.createElement('div');
-    popupNameElement.classList.add("organization-name");
+    popupNameElement.classList.add("organization-popup-name");
     popupNameElement.textContent = this.organization.name;
 
     const popupPhoneElement = document.createElement('div');
     popupPhoneElement.classList.add("organization-popup-phone");
-    popupPhoneElement.textContent = this.organization.phoneNum;
+    popupPhoneElement.textContent = "Primary Phone: " + this.organization.phoneNum;
 
     const popupAddressElement = document.createElement('div');
     popupAddressElement.classList.add("organization-popup-address");
-    popupAddressElement.textContent = this.organization.address;
-
-    const popupZipcodeElement = document.createElement('div');
-    popupZipcodeElement.classList.add("organization-popup-zipcode");
-    popupZipcodeElement.textContent = this.organization.zipcode;
+    popupAddressElement.textContent = this.organization.address + ", " + 
+    this.organization.city + ", " + this.organization.state + " " + this.organization.zipcode;
 
     const popupEmailElement = document.createElement('div');
     popupEmailElement.classList.add("organization-popup-email");
-    popupEmailElement.textContent = this.organization.email;
+    popupEmailElement.textContent = "Primary Email: " + this.organization.email;
 
+    const popupWebsiteElement = document.createElement("div");
+    popupWebsiteElement.textContent = "Website: ";
     const popupUrlLinkElement = document.createElement('a');
     popupUrlLinkElement.classList.add("organization-popup-url-link");
     popupUrlLinkElement.setAttribute("href", this.organization.urlLink);
     popupUrlLinkElement.textContent = this.organization.urlLink;
+    popupWebsiteElement.appendChild(popupUrlLinkElement);
 
     const popupDescriptionElement = document.createElement('div');
     popupDescriptionElement.classList.add("organization-popup-description");
-    popupDescriptionElement.textContent = this.organization.description;
+    popupDescriptionElement.textContent = "Additional Information: " + this.organization.description;
 
     const popupEditElement = document.createElement('button');
     if(this.forOrganizationsPage) {
@@ -102,11 +102,10 @@ class Organization {
 
     this.popupElement.appendChild(this.closeButtonElement);
     this.popupElement.appendChild(popupNameElement);
-    this.popupElement.appendChild(popupPhoneElement);
     this.popupElement.appendChild(popupAddressElement);
-    this.popupElement.appendChild(popupZipcodeElement);
+    this.popupElement.appendChild(popupPhoneElement);
     this.popupElement.appendChild(popupEmailElement);
-    this.popupElement.appendChild(popupUrlLinkElement);
+    this.popupElement.appendChild(popupWebsiteElement);
     this.popupElement.appendChild(popupDescriptionElement);
     if(this.forOrganizationsPage) {
       this.popupElement.appendChild(popupEditElement);
@@ -188,11 +187,41 @@ class Organization {
     orgAddressEntry.setAttribute("name", "org-street-address");
     orgAddressEntry.classList.add("edit-entry");
     editForm.appendChild(orgAddressEntry);
+
+    // label and entry area for organization city
+    const orgCityLabel = document.createElement("label");
+    orgCityLabel.setAttribute("for", "city");
+    orgCityLabel.setAttribute("id", "city-label");
+    orgCityLabel.textContent = "City: ";
+    editForm.appendChild(orgCityLabel);
+
+    const orgCityEntry = document.createElement("input");
+    orgCityEntry.setAttribute("type", "text");
+    orgCityEntry.setAttribute("id", "city");
+    orgCityEntry.setAttribute("value", `${organization.city}`);
+    orgCityEntry.setAttribute("name", "org-city");
+    orgCityEntry.classList.add("edit-entry");
+    editForm.appendChild(orgCityEntry);
+
+    // label and entry area for organization state
+    const orgStateLabel = document.createElement("label");
+    orgStateLabel.setAttribute("for", "state");
+    orgStateLabel.setAttribute("id", "state-label");
+    orgStateLabel.textContent = "State: ";
+    editForm.appendChild(orgStateLabel);
+
+    const orgStateEntry = document.createElement("input");
+    orgStateEntry.setAttribute("type", "text");
+    orgStateEntry.setAttribute("id", "state");
+    orgStateEntry.setAttribute("value", `${organization.state}`);
+    orgStateEntry.setAttribute("name", "org-state");
+    orgStateEntry.classList.add("edit-entry");
+    editForm.appendChild(orgStateEntry);
    
     // label and entry area for organization zipcode
     const orgZipcodeLabel = document.createElement("label");
     orgZipcodeLabel.setAttribute("for", "zipcode");
-    orgZipcodeLabel.setAttribute("id", "zipcode-label");
+    orgZipcodeLabel.setAttribute("id", "zipcode-edit-label");
     orgZipcodeLabel.textContent = "Zipcode: ";
     editForm.appendChild(orgZipcodeLabel);
 
