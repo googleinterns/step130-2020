@@ -37,7 +37,8 @@ import java.lang.Object;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-public final class GivrUser {
+
+public class GivrUser {
 
   private static Logger logger = Logger.getLogger("GivrUser Logger");
   private String id;
@@ -188,5 +189,12 @@ public final class GivrUser {
       return getUserById(userService.getCurrentUser().getUserId());
     }
     return new GivrUser("" /* userId */, false /* isMaintainer */, false /* isLoggedIn */, url /* loginURL */, "" /* userEmail */);
+  }
+
+  public boolean equals(Object userObject) {
+    GivrUser user = (GivrUser) userObject;
+    
+    // Two GivrUser objects will be equal to each other when they have the same userEmail and userId.
+    return this.getUserEmail().equals(user.getUserEmail()) && this.getUserId().equals(user.getUserId());
   }
 }

@@ -82,12 +82,18 @@ class Organization {
     popupUrlLinkElement.textContent = this.organization.urlLink;
     popupWebsiteElement.appendChild(popupUrlLinkElement);
 
+    const popupHoursElement = document.createElement('div');
+    popupHoursElement.classList.add("organization-popup-hours");
+    this.organization.hoursOpen.forEach((day) => {
+      popupHoursElement.appendChild(this.createOpenHoursText(day));
+    });
+
     const popupDescriptionElement = document.createElement('div');
     popupDescriptionElement.classList.add("organization-popup-description");
     popupDescriptionElement.textContent = "Additional Information: " + this.organization.description;
 
     const popupEditElement = document.createElement('button');
-    if(this.forOrganizationsPage) {
+    if (this.forOrganizationsPage) {
       popupEditElement.classList.add("enter-button");
       popupEditElement.textContent = "Edit";
       popupEditElement.addEventListener('click', () => {
@@ -106,14 +112,15 @@ class Organization {
     this.popupElement.appendChild(popupPhoneElement);
     this.popupElement.appendChild(popupEmailElement);
     this.popupElement.appendChild(popupWebsiteElement);
+    this.popupElement.appendChild(popupHoursElement);
     this.popupElement.appendChild(popupDescriptionElement);
-    if(this.forOrganizationsPage) {
+    if (this.forOrganizationsPage) {
       this.popupElement.appendChild(popupEditElement);
     }
     return this.popupElement;
   }
 
- editOrganization(organization) {
+  editOrganization(organization) {
     // all entry fields will be prepopulated with the current values for user experience
 
     // TODO(): Convert user ids to emails
@@ -265,6 +272,21 @@ class Organization {
     orgUrlLinkEntry.classList.add("edit-entry");
     editForm.appendChild(orgUrlLinkEntry);
 
+    const orgOpenHoursLabel = document.createElement("label");
+    orgOpenHoursLabel.setAttribute("id", "hours-open-label");
+    orgOpenHoursLabel.textContent = "Organization Hours: ";
+    editForm.appendChild(orgOpenHoursLabel);
+
+    const orgOpenHoursArea = document.createElement("div");
+    orgOpenHoursArea.setAttribute("id", "hours-option-area");
+
+    //creates time input options for each day
+    for(let i = 0; i < 7; i++) {
+        const day = organization.hoursOpen[i].propertyMap.day;
+        const timeOption = new TimeOption(day, false, organization.hoursOpen[i], orgOpenHoursArea);
+    }
+    editForm.appendChild(orgOpenHoursArea);
+
     // label and entry area for organization description
     const orgDescriptionLabel = document.createElement("label");
     orgDescriptionLabel.setAttribute("for", "description");
@@ -328,7 +350,7 @@ class Organization {
         approvedButton.setAttribute("checked", "checked");
       }
       editForm.appendChild(approvedButton);
-      
+
       // page break for styling purposes
       editForm.appendChild(document.createElement("br"));
 
@@ -362,6 +384,72 @@ class Organization {
   }
 
   convertIdsToEmails(moderators) {
-      return "placeholder";
+    return "placeholder";
+  }
+
+  createOpenHoursText(organizationDay) {
+    // organization.hoursOpen[index(1-7 for day of week)].propertyMap.
+    // fromToPairs.value[index(how many set of hours for that day )].propertyMap.from/to
+    const dayTimeArea = document.createElement("div");
+    dayTimeArea.classList.add("day-time-area");
+
+    const dayTimeText = document.createElement("p");
+    dayTimeText.textContent = `${organizationDay.propertyMap.day}: `;
+
+    if (organizationDay.propertyMap.isOpen) {
+      let fromToString = null;
+      const numPairs = organizationDay.propertyMap.fromToPairs.value.length;
+
+      // creates from to text in the form of hh:mm - hh:mm
+      for (let i = 0; i < numPairs; i++) {
+        
+        // parses it from 24 hour format to 12 hour format
+        let from = this.parseTime(organizationDay.propertyMap.fromToPairs.value[i].propertyMap.from);
+        let to = this.parseTime(organizationDay.propertyMap.fromToPairs.value[i].propertyMap.to);
+
+        // adds a comma if it is not the last pair in the list
+        fromToString = `${from} - ${to}`;
+        if (numPairs - 1 != i) {
+          fromToString += `, \n`;
+        }
+        else {
+          fromToString += `\n`;
+        }
+        dayTimeText.textContent += fromToString;
+      }
+    }
+    else {
+      dayTimeText.textContent += `Closed`;
+    }
+
+    dayTimeArea.appendChild(dayTimeText);
+    return dayTimeArea;
+  }
+
+  parseTime(time) {
+    const hoursAndMinutes = time.split(":");
+    let AMOrPM = null;
+    let hours = parseInt(hoursAndMinutes[0]);
+    let minutes = parseInt(hoursAndMinutes[1]);
+
+    if (hours > 12) {
+      AMOrPM = "PM";
+      hours -= 12;
+    } else if (hours == 12) {
+        AMOrPM ="PM";
+    } else if (hours == 0) {
+        AMOrPM = "AM";
+        hours = 12;
+    } else {
+      AMOrPM = "AM";
+    }
+    
+    let hoursString = hours.toString();
+    let minutesString = minutes.toString();
+  
+    if (minutes < 10) {
+      minutesString = `0${minutes.toString()}`;
+    }
+    return `${hoursString}:${minutesString} ${AMOrPM}`;
   }
 }
