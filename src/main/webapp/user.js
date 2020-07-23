@@ -28,12 +28,7 @@ class User {
 
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.isMaintainer;
-
-      if (loginData.moderatingOrgs.length === 0) {
-        this.isModerator = false;
-      } else {
-        this.isModerator = true;
-      }
+      this.isModerator = loginData.moderatingOrgs.length >= 1;
       this.rebuildNavBar();
     }  else {
       const loginLink = document.getElementById("login-url");
