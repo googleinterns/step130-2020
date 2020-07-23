@@ -3,9 +3,11 @@ indexes:
 - kind: Distributor
   ancestor: no  
   properties:
+  - name: orgStreetAddress
+  - name: orgPhoneNum
+  - name: orgName
   - name: isApproved
   - name: moderatorList
   - name: orgZipCode
   - name: creationTimeStampMillis
     direction: desc
-  
