@@ -88,10 +88,10 @@ class User {
     const navLinksArea = document.createElement("div");
     navLinksArea.setAttribute("id", "nav-links");
 
-    const helpNearMeLink = document.createElement("a");
-    helpNearMeLink.setAttribute("href", "index.html");
-    helpNearMeLink.textContent = "Help Near Me";
-    navLinksArea.appendChild(helpNearMeLink);
+    const getHelpLink = document.createElement("a");
+    getHelpLink.setAttribute("href", "index.html");
+    getHelpLink.textContent = "Get Help";
+    navLinksArea.appendChild(getHelpLink);
 
     const registrationLink = document.createElement("a");
     registrationLink.setAttribute("href", "registration.html");
