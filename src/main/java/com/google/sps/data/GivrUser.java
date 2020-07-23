@@ -121,6 +121,21 @@ public final class GivrUser {
     return user;
   }
 
+  public static GivrUser getUserById(String userId) {
+    Entity entityRetrievedWithId = getUserFromDatastoreWithProperty("userId", userId);
+
+    boolean isMaintainer = false;
+    boolean isLoggedIn = true;
+    String userEmail = "";
+    
+    if (entityRetrievedWithId != null) {
+      isMaintainer = (boolean) entityRetrievedWithId.getProperty("isMaintainer");
+      userEmail = (String) entityRetrievedWithId.getProperty("userEmail");
+    }
+
+    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */, userEmail);
+    return user;
+  }
   public static GivrUser getUserByEmail(String email) {
     // TODO: Support OAuth.
     Entity entity = getUserFromDatastoreWithProperty("userEmail", email);
