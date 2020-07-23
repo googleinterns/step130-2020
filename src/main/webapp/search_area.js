@@ -69,6 +69,8 @@ class SearchArea {
     this.organizationSearchArea.appendChild(this.zipcodeFormArea);
 
     this.filterTagArea = new FilterTagArea(this);
+    this.filterTagArea.filterEntry.filterEntryArea.addEventListener('onParamEntry', 
+      (e) => this.setUrlParamValue(e.detail.urlParamKey, e.detail.urlParamValue), true);
 
     this.organizationListArea = document.createElement("div");
     this.organizationListArea.setAttribute("id", "organization-list");
@@ -129,6 +131,9 @@ class SearchArea {
   }
 
   async setUrlParamValue(urlParamKey, urlParamValue) {
+    console.log("FLKJGKHHFKJSDFHGKJHFSLKUHSDGHFDJGFSDJHGSDKHFGKSDJHGFVDGSFKJDGVSFKJHSDBVKDGFSKHFBDFSKJHGB");
+    console.log("PARAM KEY IS:", urlParamKey);
+    console.log("PARAM VALUE IS:", urlParamValue);
     /* New query value is not added if it is a duplicate or empty/null */
     if (this.filterParams.getAll(urlParamKey).includes(urlParamValue) ||
         (urlParamValue === null) || (urlParamValue.trim() === "")) {

@@ -12,6 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/* 
+ * FilterTagArea holds the button to add new filters, the text field where the user enters
+ * info for a new filter, and the filter tag itself after the user finishes adding it.
+ * The text field for a new filter is the FilterEntry class, and the display of that new filter is
+ * handled  by the FilterTag class.
+ */
+
 class FilterTagArea {
  
   constructor(searchArea) {
@@ -21,7 +28,8 @@ class FilterTagArea {
     this.activeFilterArea = document.createElement("div");
     this.activeFilterArea.setAttribute("class", "filter-holder");
 
-    this.filterEntry = new FilterEntry(this.activeFilterArea, this.parentSearchArea);
+    this.filterEntry = new FilterEntry(this.activeFilterArea);
+    this.filterEntry.filterEntryArea.addEventListener('onRemove', (e) => this.onRemoveCallback());
 
     /* This button does not move- when clicked it opens a filter entry area */
     this.addFilterButton = document.createElement("div");
@@ -37,6 +45,10 @@ class FilterTagArea {
     this.activeFilterArea.appendChild(this.addFilterButton);
 
     this.parentSearchArea.organizationSearchArea.appendChild(this.activeFilterArea);
+  }
+
+   onRemoveCallback() {
+    this.activeFilterArea.removeChild(this.filterEntry.filterEntryArea)
   }
 
   async addFilterTag(urlParamKey, urlParamValue) {

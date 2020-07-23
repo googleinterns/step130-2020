@@ -12,13 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/* 
+ * FilterEntry displays an area for the user to first specify the field they want to filter by,
+ * and then the keyword they want to apply to that filter field
+ */
+
 class FilterEntry{
  
-  // Constructs a new filter entry row.
-  constructor(parentFilterArea, parentSearchArea) { 
+  // Constructs a new filter entry box
+  constructor(parentFilterArea) { 
   
     this.activeFilterArea = parentFilterArea;
-    this.parentSearchArea = parentSearchArea;
 
     /* filterEntryArea is displayed when the user clicks add filter. It first asks for a type of filter, 
        then asks the user to enter the keyword for that filter type */
@@ -61,12 +65,19 @@ class FilterEntry{
     this.filterParamInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         /* If the user enters an unsupported type, it is ignored on the servlet side */
-        this.parentSearchArea.setUrlParamValue(this.optionMap.get(this.filterFieldInput.value), this.filterParamInput.value);
+        console.log(this.optionMap.get(this.filterFieldInput.value));
+        this.filterEntryArea.dispatchEvent(new CustomEvent('onParamEntry', {
+          bubbles: true,
+          detail : {
+            urlParamKey: this.optionMap.get(this.filterFieldInput.value),
+            urlParamValue: this.filterParamInput.value
+          }
+        }));
         this.filterParamInput.value = "";
         this.filterFieldInput.value = "";
         this.filterEntryArea.removeChild(this.filterParamInput);
         this.filterEntryArea.removeChild(this.filterParamLabel);
-        this.activeFilterArea.removeChild(this.filterEntryArea);
+        this.filterEntryArea.dispatchEvent(this.closeEvent);
       }
     });
 
@@ -75,8 +86,10 @@ class FilterEntry{
     this.filterEntryClose.setAttribute("class", "filter-tag-close");
     this.filterEntryClose.addEventListener('click', () => {
       this.filterEntryArea.textContent = "";
-      this.activeFilterArea.removeChild(this.filterEntryArea)
+      this.filterEntryArea.dispatchEvent(this.closeEvent);
     });
+
+    this.closeEvent = new Event('onRemove');
   }
 
   hasFilterField() {

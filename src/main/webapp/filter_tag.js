@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/* 
+ * FilterTag represents a completed filter that the user has added to the query, containing that 
+ * filter's name and a button to delete it. A filter tag exists for each filter that is added.
+ */
 class FilterTag {
  
   constructor(filterTagArea, urlParamKey, urlParamValue) {
