@@ -19,6 +19,10 @@
   border-bottom: 3px solid #666666;
 }
 
+#login-url {
+  cursor: pointer;
+}
+
 #site-title {
   display: flex;
   justify-content: center;
