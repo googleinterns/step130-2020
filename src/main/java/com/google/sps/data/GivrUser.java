@@ -144,9 +144,9 @@ public class GivrUser {
     
     if (isUserLoggedIn) {
       return getUserById(userService.getCurrentUser().getUserId());
-    } else {
-      url = userService.createLoginURL("/");
     }
+    url = userService.createLoginURL("/");
+
     return new GivrUser("" /* userId */, false /* isMaintainer */, false /* isLoggedIn */, url /* loginURL */, "" /* userEmail */);
   }
 
