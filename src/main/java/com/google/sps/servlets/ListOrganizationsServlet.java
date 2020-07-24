@@ -53,7 +53,7 @@ public class ListOrganizationsServlet extends HttpServlet {
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
 
-    String startCursor = request.getParameter("scrs");
+    String startCursor = request.getParameter("cursor");
     if ((startCursor != null) && (!startCursor.equals("none"))) { //if the given cursor is 'none' no cursor is necessary
       fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
     }

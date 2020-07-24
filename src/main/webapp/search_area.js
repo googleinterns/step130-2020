@@ -40,7 +40,8 @@ class SearchArea {
     this.forOrganizationsPage = forOrganizationsPage;
     this.filterParams = new URLSearchParams();
     this.organizationObjectsList = [];
-    this.mostRecentCursor = "none";
+    //this.mostRecentCursor = "none";
+    this.filterParams.set("cursor", "none");
     this.lastResultFound = false;
 
     this.zipcodeFormArea = document.createElement("div");
@@ -152,14 +153,10 @@ class SearchArea {
   }
 
   async getListOfOrganizations() {
-    let response;
-    if (this.filterParams) {
-      response = await fetch(`/list-organizations?scrs=${this.mostRecentCursor}&${this.filterParams.toString()}`);
-    } else {
-      response = await fetch(`/list-organizations?scrs=${this.mostRecentCursor}`);
-    }
+    const response = await fetch(`/list-organizations?${this.filterParams.toString()}`);
     this.organizationObjectsList = await response.json();
-    this.mostRecentCursor = await response.headers.get("Cursor");
+    const newCursor = await response.headers.get("Cursor");
+    this.filterParams.set("cursor", newCursor);
     /* If < 5 results are returned, the end of the given query has been reached */
     this.lastResultFound = (this.organizationObjectsList.length < 5);
     if (this.lastResultFound) {
@@ -187,7 +184,8 @@ class SearchArea {
     }
     this.form.reset();
     this.addFilterTag(urlParamKey, urlParamValue);
-    this.mostRecentCursor = "none";
+    //this.mostRecentCursor = "none";
+    this.filterParams.set("cursor", "none");
     this.lastResultFound = false;
     this.loadMoreButton.classList.remove("hide-load-button");
     this.organizationObjectsList = [];
@@ -232,7 +230,8 @@ class SearchArea {
       }
     }
     this.activeFilterArea.removeChild(filterTag);
-    this.mostRecentCursor = "none";
+    //this.mostRecentCursor = "none";
+    this.filterParams.set("cursor", "none");
     this.lastResultFound = false;
     this.loadMoreButton.classList.remove("hide-load-button");
     this.organizationObjectsList = [];
