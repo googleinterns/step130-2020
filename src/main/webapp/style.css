@@ -90,6 +90,7 @@
   width: 700px;
   height: 495px;
   overflow-y: scroll;
+
 }
 
 .organization {
@@ -338,4 +339,15 @@
   height: 5%;
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
+}
+
+.load-more-button {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.hide-load-button {
+  display: none;
 }
