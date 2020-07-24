@@ -13,6 +13,10 @@
   border-bottom: 3px solid transparent;
   margin: 0 20px;
 }
+
+#login-url {
+  cursor: pointer;
+}
  
 #site-title {
   display: flex;
