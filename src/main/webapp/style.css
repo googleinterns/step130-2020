@@ -70,10 +70,10 @@
 
 .enter-button {
   border: 1px solid #ccc;
-  background-color: #A9A9A9;
+  background-color: #f5f5f5;
+  color: #404040;
   border-radius: 4px;
   font-family:'Courier New', Courier, monospace;
-  color: #ffffff;
   font-size: 15px;
   cursor: pointer;
   width: 100px;
