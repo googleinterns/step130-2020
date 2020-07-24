@@ -40,13 +40,13 @@ class FilterEntry{
     this.filterFieldInput.setAttribute("placeholder", "Filter by:");
     this.filterFieldInput.addEventListener('keypress', (e) => {
       if (e.key !== 'Enter') {
-        return
+        return;
       }
-        this.filterParamLabel.textContent = `${this.filterFieldInput.value}:`;
-        this.filterFieldInput.removeChild(this.filterDataList);
-        this.filterEntryArea.removeChild(this.filterFieldInput);
-        this.filterEntryArea.appendChild(this.filterParamInput);
-        this.filterEntryArea.appendChild(this.filterParamLabel);
+      this.filterParamLabel.textContent = `${this.filterFieldInput.value}:`;
+      this.filterFieldInput.removeChild(this.filterDataList);
+      this.filterEntryArea.removeChild(this.filterFieldInput);
+      this.filterEntryArea.appendChild(this.filterParamInput);
+      this.filterEntryArea.appendChild(this.filterParamLabel);
     });
 
     this.filterDataList = document.createElement("datalist");
@@ -67,21 +67,22 @@ class FilterEntry{
     this.filterParamLabel = document.createElement("label");
     this.filterParamLabel.setAttribute("class", "filter-tag-label");
     this.filterParamInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        /* If the user enters an unsupported type, it is ignored on the servlet side */
-        this.filterEntryArea.dispatchEvent(new CustomEvent('onParamEntry', {
-          bubbles: true,
-          detail : {
-            urlParamKey: this.optionMap.get(this.filterFieldInput.value),
-            urlParamValue: this.filterParamInput.value
-          }
-        }));
-        this.filterParamInput.value = "";
-        this.filterFieldInput.value = "";
-        this.filterEntryArea.removeChild(this.filterParamInput);
-        this.filterEntryArea.removeChild(this.filterParamLabel);
-        this.filterEntryArea.dispatchEvent(new Event('onRemove'));
+      if (e.key !== 'Enter') {
+        return;
       }
+      /* If the user enters an unsupported type, it is ignored on the servlet side */
+      this.filterEntryArea.dispatchEvent(new CustomEvent('onParamEntry', {
+        bubbles: true,
+        detail : {
+          urlParamKey: this.optionMap.get(this.filterFieldInput.value),
+          urlParamValue: this.filterParamInput.value
+        }
+      }));
+      this.filterParamInput.value = "";
+      this.filterFieldInput.value = "";
+      this.filterEntryArea.removeChild(this.filterParamInput);
+      this.filterEntryArea.removeChild(this.filterParamLabel);
+      this.filterEntryArea.dispatchEvent(new Event('onRemove'));
     });
 
     this.filterEntryClose = document.createElement("div");
