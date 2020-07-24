@@ -105,15 +105,15 @@ public class GivrUser {
   }
 
   private static GivrUser getUserByIdOrEmail(String userId, String userEmail) {
-    if (userId == null) {
-      userId = "";
-    } 
-    if (userEmail == null) {
-      userEmail = "";
-    }
+    Entity entityRetrievedWithId = null;
+    Entity entityRetrievedWithEmail = null;
 
-    Entity entityRetrievedWithId = getUserFromDatastoreWithProperty("userId", userId);
-    Entity entityRetrievedWithEmail = getUserFromDatastoreWithProperty("userEmail", userEmail);
+    if (userId != null) {
+      entityRetrievedWithId = getUserFromDatastoreWithProperty("userId", userId);
+    }
+    if (userEmail != null) {
+      entityRetrievedWithEmail = getUserFromDatastoreWithProperty("userEmail", userEmail);
+    }
 
     boolean isMaintainer = false;
     boolean isLoggedIn = true;
