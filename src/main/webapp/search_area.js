@@ -132,9 +132,6 @@ class SearchArea {
   }
 
   async setUrlParamValue(urlParamKey, urlParamValue) {
-    console.log("FLKJGKHHFKJSDFHGKJHFSLKUHSDGHFDJGFSDJHGSDKHFGKSDJHGFVDGSFKJDGVSFKJHSDBVKDGFSKHFBDFSKJHGB");
-    console.log("PARAM KEY IS:", urlParamKey);
-    console.log("PARAM VALUE IS:", urlParamValue);
     /* New query value is not added if it is a duplicate or empty/null */
     if (this.filterParams.getAll(urlParamKey).includes(urlParamValue) ||
         (urlParamValue === null) || (urlParamValue.trim() === "")) {

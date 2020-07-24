@@ -14,7 +14,10 @@
 
 /* 
  * FilterEntry displays an area for the user to first specify the field they want to filter by,
- * and then the keyword they want to apply to that filter field
+ * and then the keyword they want to apply to that filter field. This class sends 'onRemove' events
+ * when the user clicks the close button of the entry section, which causes that section to be removed
+ * from the dom by the FilterTagAarea. It also sends an 'onParamEntry' event when the user finishes entering
+ * the filter parameter information, which is used by the SearchArea to update the Url Search Params
  */
 
 class FilterEntry{
@@ -36,21 +39,22 @@ class FilterEntry{
     this.filterFieldInput.setAttribute("class", "filter-input-area");
     this.filterFieldInput.setAttribute("placeholder", "Filter by:");
     this.filterFieldInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
+      if (e.key !== 'Enter') {
+        return
+      }
         this.filterParamLabel.textContent = `${this.filterFieldInput.value}:`;
         this.filterFieldInput.removeChild(this.filterDataList);
         this.filterEntryArea.removeChild(this.filterFieldInput);
         this.filterEntryArea.appendChild(this.filterParamInput);
         this.filterEntryArea.appendChild(this.filterParamLabel);
-      }
     });
 
     this.filterDataList = document.createElement("datalist");
     this.filterDataList.setAttribute("id", "filter-datalist");
-    this.optionMap = new Map();
-    this.optionMap.set("Organization Name", "orgNames");
-    this.optionMap.set("Address", "orgStreetAddresses");
-    this.optionMap.set("Available Resources", "resourceCategories");
+    this.optionMap = new Map([
+      ["Organization Name", "orgNames"],
+      ["Address", "orgStreetAddress"],
+      ["Available Resources", "resourceCategories"]]);
     for (const optionKey of this.optionMap.keys()) {
       const option = document.createElement("option");
       option.value = optionKey;
@@ -65,7 +69,6 @@ class FilterEntry{
     this.filterParamInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         /* If the user enters an unsupported type, it is ignored on the servlet side */
-        console.log(this.optionMap.get(this.filterFieldInput.value));
         this.filterEntryArea.dispatchEvent(new CustomEvent('onParamEntry', {
           bubbles: true,
           detail : {
@@ -77,7 +80,7 @@ class FilterEntry{
         this.filterFieldInput.value = "";
         this.filterEntryArea.removeChild(this.filterParamInput);
         this.filterEntryArea.removeChild(this.filterParamLabel);
-        this.filterEntryArea.dispatchEvent(this.closeEvent);
+        this.filterEntryArea.dispatchEvent(new Event('onRemove'));
       }
     });
 
@@ -86,10 +89,9 @@ class FilterEntry{
     this.filterEntryClose.setAttribute("class", "filter-tag-close");
     this.filterEntryClose.addEventListener('click', () => {
       this.filterEntryArea.textContent = "";
-      this.filterEntryArea.dispatchEvent(this.closeEvent);
+      this.filterEntryArea.dispatchEvent(new Event('onRemove'));
     });
 
-    this.closeEvent = new Event('onRemove');
   }
 
   hasFilterField() {
