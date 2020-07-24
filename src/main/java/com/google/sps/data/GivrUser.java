@@ -143,8 +143,9 @@ public class GivrUser {
     String url = "";
     
     if (isUserLoggedIn) {
-      url = userService.createLoginURL("/");
       return getUserById(userService.getCurrentUser().getUserId());
+    } else {
+      url = userService.createLoginURL("/");
     }
     return new GivrUser("" /* userId */, false /* isMaintainer */, false /* isLoggedIn */, url /* loginURL */, "" /* userEmail */);
   }
