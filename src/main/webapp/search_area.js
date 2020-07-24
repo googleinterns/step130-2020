@@ -19,8 +19,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   if (document.getElementById('search-area')) {
     const mainSearchArea = new SearchArea(document.getElementById('search-area'), isMaintainer, forOrganizationsPage);
-    await mainSearchArea.getListOfOrganizations();
-    mainSearchArea.renderListOfOrganizations()
+    mainSearchArea.handleOrganizations();
   }
   isMaintainer = true;
   if (document.getElementById('all-organizations')) {
@@ -91,7 +90,6 @@ class SearchArea {
     this.searchArea.appendChild(this.organizationSearchArea);
     this.searchArea.appendChild(this.organizationPopupArea);
   }
-
   refreshOrganizationList() {
     this.filterParams.set("cursor", "none");	
     this.lastResultFound = false;	
@@ -129,7 +127,8 @@ class SearchArea {
 
       this.organizationListArea.appendChild(newOrganization.getOrganization());
     });
-    if ((this.organizationObjectsList.length === 0) && (!this.lastResultFound)) {
+    /* If the query has returned 0 organization objects, display No Results Found message */
+    if ((this.organizationObjectsList.length === 0) && (this.organizationListArea.innerHTML === '')) {
       const noResultsFoundMessage = document.createElement("div");
       noResultsFoundMessage.setAttribute("id", "no-results-found");
       noResultsFoundMessage.textContent = "No results found for current filters.";
@@ -168,6 +167,6 @@ class SearchArea {
     }
     this.form.reset();
     this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);
-    this.refreshOrganizationList();
+    // this.refreshOrganizationList();
   }
 }
