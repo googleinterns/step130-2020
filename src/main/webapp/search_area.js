@@ -167,6 +167,5 @@ class SearchArea {
     }
     this.form.reset();
     this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);
-    // this.refreshOrganizationList();
   }
 }
