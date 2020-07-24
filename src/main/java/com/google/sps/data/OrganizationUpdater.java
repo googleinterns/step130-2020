@@ -234,8 +234,7 @@ public final class OrganizationUpdater {
   }
 
   public void updateInvitedModerator(GivrUser user) {
-    // Will be called if an invited moderator logs in, will be removing them from the 
-    // invited moderator set and adding there user id to the moderator list
+    // Called when an invited moderator logs in, will be removing their userEmail from the invitedModerators list and adding their userId to the moderatorList.
     if (this.entity.getProperty("invitedModerators") == null) {
       return;
     }

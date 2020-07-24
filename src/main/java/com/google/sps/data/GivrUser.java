@@ -46,6 +46,7 @@ public class GivrUser {
   private boolean isLoggedIn;
   private String url;
   private String email;
+  // In method setModeratingOrgs(), ArrayList will be set with all Organizations that this GivrUser moderates.
   private ArrayList<Entity> moderatingOrgs = new ArrayList<Entity>();
 
   public GivrUser(String id, boolean isMaintainer, boolean isLoggedIn, String url, String email) {
@@ -115,6 +116,7 @@ public class GivrUser {
     datastore.put(entity);
   }
 
+  // Updates Organization entities in Datastore by removing user's email from invitedModerators list and adding user's ID in moderatorlist.
   public void updateModeratingOrgs() {
     for (int i = 0; i < this.moderatingOrgs.size(); i++) {
       OrganizationUpdater organizationUpdater = new OrganizationUpdater(this.moderatingOrgs.get(i));
@@ -122,11 +124,8 @@ public class GivrUser {
     }
   }
 
+  // Properly sets user's moderatingOrgs based on results from querying to Datastore for Organization entity's moderatorList and invitedModerators list.
   public void setModeratingOrgs() {
-    // There is no need to set moderatingOrgs for maintainers.
-    if (this.isMaintainer) {
-      return;
-    }
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     this.moderatingOrgs = new ArrayList<Entity>();
