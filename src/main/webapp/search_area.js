@@ -13,12 +13,10 @@
 // limitations under the License.
 
 document.addEventListener("DOMContentLoaded", async function() {
-  // TODO: Get Maintainer status by checking if requester User is a Maintainer. 
   // This checks that requester User has valid credentials to edit/delete/view ALL organizations. (by checking userID)
   let isMaintainer = false;
   let forOrganizationsPage = false;
 
-  // TODO: Create separate JS file for listing organizations, instead of using SearchArea and having these checks below
   if (document.getElementById('search-area')) {
     const mainSearchArea = new SearchArea(document.getElementById('search-area'), isMaintainer, forOrganizationsPage);
     await mainSearchArea.getListOfOrganizations();
@@ -40,7 +38,8 @@ class SearchArea {
     this.forOrganizationsPage = forOrganizationsPage;
     this.filterParams = new URLSearchParams();
     this.organizationObjectsList = [];
-    //this.mostRecentCursor = "none";
+    
+    /* The cursor is the "cursor" filter param, and the keyword "none" is used to start at the beginning of the query */
     this.filterParams.set("cursor", "none");
     this.lastResultFound = false;
 
@@ -76,11 +75,12 @@ class SearchArea {
     this.filterInputArea.setAttribute("id", "filter-input-area");
     this.filterInputArea.setAttribute("placeholder", "Filter Results");
     this.filterInputArea.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        /* When the user hits enter in the filter input area, it is added as a param */
-        this.setUrlParamValue("filterParam", this.filterInputArea.value);
-        this.filterInputArea.value = "";
+      if (e.key !== 'Enter') {
+        return;
       }
+      /* When the user hits enter in the filter input area, it is added as a param */
+      this.setUrlParamValue("filterParam", this.filterInputArea.value);
+      this.filterInputArea.value = "";
     });
 
     this.filterDataList = document.createElement("datalist");
@@ -185,7 +185,6 @@ class SearchArea {
     }
     this.form.reset();
     this.addFilterTag(urlParamKey, urlParamValue);
-    //this.mostRecentCursor = "none";
     this.filterParams.set("cursor", "none");
     this.lastResultFound = false;
     this.loadMoreButton.classList.remove("hide-load-button");
@@ -231,7 +230,6 @@ class SearchArea {
       }
     }
     this.activeFilterArea.removeChild(filterTag);
-    //this.mostRecentCursor = "none";
     this.filterParams.set("cursor", "none");
     this.lastResultFound = false;
     this.loadMoreButton.classList.remove("hide-load-button");
