@@ -104,7 +104,14 @@ public final class GivrUser {
     datastore.put(entity);
   }
 
-  public static GivrUser getUserByIdOrEmail(String userId, String userEmail) {
+  private static GivrUser getUserByIdOrEmail(String userId, String userEmail) {
+    if (userId == null) {
+      userId = "";
+    } 
+    if (userEmail == null) {
+      userEmail = "";
+    }
+
     Entity entityRetrievedWithId = getUserFromDatastoreWithProperty("userId", userId);
     Entity entityRetrievedWithEmail = getUserFromDatastoreWithProperty("userEmail", userEmail);
 
@@ -113,8 +120,10 @@ public final class GivrUser {
 
     if (entityRetrievedWithId != null) {
       isMaintainer = (boolean) entityRetrievedWithId.getProperty("isMaintainer");
+      userEmail = (String) entityRetrievedWithId.getProperty("userEmail");
     } else if (entityRetrievedWithEmail != null) {
       isMaintainer = (boolean) entityRetrievedWithEmail.getProperty("isMaintainer");
+      userId = (String) entityRetrievedWithEmail.getProperty("userId");
     }
     
     GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */, userEmail);
@@ -122,34 +131,12 @@ public final class GivrUser {
   }
 
   public static GivrUser getUserById(String userId) {
-    Entity entityRetrievedWithId = getUserFromDatastoreWithProperty("userId", userId);
-
-    boolean isMaintainer = false;
-    boolean isLoggedIn = true;
-    String userEmail = "";
-    
-    if (entityRetrievedWithId != null) {
-      isMaintainer = (boolean) entityRetrievedWithId.getProperty("isMaintainer");
-      userEmail = (String) entityRetrievedWithId.getProperty("userEmail");
-    }
-
-    GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */, userEmail);
-    return user;
+    return getUserByIdOrEmail(userId, null);
   }
+
   public static GivrUser getUserByEmail(String email) {
     // TODO: Support OAuth.
-    Entity entity = getUserFromDatastoreWithProperty("userEmail", email);
-
-    String userId = "";
-    boolean isMaintainer = false;
-    boolean isLoggedIn = false;
-    String loginURL = "";
-
-    if (entity != null) {
-      userId = (String) entity.getProperty("userId");
-      isMaintainer = (boolean) entity.getProperty("isMaintainer");
-    }
-    return new GivrUser(userId, isMaintainer, isLoggedIn, loginURL, email);
+    return getUserByIdOrEmail(null, email);
   }
 
   // The email returned in the GivrUser object is the value in the Datastore.
