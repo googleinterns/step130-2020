@@ -18,6 +18,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -94,6 +99,27 @@ public class ListOrganizationsServlet extends HttpServlet {
       queryForZipcode = true;
     }
 
+    /* Stores datastore property name as key, and received filter keywords for said property in arraylist */
+    HashMap<String, ArrayList<String>> filterParamMap = new HashMap<String, ArrayList<String>>();
+
+    ArrayList<String> orgNames = new ArrayList<String>();
+    if (request.getParameterValues("orgNames") != null) {
+      Collections.addAll(orgNames, request.getParameterValues("orgNames"));
+      filterParamMap.put("orgName", orgNames);
+    }
+
+    ArrayList<String> orgStreetAddresses = new ArrayList<String>();
+    if (request.getParameterValues("orgStreetAddresses") != null) {
+      Collections.addAll(orgStreetAddresses, request.getParameterValues("orgStreetAddresses"));
+      filterParamMap.put("orgStreetAddress", orgStreetAddresses);
+    }
+
+    ArrayList<String> resourceCategories = new ArrayList<String>();
+    if (request.getParameterValues("resourceCategories") != null) {
+      Collections.addAll(resourceCategories, request.getParameterValues("resourceCategories"));
+      filterParamMap.put("resourceCategories", resourceCategories);
+    }
+
     /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
     String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
     boolean displayUserOrgs = coerceParameterToBoolean(request, displayUserOrgsParameter);
@@ -116,6 +142,13 @@ public class ListOrganizationsServlet extends HttpServlet {
       filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
     }
 
+    /* Adds a filter for each keyword in each arraylist of the map, according to its datastore property */
+    for (Map.Entry<String, ArrayList<String>> entry : filterParamMap.entrySet()) {
+      for (String filterParam : entry.getValue()) {
+        filterCollection.add(new FilterPredicate(entry.getKey(), FilterOperator.EQUAL, filterParam));
+      }
+    }
+
     if (filterCollection.size() >= 2) {
       /* Composite Filter only works with 2 or more filters. */
       CompositeFilter combinedQueryFilter = new CompositeFilter(CompositeFilterOperator.AND, filterCollection);
@@ -124,9 +157,6 @@ public class ListOrganizationsServlet extends HttpServlet {
       /* If a filter exists but it can't be composite, normal one is applied */
       query.setFilter(filterCollection.get(0));
     }
-
-    // TODO(): Repeat this functionality for the filtering keywords from the datalist
-
     return query;
   }
 
