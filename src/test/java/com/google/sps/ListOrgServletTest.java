@@ -29,6 +29,7 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.sps.data.GivrUser;
 import com.google.sps.servlets.ListOrganizationsServlet;
+import com.google.sps.data.ListHelper;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
@@ -144,7 +145,7 @@ public final class ListOrgServletTest {
     when(mockRequest.getParameter("zipcode")).thenReturn(null);
     when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
  
-    Query receivedQuery = ListOrganizationsServlet.getQueryFromParams(mockRequest, mockUser);
+    Query receivedQuery = ListHelper.getQueryFromParams("Distributor", mockRequest, mockUser);
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
@@ -167,7 +168,7 @@ public final class ListOrgServletTest {
     when(mockRequest.getParameter("zipcode")).thenReturn(null);
     when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
  
-    Query receivedQuery = ListOrganizationsServlet.getQueryFromParams(mockRequest, mockUser);
+    Query receivedQuery = ListHelper.getQueryFromParams("Distributor", mockRequest, mockUser);
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
@@ -187,7 +188,7 @@ public final class ListOrgServletTest {
     when(mockRequest.getParameter("zipcode")).thenReturn("02763");
     when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
  
-    Query receivedQuery = ListOrganizationsServlet.getQueryFromParams(mockRequest, mockUser);
+    Query receivedQuery = ListHelper.getQueryFromParams("Distributor", mockRequest, mockUser);
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
  

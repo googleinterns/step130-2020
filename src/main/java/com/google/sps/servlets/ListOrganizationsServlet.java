@@ -40,6 +40,7 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.data.Organization;
+import com.google.sps.data.ListHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.GivrUser;
@@ -63,7 +64,7 @@ public class ListOrganizationsServlet extends HttpServlet {
       fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
     }
 
-    Query query = getQueryFromParams(request, currentUser);
+    Query query = ListHelper.getQueryFromParams("Distributor", request, currentUser);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
@@ -84,80 +85,6 @@ public class ListOrganizationsServlet extends HttpServlet {
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(requestedOrganizations));
     response.addHeader("Cursor", encodedEndCursor);
-  }
-
-  /* This function constructs a query based on the request parameters & user's role */
-  public static Query getQueryFromParams(HttpServletRequest request, GivrUser currentUser) {
-    Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
-
-    ArrayList<Filter> filterCollection = new ArrayList<Filter>();
-
-    String zipcode  = "";
-    boolean queryForZipcode = false;
-    if (request.getParameter("zipcode") != null) {
-      zipcode = request.getParameter("zipcode");
-      queryForZipcode = true;
-    }
-
-    /* Stores datastore property name as key, and received filter keywords for said property in arraylist */
-    HashMap<String, ArrayList<String>> filterParamMap = new HashMap<String, ArrayList<String>>();
-
-    ArrayList<String> orgNames = new ArrayList<String>();
-    if (request.getParameterValues("orgNames") != null) {
-      Collections.addAll(orgNames, request.getParameterValues("orgNames"));
-      filterParamMap.put("orgName", orgNames);
-    }
-
-    ArrayList<String> orgStreetAddresses = new ArrayList<String>();
-    if (request.getParameterValues("orgStreetAddresses") != null) {
-      Collections.addAll(orgStreetAddresses, request.getParameterValues("orgStreetAddresses"));
-      filterParamMap.put("orgStreetAddress", orgStreetAddresses);
-    }
-
-    ArrayList<String> resourceCategories = new ArrayList<String>();
-    if (request.getParameterValues("resourceCategories") != null) {
-      Collections.addAll(resourceCategories, request.getParameterValues("resourceCategories"));
-      filterParamMap.put("resourceCategories", resourceCategories);
-    }
-
-    /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
-    String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
-    boolean displayUserOrgs = coerceParameterToBoolean(request, displayUserOrgsParameter);
-    boolean isUserLoggedIn = (currentUser != null);
-    // Ternary operator is used to check if userIsMaintainer to protect against null currentUser
-    boolean userIsMaintainer = isUserLoggedIn ? currentUser.isMaintainer() : false;
-
-    if (queryForZipcode) {
-      filterCollection.add(new FilterPredicate("orgZipCode", FilterOperator.EQUAL, zipcode));
-    }
-
-    if (isUserLoggedIn && displayUserOrgs) {
-      /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
-      String userId = currentUser.getUserId();
-      filterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
-    }
-
-    if (!userIsMaintainer) {
-      /* If the user is not a maintainer, only allow them to see approved orgs */
-      filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
-    }
-
-    /* Adds a filter for each keyword in each arraylist of the map, according to its datastore property */
-    for (Map.Entry<String, ArrayList<String>> entry : filterParamMap.entrySet()) {
-      for (String filterParam : entry.getValue()) {
-        filterCollection.add(new FilterPredicate(entry.getKey(), FilterOperator.EQUAL, filterParam));
-      }
-    }
-
-    if (filterCollection.size() >= 2) {
-      /* Composite Filter only works with 2 or more filters. */
-      CompositeFilter combinedQueryFilter = new CompositeFilter(CompositeFilterOperator.AND, filterCollection);
-      query.setFilter(combinedQueryFilter);
-    } else if (filterCollection.size() == 1) {
-      /* If a filter exists but it can't be composite, normal one is applied */
-      query.setFilter(filterCollection.get(0));
-    }
-    return query;
   }
 
   public static boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
