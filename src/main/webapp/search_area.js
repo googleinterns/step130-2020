@@ -69,37 +69,13 @@ class SearchArea {
     this.zipcodeFormArea.appendChild(this.form);
     this.organizationSearchArea.appendChild(this.zipcodeFormArea);
 
-    this.filterInputArea = document.createElement("input");
-    this.filterInputArea.setAttribute("list", "filter-datalist");
-    this.filterInputArea.setAttribute("id", "filter-input-area");
-    this.filterInputArea.setAttribute("placeholder", "Filter Results");
-    this.filterInputArea.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        /* When the user hits enter in the filter input area, it is added as a param */
-        this.setUrlParamValue("filterParam", this.filterInputArea.value);
-        this.filterInputArea.value = "";
-      }
-    });
-
-    this.filterDataList = document.createElement("datalist");
-    this.filterDataList.setAttribute("id", "filter-datalist");
-    this.filterOptions = ["Foods", "Clothing", "Shelter"];
-    for (const value of this.filterOptions) {
-      const option = document.createElement("option");
-      option.value = value;
-      this.filterDataList.appendChild(option);
-    }
-
-    this.filterInputArea.appendChild(this.filterDataList);
-    this.organizationSearchArea.appendChild(this.filterInputArea);
-
-    this.activeFilterArea = document.createElement("div");
-    this.activeFilterArea.setAttribute("class", "filter-holder");
-    this.organizationSearchArea.appendChild(this.activeFilterArea);
+    this.filterTagArea = new FilterTagArea(this);
+    this.filterTagArea.filterEntry.filterEntryArea.addEventListener('onParamEntry', 
+      (e) => this.setUrlParamValue(e.detail.urlParamKey, e.detail.urlParamValue), true);
 
     this.organizationListArea = document.createElement("div");
     this.organizationListArea.setAttribute("id", "organization-list");
-    
+
     this.organizationPopupArea = document.createElement("div");
     this.organizationPopupArea.setAttribute("id", "organization-popup-area");
     this.organizationPopupArea.classList.add("hide-popup");
@@ -107,6 +83,13 @@ class SearchArea {
     this.organizationSearchArea.appendChild(this.organizationListArea);
     this.searchArea.appendChild(this.organizationSearchArea);
     this.searchArea.appendChild(this.organizationPopupArea);
+  }
+
+  async refreshOrganizationList() {
+    this.organizationObjectsList = [];
+    this.organizationListArea.innerHTML = "";
+    await this.getListOfOrganizations();
+    this.renderListOfOrganizations();
   }
 
   renderListOfOrganizations() {
@@ -148,14 +131,13 @@ class SearchArea {
     this.organizationObjectsList = await response.json();
   }
 
-  async setUrlParamValue(urlParamKey, urlParamValue) {   
+  async setUrlParamValue(urlParamKey, urlParamValue) {
     /* New query value is not added if it is a duplicate or empty/null */
-    if (this.filterParams.getAll("filterParam").includes(urlParamValue) ||
-        this.filterParams.getAll("zipcode").includes(urlParamValue) ||
+    if (this.filterParams.getAll(urlParamKey).includes(urlParamValue) ||
         (urlParamValue === null) || (urlParamValue.trim() === "")) {
       return;
     }
-    
+
     /* if the param is a zipcode, remove tag of any existing one & set new one*/ 
     if (urlParamKey === "zipcode") {
       if (this.filterParams.get("zipcode")) {
@@ -167,53 +149,6 @@ class SearchArea {
       this.filterParams.append(urlParamKey, urlParamValue);      
     }
     this.form.reset();
-    this.addFilterTag(urlParamKey, urlParamValue);
-    this.organizationObjectsList = [];
-    this.organizationListArea.innerHTML = "";
-    await this.getListOfOrganizations();
-    this.renderListOfOrganizations();
-  }
-
-  addFilterTag(urlParamKey, urlParamValue) {
-    let filterTagArea = document.createElement("div");
-    filterTagArea.setAttribute("class", "filter-tag-area");
-    /* ID is given to zipcode tag so it can be removed if new one is added */
-    if (urlParamKey === "zipcode") {
-      filterTagArea.setAttribute("id", "zipcodeTag");
-    }
-
-    let filterTagClose = document.createElement("div");
-    filterTagClose.addEventListener('click', () => this.removeFilterTag(urlParamKey, urlParamValue, filterTagArea));
-    filterTagClose.textContent = 'X';
-    filterTagClose.setAttribute("class", "filter-tag-close");
-    filterTagArea.appendChild(filterTagClose);
-
-    let filterTagLabel = document.createElement("div");
-    filterTagLabel.textContent = urlParamValue;
-    filterTagLabel.setAttribute("class", "filter-tag-label");
-    filterTagArea.appendChild(filterTagLabel);
-
-    this.activeFilterArea.appendChild(filterTagArea);
-  }
-
-  async removeFilterTag(urlParamKey, urlParamValue, filterTag) {
-    if (urlParamKey === "zipcode") {
-      this.filterParams.delete("zipcode");
-    } else {
-      if (this.filterParams.getAll("filterParam").length === 1) {
-        /* If only 1 filter param, delete the array */
-        this.filterParams.delete("filterParam");
-      } else {
-        /* If not, just remove specified element */
-        let filterArray = this.filterParams.getAll("filterParam");
-        filterArray.splice(filterArray.indexOf(urlParamValue), 1);
-        this.filterParams.set("filterParam", filterArray);
-      }
-    }
-    this.activeFilterArea.removeChild(filterTag);
-    this.organizationObjectsList = [];
-    this.organizationListArea.innerHTML = "";
-    await this.getListOfOrganizations();
-    this.renderListOfOrganizations();
+    this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);
   }
 }
