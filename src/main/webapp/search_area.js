@@ -90,6 +90,7 @@ class SearchArea {
     this.searchArea.appendChild(this.organizationSearchArea);
     this.searchArea.appendChild(this.organizationPopupArea);
   }
+  
   refreshOrganizationList() {
     this.filterParams.set("cursor", "none");	
     this.lastResultFound = false;	
