@@ -35,16 +35,16 @@ public class DeleteOrganizationServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    long id = Long.parseLong(request.getParameter("id"));
+    long organizationId = Long.parseLong(request.getParameter("id"));
     
     GivrUser user = GivrUser.getCurrentLoggedInUser();
 
-    if(!user.isModeratorOfOrganization(id) || !user.isMaintainer()) {
+    if(!user.isModeratorOfOrganization(organizationId) || !user.isMaintainer()) {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
       return;
     }
 
-    Key DistributorEntityKey = KeyFactory.createKey("Distributor", id);
+    Key DistributorEntityKey = KeyFactory.createKey("Distributor", organizationId);
     Entity organizationEntity = null;
 
     // try catch for compilation purposes, servlet will not be called without a valid id param
