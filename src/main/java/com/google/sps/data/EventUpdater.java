@@ -15,6 +15,13 @@
 package com.google.sps.data;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.sps.data.GivrUser;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public final class EventUpdater {
 
@@ -28,4 +35,7 @@ public final class EventUpdater {
     return this.entity;
   }
 
+  public void updateEvent(HttpServletRequest request, GivrUser user, boolean forRegistration, EmbeddedEntity historyUpdate) throws IllegalArgumentException {
+    
+  }
 }
