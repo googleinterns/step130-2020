@@ -16,6 +16,7 @@ package com.google.sps.data;
 
 import java.util.ArrayList;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 
 public final class Organization {
 
@@ -23,7 +24,10 @@ public final class Organization {
   private String name;
   private String email;
   private String address;
+  private String city;
+  private String state;
   private String zipcode;
+  private ArrayList<EmbeddedEntity> hoursOpen;
   private String description;
   private String phoneNum;
   private long creationTimeStampMillis;
@@ -41,7 +45,10 @@ public final class Organization {
     this.name = (String) entity.getProperty("orgName");
     this.email = (String) entity.getProperty("orgEmail");
     this.address = (String) entity.getProperty("orgStreetAddress");
+    this.city = (String) entity.getProperty("orgCity");
+    this.state = (String) entity.getProperty("orgState");
     this.zipcode = (String) entity.getProperty("orgZipCode");
+    this.hoursOpen = (ArrayList) entity.getProperty("orgHoursOpen");
     this.description = (String) entity.getProperty("orgDescription");
     this.phoneNum = (String) entity.getProperty("orgPhoneNum");
     this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");

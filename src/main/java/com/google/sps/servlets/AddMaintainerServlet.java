@@ -48,6 +48,7 @@ public class AddMaintainerServlet extends HttpServlet {
 
     if (!currUser.isMaintainer()) {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      return;
     }
 
     // User can add another Maintainer only if they are a Maintainer.
