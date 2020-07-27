@@ -79,10 +79,7 @@ public class GivrUser {
   }
 
   public boolean isModeratorOfAnyOrg() {
-    if (getModeratingOrgs().size() > 0) {
-      return true;
-    }
-    return false;
+    return getModeratingOrgs().size() > 0;
   }
 
   // Gets User with propertyName, propertyValue exists within Datastore.
