@@ -104,47 +104,52 @@ public class GivrUser {
     datastore.put(entity);
   }
 
-  public static GivrUser getUserById(String userId) {
-    Entity entity = getUserFromDatastoreWithProperty("userId", userId);
+  private static GivrUser getUserByIdOrEmail(String userId, String userEmail) {
+    Entity entityRetrievedWithId = null;
+    Entity entityRetrievedWithEmail = null;
+
+    if (userId != null) {
+      entityRetrievedWithId = getUserFromDatastoreWithProperty("userId", userId);
+    }
+    if (userEmail != null) {
+      entityRetrievedWithEmail = getUserFromDatastoreWithProperty("userEmail", userEmail);
+    }
 
     boolean isMaintainer = false;
     boolean isLoggedIn = true;
-    String userEmail = "";
 
-    if (entity != null) {
-      isMaintainer = (boolean) entity.getProperty("isMaintainer");
-      userEmail = (String) entity.getProperty("userEmail");
+    if (entityRetrievedWithId != null) {
+      isMaintainer = (boolean) entityRetrievedWithId.getProperty("isMaintainer");
+      userEmail = (String) entityRetrievedWithId.getProperty("userEmail");
+    } else if (entityRetrievedWithEmail != null) {
+      isMaintainer = (boolean) entityRetrievedWithEmail.getProperty("isMaintainer");
+      userId = (String) entityRetrievedWithEmail.getProperty("userId");
     }
-
+    
     GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */, userEmail);
     return user;
   }
 
+  public static GivrUser getUserById(String userId) {
+    return getUserByIdOrEmail(userId, null);
+  }
+
   public static GivrUser getUserByEmail(String email) {
     // TODO: Support OAuth.
-    Entity entity = getUserFromDatastoreWithProperty("userEmail", email);
-
-    String userId = "";
-    boolean isMaintainer = false;
-    boolean isLoggedIn = false;
-    String loginURL = "";
-
-    if (entity != null) {
-      userId = (String) entity.getProperty("userId");
-      isMaintainer = (boolean) entity.getProperty("isMaintainer");
-    }
-    return new GivrUser(userId, isMaintainer, isLoggedIn, loginURL, email);
+    return getUserByIdOrEmail(null, email);
   }
 
   // The email returned in the GivrUser object is the value in the Datastore.
   public static GivrUser getCurrentLoggedInUser() {
     UserService userService = UserServiceFactory.getUserService();
     boolean isUserLoggedIn = userService.isUserLoggedIn();
-    String url = userService.createLoginURL("/");
+    String url = "";
     
     if (isUserLoggedIn) {
-      return getUserById(userService.getCurrentUser().getUserId());
+      return getUserByIdOrEmail(userService.getCurrentUser().getUserId(), userService.getCurrentUser().getEmail());
     }
+    url = userService.createLoginURL("/");
+
     return new GivrUser("" /* userId */, false /* isMaintainer */, false /* isLoggedIn */, url /* loginURL */, "" /* userEmail */);
   }
 
