@@ -25,6 +25,11 @@ document.addEventListener("DOMContentLoaded", async function() {
     const saturdayTimeOption = new TimeOption("Saturday", true, null, optionArea);
     const sundayTimeOption = new TimeOption("Sunday", true, null, optionArea);
   }
+
+  if (document.getElementById("event-registration-form-area")) {
+    const optionArea = document.getElementById("hours-option-area");
+    const timeOption = new TimeOption("Event hours", true, null, optionArea);
+  }
 });
 
 class TimeOption {
@@ -45,36 +50,51 @@ class TimeOption {
     this.dayLabel.classList.add("day-label");
     this.dayOptionArea.appendChild(this.dayLabel);
 
-    this.dayOpenLabel = document.createElement("label");
-    this.dayOpenLabel.textContent = "Open";
-    this.dayOpenLabel.classList.add("day-open-label");
-    this.dayOptionArea.appendChild(this.dayOpenLabel);
-    this.dayOpenInput = document.createElement("input");
-    this.dayOpenInput.setAttribute("type", "radio");
-    this.dayOpenInput.setAttribute("name", `${this.day}-isOpen`);
-    this.dayOpenInput.setAttribute("value", "open");
-    this.dayOptionArea.appendChild(this.dayOpenInput);
 
-    this.dayClosedLabel = document.createElement("label");
-    this.dayClosedLabel.textContent = "Closed";
-    this.dayClosedLabel.classList.add("day-closed-label");
-    this.dayOptionArea.appendChild(this.dayClosedLabel);
-    this.dayClosedInput = document.createElement("input");
-    this.dayClosedInput.setAttribute("type", "radio");
-    this.dayClosedInput.setAttribute("name", `${this.day}-isOpen`);
-    this.dayClosedInput.setAttribute("value", "closed");
-    this.dayOptionArea.appendChild(this.dayClosedInput);
+    // Only show open closed options for organization modification
+    if (!document.getElementById("event-registration-form-area")) {
+      this.dayOpenLabel = document.createElement("label");
+      this.dayOpenLabel.textContent = "Open";
+      this.dayOpenLabel.classList.add("day-open-label");
+      this.dayOptionArea.appendChild(this.dayOpenLabel);
+      this.dayOpenInput = document.createElement("input");
+      this.dayOpenInput.setAttribute("type", "radio");
+      this.dayOpenInput.setAttribute("name", `${this.day}-isOpen`);
+      this.dayOpenInput.setAttribute("value", "open");
+      this.dayOptionArea.appendChild(this.dayOpenInput);
 
-    this.radioElements = [this.dayOpenInput, this.dayClosedInput];
-    if (this.forRegistration) {
-      this.dayOpenInput.setAttribute("checked", "checked");
-      this.timeInputArea.classList.add("show-time-area");
-    } else if (!this.organizationDay.propertyMap.isOpen) {
-      this.dayClosedInput.setAttribute("checked", "checked");
-      this.timeInputArea.classList.add("hide-time-area");
-    } else {
-      this.dayOpenInput.setAttribute("checked", "checked");
-      this.timeInputArea.classList.add("show-time-area");
+      this.dayClosedLabel = document.createElement("label");
+      this.dayClosedLabel.textContent = "Closed";
+      this.dayClosedLabel.classList.add("day-closed-label");
+      this.dayOptionArea.appendChild(this.dayClosedLabel);
+      this.dayClosedInput = document.createElement("input");
+      this.dayClosedInput.setAttribute("type", "radio");
+      this.dayClosedInput.setAttribute("name", `${this.day}-isOpen`);
+      this.dayClosedInput.setAttribute("value", "closed");
+      this.dayOptionArea.appendChild(this.dayClosedInput);
+
+      this.radioElements = [this.dayOpenInput, this.dayClosedInput];
+      if (this.forRegistration) {
+        this.dayOpenInput.setAttribute("checked", "checked");
+        this.timeInputArea.classList.add("show-time-area");
+      } else if (!this.organizationDay.propertyMap.isOpen) {
+        this.dayClosedInput.setAttribute("checked", "checked");
+        this.timeInputArea.classList.add("hide-time-area");
+      } else {
+        this.dayOpenInput.setAttribute("checked", "checked");
+        this.timeInputArea.classList.add("show-time-area");
+      }
+      this.radioElements.forEach((elem) => {
+        elem.addEventListener("change", () => {
+          if (this.dayOpenInput.checked) {
+            this.timeInputArea.classList.add("show-time-area");
+            this.timeInputArea.classList.remove("hide-time-area");
+          } else {
+            this.timeInputArea.classList.add("hide-time-area");
+            this.timeInputArea.classList.remove("show-time-area");
+          }
+        });
+      });
     }
 
     this.dayFromInput = document.createElement("input");
@@ -112,18 +132,6 @@ class TimeOption {
     }
 
     this.dayOptionArea.appendChild(this.timeInputArea);
-
-    this.radioElements.forEach((elem) => {
-      elem.addEventListener("change", () => {
-        if (this.dayOpenInput.checked) {
-          this.timeInputArea.classList.add("show-time-area");
-          this.timeInputArea.classList.remove("hide-time-area");
-        } else {
-          this.timeInputArea.classList.add("hide-time-area");
-          this.timeInputArea.classList.remove("show-time-area");
-        }
-      });
-    });
     this.optionArea.appendChild(this.dayOptionArea);
   }
 
