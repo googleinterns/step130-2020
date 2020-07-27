@@ -233,6 +233,11 @@
   width: 70%;
 }
 
+#add-maintainer-email-form {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
 .day-option-area {
   margin: 5px 0px 5px 0px;
 }
