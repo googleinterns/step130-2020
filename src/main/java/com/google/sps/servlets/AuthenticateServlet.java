@@ -82,7 +82,6 @@ public class AuthenticateServlet extends HttpServlet {
 
     GivrUser user = GivrUser.getCurrentLoggedInUser();
     // This servlet will always be called for logged in and non logged in users.
-    user.setModeratingOrgs();
     if (user.isModeratorOfAnyOrg()) {
       // Updates Organizations using OrganizationUpdater by removing user's email from its invitedModerators list and adding user's ID to its moderatorsList.
       user.updateModeratingOrgs();
