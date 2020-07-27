@@ -51,14 +51,6 @@ public class DeleteOrganizationServlet extends HttpServlet {
     ArrayList<String> moderators = (ArrayList) organizationEntity.getParameter("moderatorList");
     datastore.delete(DistributorEntityKey);
 
-
-    // After deleting organization from datastore, go through its list of moderators and correctly update the
-    // moderating orgs they are now apart of
-    for(String userId : moderators) {
-        GivrUser user = GivrUser.getUserById(userId);
-        user.setModeratingOrgs();
-    }
-
     // Redirect back to the HTML page.
     response.sendRedirect("/organizations.html");
   }
