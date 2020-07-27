@@ -56,7 +56,7 @@ public class DeleteOrganizationServlet extends HttpServlet {
     // moderating orgs they are now apart of
     for(String userId : moderators) {
         GivrUser user = GivrUser.getUserById(userId);
-        user.setModeratingOrgsAndUpdateOrgs();
+        user.setModeratingOrgs();
     }
 
     // Redirect back to the HTML page.
