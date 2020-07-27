@@ -28,9 +28,9 @@ class User {
 
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.isMaintainer;
+      this.isModerator =  this.userIsModerator();
 
-      // TODO(): add isModerator check
-      this.rebuildNavBar(/*isModerator*/ false);
+      this.rebuildNavBar(/*isModerator*/ this.isModerator);
     }  else {
       const loginLink = document.getElementById("login-url");
       loginLink.textContent = "Log In";
@@ -94,6 +94,11 @@ class User {
     getHelpLink.textContent = "Get Help";
     navLinksArea.appendChild(getHelpLink);
 
+    const eventsLink = document.createElement("a");
+    eventsLink.setAttribute("href", "events.html");
+    eventsLink.textContent = "Events";
+    navLinksArea.appendChild(eventsLink);
+
     const registrationLink = document.createElement("a");
     registrationLink.setAttribute("href", "registration.html");
     registrationLink.textContent = "Register Organization";
@@ -129,6 +134,11 @@ class User {
       navLinksArea.appendChild(organizationsLink);
     }
       navBar.appendChild(navLinksArea);
+  }
+
+  userIsModerator() {
+      // TODO(): Add isModerator check
+      return false;
   }
 }
 

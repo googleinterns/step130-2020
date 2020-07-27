@@ -16,31 +16,51 @@ document.addEventListener("DOMContentLoaded", async function() {
   // This checks that requester User has valid credentials to edit/delete/view ALL organizations. (by checking userID)
   let isMaintainer = false;
   let forOrganizationsPage = false;
-
+  let forEventsPage = false;
   if (document.getElementById('search-area')) {
-    const mainSearchArea = new SearchArea(document.getElementById('search-area'), isMaintainer, forOrganizationsPage);
+    const mainSearchArea = new SearchArea(document.getElementById('search-area'), isMaintainer, forOrganizationsPage, forEventsPage);
     mainSearchArea.handleOrganizations();
   }
-  isMaintainer = true;
   if (document.getElementById('all-organizations')) {
     forOrganizationsPage = true;
-    const organizationSearchArea = new SearchArea(document.getElementById('all-organizations'), isMaintainer, forOrganizationsPage);
+    const organizationSearchArea = new SearchArea(document.getElementById('all-organizations'), isMaintainer, forOrganizationsPage, forEventsPage);
     organizationSearchArea.handleOrganizations();
   }
+  if (document.getElementById('events')) {
+      forEventsPage = true;
+      const eventsSearchArea = new SearchArea(document.getElementById('events'), isMaintainer, forOrganizationsPage, forEventsPage);  }
 });
 
 class SearchArea {
-  constructor(searchAreaElement, isMaintainer, forOrganizationsPage) {
-    this.searchArea = searchAreaElement;
-    this.organizationSearchArea = document.createElement("div");
+  constructor(searchAreaElement, isMaintainer, forOrganizationsPage, forEventsPage) {
+    this.searchAreaContainer = searchAreaElement;
+    this.searchArea = document.createElement("div");
     this.isMaintainer = isMaintainer;
+    // TODO(): Add isModerator check after moderator PR is pulled in
+    this.isModerator = true;
     this.forOrganizationsPage = forOrganizationsPage;
+    this.forEventsPage = forEventsPage;
     this.filterParams = new URLSearchParams();
     this.organizationObjectsList = [];
+    this.eventObjectsList = [];
     
     /* The cursor is the "cursor" filter param, and the keyword "none" is used to start at the beginning of the query */
     this.filterParams.set("cursor", "none");
     this.lastResultFound = false;
+
+    if(forEventsPage && (this.isModerator || this.isMaintainer)) {
+      this.myEventsAndAddButtons = document.createElement("div");
+      this.myEventsAndAddButtons.setAttribute("id", "my-events-and-add-buttons");
+      this.myEventsButton = document.createElement("div");
+      this.myEventsButton.textContent = "My Events";
+      this.myEventsButton.addEventListener('click', () => this.addMyEventsFilter());
+      this.myEventsAndAddButtons.appendChild(this.myEventsButton);
+      this.addEventButton = document.createElement("a");
+      this.addEventButton.textContent = "Register an Event";
+      this.addEventButton.setAttribute("href", "register_event.html");
+      this.myEventsAndAddButtons.appendChild(this.addEventButton);
+      this.searchArea.appendChild(this.myEventsAndAddButtons);
+    }
 
     this.zipcodeFormArea = document.createElement("div");
     this.zipcodeFormArea.setAttribute("id", "zipcode-form-area");
@@ -67,7 +87,7 @@ class SearchArea {
     this.form.appendChild(this.zipcodeSubmit);
 
     this.zipcodeFormArea.appendChild(this.form);
-    this.organizationSearchArea.appendChild(this.zipcodeFormArea);
+    this.searchArea.appendChild(this.zipcodeFormArea);
 
     this.filterTagArea = new FilterTagArea(this);
     this.filterTagArea.filterEntry.filterEntryArea.addEventListener('onParamEntry', 
@@ -85,10 +105,19 @@ class SearchArea {
     this.organizationPopupArea.setAttribute("id", "organization-popup-area");
     this.organizationPopupArea.classList.add("hide-popup");
 
-    this.organizationSearchArea.appendChild(this.organizationListArea);
-    this.organizationSearchArea.appendChild(this.loadMoreButton);
-    this.searchArea.appendChild(this.organizationSearchArea);
-    this.searchArea.appendChild(this.organizationPopupArea);
+    this.eventListArea = document.createElement("div");
+    this.eventListArea.setAttribute("id", "event-list");
+
+    this.eventPopupArea = document.createElement("div");
+    this.eventPopupArea.setAttribute("id", "event-popup-area");
+    this.eventPopupArea.classList.add("hide-popup");
+
+    this.searchArea.appendChild(this.organizationListArea);
+    this.searchArea.appendChild(this.eventListArea);
+    this.searchArea.appendChild(this.loadMoreButton);
+    this.searchAreaContainer.appendChild(this.searchArea);
+    this.searchAreaContainer.appendChild(this.organizationPopupArea);
+    this.searchAreaContainer.appendChild(this.eventPopupArea);
   }
   
   refreshOrganizationList() {
@@ -168,5 +197,10 @@ class SearchArea {
     }
     this.form.reset();
     this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);
+  }
+
+  addMyEventsFilter() {
+    // TODO(): Refine events by the ones fetching a list of events that are organized by 
+    // organizations that they are a moderator of
   }
 }
