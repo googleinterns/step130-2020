@@ -15,15 +15,26 @@
 package com.google.sps.data;
 
 public class Contact {
-  // Represents contact email.
+  /*
+   * Examples: help@lfpod.com | give@myway.com
+   */
   private String email;
-  // Represents contact phone number.
+
+  /*
+   * Ten digit phone number (Excluding +1 - USA)
+   * Examples: 0123456789 | 1111111111
+   */
   private String phone;
-  // Represents contact first name.
+
+  /*
+   * Can be left blank.
+   */
   private String firstName;
-  // Represents contact last name.
   private String lastName;
-  // Represents contact's pronouns.
+
+  /* Represents contact's pronouns.
+   * Examples: They/Them/Their, She/Her/Hers
+   */
   private String pronouns;
 
   public Contact(String email, String phone, String firstName, String lastName, String pronouns) {

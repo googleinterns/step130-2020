@@ -14,15 +14,30 @@
 
 package com.google.sps.data;
 
-public class Address {
+/*All addresses used in this application are in United States. */
 
-  private String address;
+public class Address {
+  /* Represents Street Address, including street name, House number/Apartment/Suite/Room number (if any).
+   *     Example:
+   *         1600 Amphitheatre Parkway
+   *         Mountain View, CA 94043
+   *   +-------------------------------------------+
+   *   | streetAddress | 1600 Amphitheatre Parkway |
+   *   |          city | Mountain View             |
+   *   |         state | CA                        |
+   *   |       zipcode | 94043                     |
+   *   +-------------------------------------------+
+   */
+  private String streetAddress;
+  // Represents City name.
   private String city;
+  // Represents the state name.
   private String state;
+  // Represents the five digit zipcode.
   private String zipcode;
 
-  public Address(String address, String city, String state, String zipcode) {
-    this.address = address;
+  public Address(String streetAddress, String city, String state, String zipcode) {
+    this.streetAddress = streetAddress;
     this.city = city;
     this.state = state;
     this.zipcode = zipcode;
