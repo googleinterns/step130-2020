@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.sps.data.Contact;
+import com.google.sps.data.Address;
 
 public class Event {
 
@@ -42,10 +43,7 @@ public class Event {
   // Represents when Event was last updated.
   private long lastEditedTimeStampMillis;
   // Represents location information for the Event.
-  private String address;
-  private String city;
-  private String state;
-  private String zipcode;
+  private Address addressInformation;
 
   /* An Event object takes in an entity and assigns all of its fields based on the entity's properties. */
   
@@ -59,10 +57,7 @@ public class Event {
     this.contactInformation = (Contact) entity.getProperty("eventContactInfo");
     this.creationTimeStampMillis = (long) entity.getProperty("eventCreationTimeStampMillis");
     this.lastEditedTimeStampMillis = (long) entity.getProperty("eventLastEditTimeStampMillis");
-    this.address = (String) entity.getProperty("eventAddress");
-    this.city = (String) entity.getProperty("eventCity");
-    this.state = (String) entity.getProperty("eventState");
-    this.zipcode = (String) entity.getProperty("eventZipcode");
+    this.addressInformation = (Address) entity.getProperty("eventAddress");
   }
 
 }
