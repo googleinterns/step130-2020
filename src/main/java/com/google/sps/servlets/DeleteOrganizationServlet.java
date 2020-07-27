@@ -34,6 +34,13 @@ public class DeleteOrganizationServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    GivrUser user = GivrUser.getCurrentLoggedInUser();
+
+    if(!user.isModeratorOfAnyOrg() || !user.isMaintainer()) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     long id = Long.parseLong(request.getParameter("id"));
 
