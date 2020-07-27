@@ -74,11 +74,11 @@ public class GivrUser {
   }
 
   public ArrayList<Entity> getModeratingOrgs() {
+    setModeratingOrgs(); // Makes sure that getModeratingOrgs is returning updated information.
     return this.moderatingOrgs;
   }
 
   public boolean isModeratorOfAnyOrg() {
-    setModeratingOrgs(); // Makes sure that getModeratingOrgs is returning updated information.
     if (getModeratingOrgs().size() > 0) {
       return true;
     }
