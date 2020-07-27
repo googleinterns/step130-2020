@@ -112,12 +112,16 @@ class SearchArea {
     this.eventPopupArea.setAttribute("id", "event-popup-area");
     this.eventPopupArea.classList.add("hide-popup");
 
-    this.searchArea.appendChild(this.organizationListArea);
-    this.searchArea.appendChild(this.eventListArea);
+    if(forEventsPage) {
+      this.searchArea.appendChild(this.eventListArea);
+      this.searchAreaContainer.appendChild(this.eventPopupArea);
+    } else {
+      this.searchArea.appendChild(this.organizationListArea);
+      this.searchAreaContainer.appendChild(this.organizationPopupArea);
+    }
+    
     this.searchArea.appendChild(this.loadMoreButton);
     this.searchAreaContainer.appendChild(this.searchArea);
-    this.searchAreaContainer.appendChild(this.organizationPopupArea);
-    this.searchAreaContainer.appendChild(this.eventPopupArea);
   }
   
   refreshOrganizationList() {
