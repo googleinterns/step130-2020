@@ -78,6 +78,7 @@ public class GivrUser {
   }
 
   public boolean isModeratorOfAnyOrg() {
+    setModeratingOrgs(); // Makes sure that getModeratingOrgs is returning updated information.
     if (getModeratingOrgs().size() > 0) {
       return true;
     }
@@ -124,7 +125,7 @@ public class GivrUser {
     }
   }
 
-  // Properly sets user's moderatingOrgs based on results from querying to Datastore for Organization entity's moderatorList and invitedModerators list.
+  // Properly sets user's moderatingOrgs based on results from querying to Datastore for Organization entity's moderatorList and invitedModerators list. Does not update to the Datastore Organization table.
   public void setModeratingOrgs() {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
