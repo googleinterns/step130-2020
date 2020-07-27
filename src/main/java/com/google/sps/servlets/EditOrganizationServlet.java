@@ -71,6 +71,7 @@ public class EditOrganizationServlet extends HttpServlet {
     organizationEntity = organizationUpdater.getEntity();
 
     datastore.put(organizationEntity);
+
     System.out.println("Edited Organization");
     response.sendRedirect("/organizations.html");
   }
