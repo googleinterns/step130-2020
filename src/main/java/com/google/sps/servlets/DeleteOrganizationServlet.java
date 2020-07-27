@@ -34,13 +34,6 @@ public class DeleteOrganizationServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    GivrUser user = GivrUser.getCurrentLoggedInUser();
-
-    if(!user.isModeratorOfAnyOrg() || !user.isMaintainer()) {
-      response.sendError(HttpServletResponse.SC_NOT_FOUND);
-      return;
-    }
-
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     long id = Long.parseLong(request.getParameter("id"));
 
@@ -55,7 +48,24 @@ public class DeleteOrganizationServlet extends HttpServlet {
         return;
     }
 
-    ArrayList<String> moderators = (ArrayList) organizationEntity.getParameter("moderatorList");
+    GivrUser user = GivrUser.getCurrentLoggedInUser();
+    ArrayList<Entity> usersModeratingOrgs = user.getModeratingOrgs();
+    boolean userIsModeratorOfOrg = false;
+
+    // Check to see if the user who requested deletetion of this organization is a true moderator of the
+    // organization
+    for(Entity org : usersModeratingOrgs) {
+      long orgId = (long) org.getKey().getId();
+      if(orgId == id) {
+        userIsModeratorOfOrg = true;
+      }
+    }
+
+    if(!userIsModeratorOfOrg || !user.isMaintainer()) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+    
     datastore.delete(DistributorEntityKey);
 
     // Redirect back to the HTML page.
