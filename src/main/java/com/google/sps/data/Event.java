@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Date;
 import java.util.ArrayList;
 import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 
 public class Event {
 
@@ -33,8 +35,23 @@ public class Event {
   private String city;
   private String state;
   private String zipcode;
+  private long creationTimeStampMillis;
+  private long lastEditedTimeStampMillis;
 
-  public Event() {
-    // TODO: Set necessary parameters for Constructor.
+  public Event(Entity entity) {
+    this.id = (long) entity.getKey().getId();
+    this.title = (String) entity.getProperty("eventTitle");
+    this.ownerOrgIds = (ArrayList) entity.getProperty("eventOwnerOrgIds");
+    this.partnerIdsOrNames = (ArrayList) entity.getProperty("eventPartnerOrgIdsOrNames");
+    this.description = (String) entity.getProperty("eventDescription");
+    this.contactEmail = (String) entity.getProperty("eventEmail");
+    this.address = (String) entity.getProperty("eventStreetAddress");
+    this.city = (String) entity.getProperty("eventCity");
+    this.state = (String) entity.getProperty("eventState");
+    this.zipcode = (String) entity.getProperty("eventZipCode");
+    this.dateAndHours = (Map) entity.getProperty("dateAndHours");
+    this.contactPhone = (String) entity.getProperty("eventPhoneNum");
+    this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");
+    this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
   }
 }

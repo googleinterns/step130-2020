@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.GivrUser;
+import com.google.sps.data.OrganizationUpdater;
 import java.io.IOException;
 import com.google.gson.Gson;
 import com.google.appengine.api.users.UserService;
@@ -37,6 +38,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 import java.lang.Object;
 
 @WebServlet("/authenticate")
@@ -79,6 +81,11 @@ public class AuthenticateServlet extends HttpServlet {
     Gson gson = new Gson();
 
     GivrUser user = GivrUser.getCurrentLoggedInUser();
+    // This servlet will always be called for logged in and non logged in users.
+    if (user.isModeratorOfAnyOrg()) {
+      // Updates Organizations using OrganizationUpdater by removing user's email from its invitedModerators list and adding user's ID to its moderatorsList.
+      user.updateModeratingOrgs();
+    }
 
     Entity userWithId = GivrUser.getUserFromDatastoreWithProperty("userId", user.getUserId());
     if (userWithId == null) {

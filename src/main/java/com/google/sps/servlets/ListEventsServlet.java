@@ -39,27 +39,27 @@ import com.google.appengine.api.datastore.Query.CompositeFilter;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.sps.data.Organization;
+import com.google.sps.data.Event;
 import com.google.sps.data.ListHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.GivrUser;
 import java.io.IOException;
 
-@WebServlet("/list-organizations")
-public class ListOrganizationsServlet extends HttpServlet {
+@WebServlet("/list-events")
+public class ListEventsServlet extends HttpServlet {
 
   /* Events & orgs have different labels for fields (ex: orgCity vs eventCity). This map is used to reference
-   * the organization-specific fields easily from ListHelper */
+   * the event-specific fields easily from ListHelper */
   public static HashMap<String, String> constantMap = new HashMap<String, String>();
   static {
-    constantMap.put("name", "orgName");
-    constantMap.put("address", "orgStreetAddress");
-    constantMap.put("zipcode", "orgZipCode");
+    constantMap.put("name", "eventTitle");
+    constantMap.put("address", "eventStreetAddress");
+    constantMap.put("zipcode", "eventZipCode");
   }
 
   /*
-   * This get request returns a list of organizations depending on its query parameters. 
+   * This get request returns a list of events depending on its query parameters. 
    * If no parameters are included, it will return a default list of organizations
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -73,7 +73,7 @@ public class ListOrganizationsServlet extends HttpServlet {
       fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
     }
 
-    Query query = ListHelper.getQuery("Distributor", request, currentUser);
+    Query query = ListHelper.getQuery("Event", request, currentUser);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
@@ -82,17 +82,17 @@ public class ListOrganizationsServlet extends HttpServlet {
     Cursor endCursor = results.getCursor();
     String encodedEndCursor = endCursor.toWebSafeString();
 
-    ArrayList<Organization> requestedOrganizations = new ArrayList<Organization>();
+    ArrayList<Event> requestedEvents = new ArrayList<Event>();
 
     /* Fills requestedOrganizations array*/
     for (Entity entity : results) {
       // TODO(): Implement better schema to represent opening and closing hours for different days
-      Organization newOrg = new Organization(entity);
-      requestedOrganizations.add(newOrg);
+      Event newEvent = new Event(entity);
+      requestedEvents.add(newEvent);
     }
     Gson gson = new Gson();
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(requestedOrganizations));
+    response.getWriter().println(gson.toJson(requestedEvents));
     response.addHeader("Cursor", encodedEndCursor);
   }
 }

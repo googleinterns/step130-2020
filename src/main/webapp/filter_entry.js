@@ -53,7 +53,7 @@ class FilterEntry{
     this.filterDataList.setAttribute("id", "filter-datalist");
     this.optionMap = new Map([
       ["Organization Name", "orgNames"],
-      ["Address", "orgStreetAddresses"],
+      ["Address", "streetAddresses"],
       ["Available Resources", "resourceCategories"]]);
     for (const optionKey of this.optionMap.keys()) {
       const option = document.createElement("option");

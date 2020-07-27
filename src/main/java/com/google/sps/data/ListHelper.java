@@ -39,42 +39,56 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import javax.servlet.http.HttpServletRequest;
 import com.google.sps.data.GivrUser;
+import com.google.sps.servlets.ListOrganizationsServlet;
+import com.google.sps.servlets.ListEventsServlet;
 import java.io.IOException;
 
 public class ListHelper {
 
-  /* This function constructs a query based on the entity kind, request parameters and user's role */
-  public static Query getQueryFromParams(String entityKind, HttpServletRequest request, GivrUser currentUser) throws IllegalArgumentException {
+  public static Query getQuery(String entityKind, HttpServletRequest request, GivrUser currentUser) {
     
-    if ((entityKind == "") || (entityKind == null)) {
-      throw new IllegalArgumentException("Entity kind must not be null");
+    /* allows generic word to reference specific field for given entity kind ("name" -> "orgName", etc.) */
+    HashMap<String, String> datastoreConstantMap;
+    if (entityKind.equals("Distributor")) {
+      datastoreConstantMap = new HashMap<String, String>(ListOrganizationsServlet.constantMap);
+    } else if (entityKind.equals("Event")) {
+      datastoreConstantMap = new HashMap<String, String>(ListEventsServlet.constantMap);
+    } else {
+      throw new IllegalArgumentException("Entity kind must be Distributor or Event");
     }
-    
-    Query query = new Query(entityKind).addSort("creationTimeStampMillis", SortDirection.DESCENDING);
 
+    /* First the filter params in the request are parsed into a map that applies each filter to the query */
+    HashMap<String, ArrayList<String>> filterParamMap = parseFilterParams(entityKind, request, currentUser, datastoreConstantMap);
+
+    /* displayForUser is set to true when the user wants whatever entity they are querying
+     * (Distributors, Events), to only return the entities they belong to / are involved with.*/
+    // String displayForUserParameter = request.getParameter("displayForUser");
+    boolean displayForUser = coerceParameterToBoolean(request, "displayForUser");
+
+    /* Next any filtering related to the user is handled */
     ArrayList<Filter> filterCollection = new ArrayList<Filter>();
+    filterCollection = handleUserFiltering(entityKind, currentUser, displayForUser);
 
-    String zipcode  = "";
-    boolean queryForZipcode = false;
-    if (request.getParameter("zipcode") != null) {
-      zipcode = request.getParameter("zipcode");
-      queryForZipcode = true;
-    }
+    /* Last, the filter keywords in the map are added to the filter collection, and the query is made & returned */
+    return getQueryFromFilters(entityKind, filterParamMap, filterCollection);
+  }
 
+
+  /* Fills all necessary filtering parameters from servlet request into a hashmap */
+  public static HashMap<String, ArrayList<String>> parseFilterParams(String entityKind, HttpServletRequest request, GivrUser currentUser, HashMap<String, String> datastoreConstantMap) {
     /* Stores datastore property name as key, and received filter keywords for said property in arraylist */
     HashMap<String, ArrayList<String>> filterParamMap = new HashMap<String, ArrayList<String>>();
 
-    ArrayList<String> orgNames = new ArrayList<String>();
-    if (request.getParameterValues("orgNames") != null) {
-      Collections.addAll(orgNames, request.getParameterValues("orgNames"));
-      filterParamMap.put("orgName", orgNames);
+    ArrayList<String> names = new ArrayList<String>();
+    if (request.getParameterValues("names") != null) {
+      Collections.addAll(names, request.getParameterValues("names"));
+      filterParamMap.put(datastoreConstantMap.get("name"), names);
     }
 
-    ArrayList<String> orgStreetAddresses = new ArrayList<String>();
-    if (request.getParameterValues("orgStreetAddresses") != null) {
-      Collections.addAll(orgStreetAddresses, request.getParameterValues("orgStreetAddresses"));
-      filterParamMap.put("orgStreetAddress", orgStreetAddresses);
-      System.out.println("Address is " + orgStreetAddresses);
+    ArrayList<String> streetAddresses = new ArrayList<String>();
+    if (request.getParameterValues("streetAddresses") != null) {
+      Collections.addAll(streetAddresses, request.getParameterValues("streetAddresses"));
+      filterParamMap.put(datastoreConstantMap.get("address"), streetAddresses);
     }
 
     ArrayList<String> resourceCategories = new ArrayList<String>();
@@ -83,27 +97,53 @@ public class ListHelper {
       filterParamMap.put("resourceCategories", resourceCategories);
     }
 
-    /* displayUserOrgsParameter is true when user only wants to see orgs they moderate*/
-    String displayUserOrgsParameter = request.getParameter("displayUserOrgs");
-    boolean displayUserOrgs = coerceParameterToBoolean(request, displayUserOrgsParameter);
-    boolean isUserLoggedIn = (currentUser != null);
-    // Ternary operator is used to check if userIsMaintainer to protect against null currentUser
-    boolean userIsMaintainer = isUserLoggedIn ? currentUser.isMaintainer() : false;
-
-    if (queryForZipcode) {
-      filterCollection.add(new FilterPredicate("orgZipCode", FilterOperator.EQUAL, zipcode));
+    ArrayList<String> zipcodes = new ArrayList<String>();
+    if (request.getParameterValues("zipcode") != null) {
+      Collections.addAll(zipcodes, request.getParameterValues("zipcode"));
+      filterParamMap.put(datastoreConstantMap.get("zipcode"), zipcodes);
     }
+    return filterParamMap;
+  }
 
-    if (isUserLoggedIn && displayUserOrgs) {
-      /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
-      String userId = currentUser.getUserId();
-      filterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
-    }
+  /* handleUserFiltering handles filtering related to a user's role and permissions, and whether that user has requested to only
+   * see organizations or events they belong to */
+  public static ArrayList<Filter> handleUserFiltering(String entityKind, GivrUser currentUser, boolean displayForUser) {
 
-    if (!userIsMaintainer) {
-      /* If the user is not a maintainer, only allow them to see approved orgs */
-      filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
+    ArrayList<Filter> filterCollection = new ArrayList<Filter>();
+
+
+    if (entityKind.equals("Distributor")) {
+      if (currentUser.isLoggedIn() && displayForUser) {
+        /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
+        String userId = currentUser.getUserId();
+        filterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
+      }
+
+      if (!currentUser.isMaintainer()) {
+        /* If the user is not a maintainer, only allow them to see approved orgs */
+        filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
+      }
+    } else if (entityKind.equals("Event")) {
+      if (displayForUser) {
+        ArrayList<Entity> moderatingOrgs = currentUser.getModeratingOrgs();
+
+        ArrayList<Long> moderatingOrgIds = new ArrayList<Long>();
+        for (Entity entity : moderatingOrgs) {
+          moderatingOrgIds.add(entity.getKey().getId());
+        }
+        filterCollection.add(new FilterPredicate("eventOwnerOrgIds", FilterOperator.IN, moderatingOrgIds));
+      }
     }
+    return filterCollection;
+  }
+
+  /* This function constructs a query based on the entity kind, request parameters and any previously added or new filters */
+  public static Query getQueryFromFilters(String entityKind, HashMap<String, ArrayList<String>> filterParamMap, ArrayList<Filter> filterCollection) throws IllegalArgumentException {
+    if ((entityKind == "") || (entityKind == null)) {
+      throw new IllegalArgumentException("Entity kind must not be null");
+    }
+    
+    Query query = new Query(entityKind).addSort("creationTimeStampMillis", SortDirection.DESCENDING);
 
     /* Adds a filter for each keyword in each arraylist of the map, according to its datastore property */
     for (Map.Entry<String, ArrayList<String>> entry : filterParamMap.entrySet()) {
