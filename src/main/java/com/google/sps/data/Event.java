@@ -37,7 +37,12 @@ public class Event {
   private String contactEmail;
   // Represents a single contact phone number for this Event.
   private String contactPhone;
-
+  // Represents a single contact name for this Event.
+  private String contactName;
+  // Represents when Event was created. Type is long because java.time.Instant returns a long type.
+  private long creationTimeStampMillis;
+  // Represents when Event was last updated.
+  private long lastEditedTimeStampMillis;
   // Represents location information for the Event.
   private String address;
   private String city;
