@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Date;
 import java.util.ArrayList;
 import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.sps.data.Contact;
 
 public class Event {
 
@@ -33,12 +34,8 @@ public class Event {
   private String description;
   // Holds dates of Event and their corresponding time(s).
   private Map<Date, EmbeddedEntity> dateAndHours;
-  // Represents a single contact email for this Event.
-  private String contactEmail;
-  // Represents a single contact phone number for this Event.
-  private String contactPhone;
-  // Represents a single contact name for this Event.
-  private String contactName;
+  // Holds contact information for this Event.
+  private Contact contactInformation;
   // Represents when Event was created. Type is long because java.time.Instant returns a long type.
   private long creationTimeStampMillis;
   // Represents when Event was last updated.
