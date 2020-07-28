@@ -29,7 +29,7 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.sps.data.GivrUser;
 import com.google.sps.servlets.ListOrganizationsServlet;
-import com.google.sps.data.ListHelper;
+import com.google.sps.data.ListEventsHelper;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
@@ -153,7 +153,7 @@ public final class ListEventServletTest {
     expectedList.add(masterEntityList.get(1));
     expectedList.add(masterEntityList.get(0));
  
-    Query receivedQuery = ListHelper.getQuery("Event", mockRequest, mockUser);
+    Query receivedQuery = ListEventsHelper.getQuery("Event", mockRequest, mockUser);
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
@@ -180,7 +180,7 @@ public final class ListEventServletTest {
     ArrayList<Entity> expectedList = new ArrayList<Entity>();
     expectedList.add(masterEntityList.get(4));
  
-    Query receivedQuery = ListHelper.getQuery("Event", mockRequest, mockUser);
+    Query receivedQuery = ListEventsHelper.getQuery("Event", mockRequest, mockUser);
 
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
