@@ -177,7 +177,7 @@ public final class EventUpdater {
       this.entity.setProperty("eventCreationTimeStampMillis", milliSecondsSinceEpoch);
     } else {
       // If not registering event, changeHistory property should exist and should be modified.
-      changeHistory = (ArrayList) this.entity.getproperty("changeHistory");
+      changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
     }
 
     this.entity.setProperty("eventLastEditTimeStampMillis", milliSecondsSinceEpoch);
