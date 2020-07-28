@@ -11,7 +11,7 @@
 document.addEventListener("DOMContentLoaded", async function() {
     createOrganizationInChargeInput(document.getElementById("organization-in-charge-area"));
     const optionArea = document.getElementById("hours-option-area");
-    const timeOption = new TimeOption("Event hours", true, null, optionArea);
+    const timeOption = new TimeOption("Event hours", true, null, optionArea, false);
 });
 
 function createOrganizationInChargeInput(listArea) {

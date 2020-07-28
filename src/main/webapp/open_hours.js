@@ -15,26 +15,27 @@
 document.addEventListener("DOMContentLoaded", async function() {
   // Looks for the hours-option-area in dom and will append the option to enter times 
   // for when the organization is open on every day of the week
+  const optionArea = document.getElementById("hours-option-area");
   if (document.getElementById("registration-form-area")) {
-    const optionArea = document.getElementById("hours-option-area");
-    const mondayTimeOption = new TimeOption("Monday", true, null, optionArea);
-    const tuesdayTimeOption = new TimeOption("Tuesday", true, null, optionArea);
-    const wednesdayTimeOption = new TimeOption("Wednesday", true, null, optionArea);
-    const thursdayTimeOption = new TimeOption("Thursday", true, null, optionArea);
-    const fridayTimeOption = new TimeOption("Friday", true, null, optionArea);
-    const saturdayTimeOption = new TimeOption("Saturday", true, null, optionArea);
-    const sundayTimeOption = new TimeOption("Sunday", true, null, optionArea);
+    const mondayTimeOption = new TimeOption("Monday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
+    const tuesdayTimeOption = new TimeOption("Tuesday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
+    const wednesdayTimeOption = new TimeOption("Wednesday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
+    const thursdayTimeOption = new TimeOption("Thursday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
+    const fridayTimeOption = new TimeOption("Friday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
+    const saturdayTimeOption = new TimeOption("Saturday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
+    const sundayTimeOption = new TimeOption("Sunday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
   }
 });
 
 class TimeOption {
   // organization.hoursOpen[index(1-7 for day of week)].propertyMap.
   // fromToPairs.value[index(how many set of hours for that day )].propertyMap.from/to
-  constructor(day, forRegistration, organizationDay, optionArea) {
+  constructor(day, forRegistration, organizationDay, optionArea, showOpenClosedOptions) {
     this.day = day;
     this.forRegistration = forRegistration;
     this.organizationDay = organizationDay;
     this.optionArea = optionArea;
+    this.showOpenClosedOptions = showOpenClosedOptions
 
     this.dayOptionArea = document.createElement("div");
     this.dayOptionArea.classList.add("day-option-area");
@@ -47,7 +48,7 @@ class TimeOption {
 
 
     // Only show open closed options for organization modification
-    if (!document.getElementById("event-registration-form-area")) {
+    if (this.showOpenClosedOptions) {
       this.dayOpenLabel = document.createElement("label");
       this.dayOpenLabel.textContent = "Open";
       this.dayOpenLabel.classList.add("day-open-label");
