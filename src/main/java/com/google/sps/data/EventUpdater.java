@@ -155,6 +155,34 @@ public final class EventUpdater {
     this.entity.setProperty("eventOwnerOrgId", ownerOrgId);
   }
 
+  private void setEventProperty(String propertyKey, String formValue) {
+    if (propertyKey.equals("eventPartnerNames")) {
+      // create ArrayList of EmbeddedEntity holding "" for Organization's ID or name
+      ArrayList<String> parsedNames = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
+
+      this.entity.setProperty(propertyKey, parsedNames);
+      return;
+    }
+
+    this.entity.setProperty(propertyKey, formValue);
+  }
+
+  private void setNonFormProperties(boolean forRegistration, EmbeddedEntity historyUpdate) {
+    long milliSecondsSinceEpoch = (long) historyUpdate.getProperty("changeTimeStampMillis");
+    ArrayList<EmbeddedEntity> changeHistory = new ArrayList<EmbeddedEntity>();
+
+    if (forRegistration) {
+      this.entity.setProperty("eventCreationTimeStampMillis", milliSecondsSinceEpoch);
+    } else {
+      // If not registering event, changeHistory property should exist and should be modified.
+      changeHistory = (ArrayList) this.entity.getproperty("changeHistory");
+    }
+
+    this.entity.setProperty("eventLastEditTimeStampMillis", milliSecondsSinceEpoch);
+    changeHistory.add(historyUpdate);
+    this.entity.setProperty("changeHistory", changeHistory);
+  }
+
   // Sets form values based on property key.
   private void setEventProperty(String propertyKey, String formValue) {
     if (propertyKey.equals("eventPartnerNames")) {
