@@ -25,11 +25,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     const saturdayTimeOption = new TimeOption("Saturday", true, null, optionArea);
     const sundayTimeOption = new TimeOption("Sunday", true, null, optionArea);
   }
-
-  if (document.getElementById("event-registration-form-area")) {
-    const optionArea = document.getElementById("hours-option-area");
-    const timeOption = new TimeOption("Event hours", true, null, optionArea);
-  }
 });
 
 class TimeOption {

@@ -9,25 +9,31 @@
 // limitations under the License.
 
 document.addEventListener("DOMContentLoaded", async function() {
-  createOrganizationInChargeInput(document.getElementById("organization-in-charge-area"));
+    createOrganizationInChargeInput(document.getElementById("organization-in-charge-area"));
+    const optionArea = document.getElementById("hours-option-area");
+    const timeOption = new TimeOption("Event hours", true, null, optionArea);
 });
 
 function createOrganizationInChargeInput(listArea) {
     // TODO(): fetch organizations that current user is a moderator of or fetch all organizations
     // if it is a maintainer
-    const organizationList = ["Fake Org A", "Fake Org B"];
+    const organizations = [{
+        "name": "Organization A",
+        "id": 1
+    },
+    {
+        "name": "Organization B",
+        "id": 2
+    }];
 
-    const inputList = document.createElement("input");
-    inputList.setAttribute("list", "organizations");
-    inputList.setAttribute("name", "event-primary-organization");
-    listArea.appendChild(inputList);
-
-    const options = document.createElement("datalist");
+    const options = document.createElement("select");
     options.setAttribute("id", "organizations");
+    options.setAttribute("name", "event-primary-organization-id");
 
-    organizationList.forEach((organization) => {
+    organizations.forEach((organization) => {
         const option = document.createElement("option");
-        option.setAttribute("value", organization);
+        option.textContent = organization.name;
+        option.setAttribute("value", organization.id);
         options.appendChild(option);
     });
 
