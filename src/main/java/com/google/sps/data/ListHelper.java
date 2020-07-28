@@ -62,19 +62,16 @@ public class ListHelper {
 
     /* displayForUser is set to true when the user wants whatever entity they are querying
      * (Distributors, Events), to only return the entities they belong to / are involved with.*/
-    // String displayForUserParameter = request.getParameter("displayForUser");
     boolean displayForUser = coerceParameterToBoolean(request, "displayForUser");
 
-    /* Next any filtering related to the user is handled */
     ArrayList<Filter> filterCollection = new ArrayList<Filter>();
     filterCollection = handleUserFiltering(entityKind, currentUser, displayForUser);
 
-    /* Last, the filter keywords in the map are added to the filter collection, and the query is made & returned */
     return getQueryFromFilters(entityKind, filterParamMap, filterCollection);
   }
 
 
-  /* Fills all necessary filtering parameters from servlet request into a hashmap */
+  /* Fills all filtering parameters from servlet request into a hashmap */
   public static HashMap<String, ArrayList<String>> parseFilterParams(String entityKind, HttpServletRequest request, GivrUser currentUser, HashMap<String, String> datastoreConstantMap) {
     /* Stores datastore property name as key, and received filter keywords for said property in arraylist */
     HashMap<String, ArrayList<String>> filterParamMap = new HashMap<String, ArrayList<String>>();
