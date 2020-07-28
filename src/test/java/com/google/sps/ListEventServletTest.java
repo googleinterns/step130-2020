@@ -136,7 +136,7 @@ public final class ListEventServletTest {
     moderatingOrgs.add(new Entity("Distributor", 3));
     when(mockUser.getModeratingOrgs()).thenReturn(moderatingOrgs);
     
-    /* Expected list only contains events hosted by orgs 1 & 3 */
+    /* Expected list only contains the events hosted by orgs 1 & 3 */
     ArrayList<Entity> expectedList = new ArrayList<Entity>();
     expectedList.add(masterEntityList.get(6));
     expectedList.add(masterEntityList.get(5));
@@ -145,7 +145,6 @@ public final class ListEventServletTest {
 
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
     when(mockRequest.getParameter("zipcode")).thenReturn(null);
-    when(mockRequest.getParameter("displayForUser")).thenReturn("true");
     when(mockRequest.getParameter("displayForUser")).thenReturn("true");
  
     Query receivedQuery = ListHelper.getQuery("Event", mockRequest, mockUser);
