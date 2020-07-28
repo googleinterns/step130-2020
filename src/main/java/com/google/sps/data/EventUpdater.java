@@ -45,7 +45,7 @@ public final class EventUpdater {
     // Format is (Form EntryName, Entity PropertyName)
     formProperties.put("event-name", "eventName");
     formProperties.put("event-owner-org-ids", "eventOwnerOrgId");
-    formProperties.put("event-partner", "eventPartnerIdsOrNames");
+    formProperties.put("event-partner", "eventPartnerNames");
     formProperties.put("event-details", "eventDetails");
     formProperties.put("event-email", "eventContactEmail");
     formProperties.put("event-phone-num", "eventContactPhone");
@@ -55,15 +55,14 @@ public final class EventUpdater {
     formProperties.put("event-state", "eventState");
     formProperties.put("event-zip-code", "eventZipcode");
 
-
     /* Optional Properties can be left blank in the request form.
      *
      * The following properties are optional:
-     * - eventPartnerIdsOrNames
+     * - eventPartnerNames
      * - eventDetails
      */
     Set<String> optionalProperties = new HashSet<String>();
-    optionalProperties.add("eventPartnerIdsOrNames");
+    optionalProperties.add("eventPartnerNames");
     optionalProperties.add("eventDescription");
 
     for (Map<String, String> entry: properties.entrySet()) {
@@ -72,11 +71,7 @@ public final class EventUpdater {
       String formValue = "";
 
       if (optionalProperties.contain(propertyKey)) {
-        if (request.getParameter(formKey) != null) {
-          formValue = request.getParameter(formKey);
-        } else {
-          formValue = "";
-        }
+        formValue = request.getParameter(formKey) == null ? "" : request.getParameter(formKey);
       } else {
         try {
           formValue = getParameterOrThrow(request, formKey);
@@ -102,11 +97,31 @@ public final class EventUpdater {
   }
 
   private void setEventProperty(String propertyKey, String formValue) {
+    if (propertyKey.equals("eventPartnerNames")) {
+      // create ArrayList of EmbeddedEntity holding "" for Organization's ID or name
+      ArrayList<String> parsedNames = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
 
+      this.entity.setProperty(propertyKey, parsedNames);
+      return;
+    }
+
+    this.entity.setProperty(propertyKey, formValue);
   }
 
-  private void setNonFormProperties(boolean forRegistration) {// determine the parameters
-    // TODO: set creation time or last edited based on forRegistration
+  private void setNonFormProperties(boolean forRegistration, EmbeddedEntity historyUpdate) {
+    long milliSecondsSinceEpoch = (long) historyUpdate.getProperty("changeTimeStampMillis");
+    ArrayList<EmbeddedEntity> changeHistory = new ArrayList<EmbeddedEntity>();
+
+    if (forRegistration) {
+      this.entity.setProperty("eventCreationTimeStampMillis", milliSecondsSinceEpoch);
+    } else {
+      // If not registering event, changeHistory property should exist and should be modified.
+      changeHistory = (ArrayList) this.entity.getproperty("changeHistory");
+    }
+
+    this.entity.setProperty("eventLastEditTimeStampMillis", milliSecondsSinceEpoch);
+    changeHistory.add(historyUpdate);
+    this.entity.setProperty("changeHistory", changeHistory);
   }
 
   private void setEventDateAndHours() { // determine the parameters
