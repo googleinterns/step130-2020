@@ -74,7 +74,7 @@ public class GivrUser {
   }
 
   public boolean isModeratorOfOrganization(long organizationId) {
-    for(Entity entity : this.getModeratingOrgs()) {
+    for(Entity entity : getModeratingOrgs()) {
       long entityId = (long) entity.getKey().getId();
       if(organizationId == entityId) {
         return true;
