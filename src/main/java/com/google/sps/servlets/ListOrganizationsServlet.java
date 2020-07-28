@@ -54,7 +54,7 @@ public class ListOrganizationsServlet extends HttpServlet {
   public static HashMap<String, String> constantMap = new HashMap<String, String>();
   static {
     constantMap.put("name", "orgName");
-    constantMap.put("address", "orgStreetAddress");
+    constantMap.put("streetAddress", "orgStreetAddress");
     constantMap.put("zipcode", "orgZipCode");
   }
 

@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-
+ 
+ 
 package com.google.sps;
  
 import static org.mockito.Mockito.*;
@@ -70,7 +70,7 @@ public final class ListOrgServletTest {
     // |     5 |                       5 | false      |   02763 |
     // |     6 |                       6 | false      |   94566 |
     // +-------+-------------------------+------------+---------+
-
+ 
     Entity entity0 = new Entity("Distributor");
     entity0.setProperty("creationTimeStampMillis", 0);
     entity0.setProperty("isApproved", false);
@@ -125,7 +125,7 @@ public final class ListOrgServletTest {
   public void tearDown() {
     helper.tearDown();
   }
-
+ 
   @Test
   public void testQueryWithNoFilter() {
     /* Because there are no filters, all entities are returned in reverse time order. */
@@ -142,15 +142,15 @@ public final class ListOrgServletTest {
     GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "testemail@gmail.com");
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
-    when(mockRequest.getParameter("zipcode")).thenReturn(null);
-    when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
+    when(mockRequest.getParameterValues("zipcode")).thenReturn(null);
+    when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListHelper.getQueryFromParams("Distributor", mockRequest, mockUser);
+    Query receivedQuery = ListHelper.getQuery("Distributor", mockRequest, mockUser);
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
-
+ 
   @Test
   public void testQueryAsNormalUser() {
  
@@ -165,10 +165,10 @@ public final class ListOrgServletTest {
     GivrUser mockUser = new GivrUser("testId", false, true, "google.com", "testemail@gmail.com");
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
-    when(mockRequest.getParameter("zipcode")).thenReturn(null);
-    when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
+    when(mockRequest.getParameterValues("zipcode")).thenReturn(null);
+    when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListHelper.getQueryFromParams("Distributor", mockRequest, mockUser);
+    Query receivedQuery = ListHelper.getQuery("Distributor", mockRequest, mockUser);
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
@@ -185,10 +185,10 @@ public final class ListOrgServletTest {
     GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "testemail@gmail.com");
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
-    when(mockRequest.getParameter("zipcode")).thenReturn("02763");
-    when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
+    when(mockRequest.getParameterValues("zipcode")).thenReturn(new String[]{"02763"});
+    when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListHelper.getQueryFromParams("Distributor", mockRequest, mockUser);
+    Query receivedQuery = ListHelper.getQuery("Distributor", mockRequest, mockUser);
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
  

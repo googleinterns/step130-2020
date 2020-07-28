@@ -54,7 +54,7 @@ public class ListEventsServlet extends HttpServlet {
   public static HashMap<String, String> constantMap = new HashMap<String, String>();
   static {
     constantMap.put("name", "eventTitle");
-    constantMap.put("address", "eventStreetAddress");
+    constantMap.put("streetAddress", "eventStreetAddress");
     constantMap.put("zipcode", "eventZipCode");
   }
 

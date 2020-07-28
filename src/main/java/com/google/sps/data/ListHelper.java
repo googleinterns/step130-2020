@@ -79,28 +79,12 @@ public class ListHelper {
     /* Stores datastore property name as key, and received filter keywords for said property in arraylist */
     HashMap<String, ArrayList<String>> filterParamMap = new HashMap<String, ArrayList<String>>();
 
-    ArrayList<String> names = new ArrayList<String>();
-    if (request.getParameterValues("names") != null) {
-      Collections.addAll(names, request.getParameterValues("names"));
-      filterParamMap.put(datastoreConstantMap.get("name"), names);
-    }
-
-    ArrayList<String> streetAddresses = new ArrayList<String>();
-    if (request.getParameterValues("streetAddresses") != null) {
-      Collections.addAll(streetAddresses, request.getParameterValues("streetAddresses"));
-      filterParamMap.put(datastoreConstantMap.get("address"), streetAddresses);
-    }
-
-    ArrayList<String> resourceCategories = new ArrayList<String>();
-    if (request.getParameterValues("resourceCategories") != null) {
-      Collections.addAll(resourceCategories, request.getParameterValues("resourceCategories"));
-      filterParamMap.put("resourceCategories", resourceCategories);
-    }
-
-    ArrayList<String> zipcodes = new ArrayList<String>();
-    if (request.getParameterValues("zipcode") != null) {
-      Collections.addAll(zipcodes, request.getParameterValues("zipcode"));
-      filterParamMap.put(datastoreConstantMap.get("zipcode"), zipcodes);
+    for (String paramString : new String[]{"name", "streetAddress", "resourceCategories", "zipcode"}) {
+      ArrayList<String> paramList = new ArrayList<String>();
+      if (request.getParameterValues(paramString) != null) {
+        Collections.addAll(paramList, request.getParameterValues(paramString));
+        filterParamMap.put(datastoreConstantMap.get(paramString), paramList);
+      }
     }
     return filterParamMap;
   }
