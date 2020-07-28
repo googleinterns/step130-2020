@@ -155,9 +155,10 @@ public final class EventUpdater {
     this.entity.setProperty("eventOwnerOrgId", ownerOrgId);
   }
 
+  // Sets form values based on property key.
   private void setEventProperty(String propertyKey, String formValue) {
     if (propertyKey.equals("eventPartnerNames")) {
-      // create ArrayList of EmbeddedEntity holding "" for Organization's ID or name
+      // Stores partnering organizations's names; partnering organizations do not have the ability to edit Event, so there is no need to store org IDs.
       ArrayList<String> parsedNames = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
 
       this.entity.setProperty(propertyKey, parsedNames);
@@ -167,6 +168,7 @@ public final class EventUpdater {
     this.entity.setProperty(propertyKey, formValue);
   }
 
+  // Sets values not passed in through the request form such as creation time of Event and last edited time.
   private void setNonFormProperties(boolean forRegistration, EmbeddedEntity historyUpdate) {
     long milliSecondsSinceEpoch = (long) historyUpdate.getProperty("changeTimeStampMillis");
     ArrayList<EmbeddedEntity> changeHistory = new ArrayList<EmbeddedEntity>();
