@@ -40,7 +40,7 @@ public class Event {
 
   public Event(Entity entity) {
     this.id = (long) entity.getKey().getId();
-    this.title = (String) entity.getProperty("eventTitle");
+    this.title = (String) entity.getProperty("eventName");
     this.ownerOrgId = (long) entity.getProperty("eventOwnerOrgId");
     this.partnerIdsOrNames = (ArrayList) entity.getProperty("eventPartnerOrgIdsOrNames");
     this.description = (String) entity.getProperty("eventDescription");
