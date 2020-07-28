@@ -21,6 +21,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.sps.data.GivrUser;
 import com.google.sps.data.EventUpdater;
 import com.google.sps.data.HistoryManager;
@@ -48,7 +50,7 @@ public class AddEventServlet extends HttpServlet {
     EventUpdater eventUpdater = new EventUpdater(newEventEntity);
     long millisecondsSinceEpoch = Instant.now().toEpochMilli();
     HistoryManager history = new HistoryManager();
-    EmbededdEntity historyUpdate = history.recordHistory("Event was registered.", millisecondsSinceEpoch);
+    EmbeddedEntity historyUpdate = history.recordHistory("Event was registered.", millisecondsSinceEpoch);
 
     // Update rest of Event properties from request form.
     try {

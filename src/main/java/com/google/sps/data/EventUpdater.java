@@ -15,6 +15,7 @@
 package com.google.sps.data;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.sps.data.GivrUser;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
