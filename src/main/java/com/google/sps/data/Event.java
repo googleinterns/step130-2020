@@ -51,7 +51,5 @@ public class Event {
     this.zipcode = (String) entity.getProperty("eventZipCode");
     this.dateAndHours = (Map) entity.getProperty("dateAndHours");
     this.contactPhone = (String) entity.getProperty("eventPhoneNum");
-    this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");
-    this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
   }
 }
