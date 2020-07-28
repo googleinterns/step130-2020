@@ -27,8 +27,9 @@ document.addEventListener("DOMContentLoaded", async function() {
     organizationSearchArea.handleOrganizations();
   }
   if (document.getElementById('events')) {
-      forEventsPage = true;
-      const eventsSearchArea = new SearchArea(document.getElementById('events'), isMaintainer, forOrganizationsPage, forEventsPage);  }
+    forEventsPage = true;
+    const eventsSearchArea = new SearchArea(document.getElementById('events'), isMaintainer, forOrganizationsPage, forEventsPage);
+  }
 });
 
 class SearchArea {
@@ -41,14 +42,13 @@ class SearchArea {
     this.forOrganizationsPage = forOrganizationsPage;
     this.forEventsPage = forEventsPage;
     this.filterParams = new URLSearchParams();
-    this.organizationObjectsList = [];
-    this.eventObjectsList = [];
-    
+    this.objectsList = [];
+
     /* The cursor is the "cursor" filter param, and the keyword "none" is used to start at the beginning of the query */
     this.filterParams.set("cursor", "none");
     this.lastResultFound = false;
 
-    if(forEventsPage && (this.isModerator || this.isMaintainer)) {
+    if (forEventsPage && (this.isModerator || this.isMaintainer)) {
       this.myEventsAndAddButtons = document.createElement("div");
       this.myEventsAndAddButtons.setAttribute("id", "my-events-and-add-buttons");
       this.myEventsButton = document.createElement("div");
@@ -90,58 +90,55 @@ class SearchArea {
     this.searchArea.appendChild(this.zipcodeFormArea);
 
     this.filterTagArea = new FilterTagArea(this);
-    this.filterTagArea.filterEntry.filterEntryArea.addEventListener('onParamEntry', 
+    this.filterTagArea.filterEntry.filterEntryArea.addEventListener('onParamEntry',
       (e) => this.setUrlParamValue(e.detail.urlParamKey, e.detail.urlParamValue), true);
 
-    this.loadMoreButton = document.createElement("div");	
-    this.loadMoreButton.setAttribute("class", "load-more-button");	
-    this.loadMoreButton.textContent = "See More Results";	
-    this.loadMoreButton.addEventListener('click', () => this.handleOrganizations());
+    this.loadMoreButton = document.createElement("div");
+    this.loadMoreButton.setAttribute("class", "load-more-button");
+    this.loadMoreButton.textContent = "See More Results";
+    this.loadMoreButton.addEventListener('click', () => this.handleObjects());
 
-    this.organizationListArea = document.createElement("div");
-    this.organizationListArea.setAttribute("id", "organization-list");
-
-    this.organizationPopupArea = document.createElement("div");
-    this.organizationPopupArea.setAttribute("id", "organization-popup-area");
-    this.organizationPopupArea.classList.add("hide-popup");
-
-    this.eventListArea = document.createElement("div");
-    this.eventListArea.setAttribute("id", "event-list");
-
-    this.eventPopupArea = document.createElement("div");
-    this.eventPopupArea.setAttribute("id", "event-popup-area");
-    this.eventPopupArea.classList.add("hide-popup");
-
-    if(forEventsPage) {
-      this.searchArea.appendChild(this.eventListArea);
-      this.searchAreaContainer.appendChild(this.eventPopupArea);
+    this.listArea = document.createElement("div");
+    this.popupArea = document.createElement("div");
+    if (forEventsPage) {
+      this.listArea.setAttribute("id", "event-list");
+      this.popupArea.setAttribute("id", "event-popup-area");
+      this.popupArea.classList.add("hide-popup");
     } else {
-      this.searchArea.appendChild(this.organizationListArea);
-      this.searchAreaContainer.appendChild(this.organizationPopupArea);
+      this.listArea.setAttribute("id", "organization-list");
+      this.popupArea.setAttribute("id", "organization-popup-area");
+      this.popupArea.classList.add("hide-popup");
     }
-    
+
+    this.searchArea.appendChild(this.listArea);
+    this.searchAreaContainer.appendChild(this.popupArea);
     this.searchArea.appendChild(this.loadMoreButton);
     this.searchAreaContainer.appendChild(this.searchArea);
   }
-  
-  refreshOrganizationList() {
-    this.filterParams.set("cursor", "none");	
-    this.lastResultFound = false;	
-    this.loadMoreButton.classList.remove("hide-load-button");	
-    this.organizationObjectsList = [];	
-    this.organizationListArea.innerHTML = "";	
-    this.handleOrganizations();
+
+  refreshObjectsList() {
+    this.filterParams.set("cursor", "none");
+    this.lastResultFound = false;
+    this.loadMoreButton.classList.remove("hide-load-button");
+    this.objectsList = [];
+    this.listArea.innerHTML = "";
+    this.handleObjects();
   }
 
-  async handleOrganizations() {
+  async handleObjects() {
     if (!this.lastResultFound) {
-      await this.getListOfOrganizations();
-      this.renderListOfOrganizations();
+      if (this.forEventsPage) {
+        await this.getListOfEvents();
+        this.renderListOfEvents();
+      } else {
+        await this.getListOfOrganizations();
+        this.renderListOfOrganizations();
+      }
     }
   }
 
   renderListOfOrganizations() {
-    this.organizationObjectsList.forEach((organization) => {
+    this.objectsList.forEach((organization) => {
       const newOrganization = new Organization(organization, this.isMaintainer, this.forOrganizationsPage);
 
       newOrganization.organizationElement.addEventListener('organization-selected', () => {
@@ -153,51 +150,85 @@ class SearchArea {
       });
 
       newOrganization.closeButtonElement.addEventListener('organization-close', () => {
-      //  Remove the popup from the DOM.
+        //  Remove the popup from the DOM.
         document.getElementById("organization-popup-area").classList.add("hide-popup");
         document.getElementById("organization-popup-area").classList.remove("show-popup");
         newOrganization.popupElement.remove();
       });
 
-      this.organizationListArea.appendChild(newOrganization.getOrganization());
+      this.listArea.appendChild(newOrganization.getOrganization());
     });
     /* If the query has returned 0 organization objects, display No Results Found message */
-    if ((this.organizationObjectsList.length === 0) && (this.organizationListArea.innerHTML === '')) {
+    if ((this.objectsList.length === 0) && (this.listArea.innerHTML === '')) {
       const noResultsFoundMessage = document.createElement("div");
       noResultsFoundMessage.setAttribute("id", "no-results-found");
       noResultsFoundMessage.textContent = "No results found for current filters.";
-      this.organizationListArea.appendChild(noResultsFoundMessage);
+      this.listArea.appendChild(noResultsFoundMessage);
     }
   }
 
   async getListOfOrganizations() {
     const response = await fetch(`/list-organizations?${this.filterParams.toString()}`);
-    this.organizationObjectsList = await response.json();
+    this.objectsList = await response.json();
     const newCursor = await response.headers.get("Cursor");
     this.filterParams.set("cursor", newCursor);
     /* If < 5 results are returned, the end of the given query has been reached */
-    this.lastResultFound = (this.organizationObjectsList.length < 5);
+    this.lastResultFound = (this.objectsList.length < 5);
     if (this.lastResultFound) {
       this.loadMoreButton.classList.add("hide-load-button");
     }
   }
 
+  renderListOfEvents() {
+    this.objectsList.forEach((event) => {
+      const newEvent = new Event(event, this.isMaintainer, this.isModerator);
+
+      newEvent.eventElement.addEventListener('event-selected', () => {
+        const eventPopupArea = document.getElementById("event-popup-area");
+        eventPopupArea.textContent = "";
+        eventPopupArea.appendChild(newEvent.createEventPopup());
+        eventPopupArea.classList.add("show-popup");
+        eventPopupArea.classList.remove("hide-popup");
+      });
+
+      newEvent.closeButtonElement.addEventListener('event-close', () => {
+        //  Remove the popup from the DOM.
+        document.getElementById("event-popup-area").classList.add("hide-popup");
+        document.getElementById("event-popup-area").classList.remove("show-popup");
+        newEvent.popupElement.remove();
+      });
+
+      this.listArea.appendChild(newEvent.getEvent());
+    });
+    /* If the query has returned 0 event objects, display No Results Found message */
+    if ((this.objectsList.length === 0) && (this.listArea.innerHTML === '')) {
+      const noResultsFoundMessage = document.createElement("div");
+      noResultsFoundMessage.setAttribute("id", "no-results-found");
+      noResultsFoundMessage.textContent = "No results found for current filters.";
+      this.listArea.appendChild(noResultsFoundMessage);
+    }
+  }
+
+  async getListOfEvents() {
+    // TODO(): Do correct fecth request
+  }
+
   async setUrlParamValue(urlParamKey, urlParamValue) {
     /* New query value is not added if it is a duplicate or empty/null */
     if (this.filterParams.getAll(urlParamKey).includes(urlParamValue) ||
-        (urlParamValue === null) || (urlParamValue.trim() === "")) {
+      (urlParamValue === null) || (urlParamValue.trim() === "")) {
       return;
     }
 
-    /* if the param is a zipcode, remove tag of any existing one & set new one*/ 
+    /* if the param is a zipcode, remove tag of any existing one & set new one*/
     if (urlParamKey === "zipcode") {
       if (this.filterParams.get("zipcode")) {
         /* If there is a zipcode being displayed, remove its tag so both aren't displayed */
         this.removeFilterTag("zipcode", this.filterParams.get("zipcode"), document.getElementById("zipcodeTag"));
       }
-      this.filterParams.set(urlParamKey, urlParamValue);      
+      this.filterParams.set(urlParamKey, urlParamValue);
     } else {
-      this.filterParams.append(urlParamKey, urlParamValue);      
+      this.filterParams.append(urlParamKey, urlParamValue);
     }
     this.form.reset();
     this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);
