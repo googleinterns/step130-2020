@@ -53,7 +53,7 @@ public class ListEventsServlet extends HttpServlet {
    * the event-specific fields easily from ListHelper */
   public static HashMap<String, String> constantMap = new HashMap<String, String>();
   static {
-    constantMap.put("name", "eventTitle");
+    constantMap.put("name", "eventName");
     constantMap.put("streetAddress", "eventStreetAddress");
     constantMap.put("zipcode", "eventZipCode");
   }
