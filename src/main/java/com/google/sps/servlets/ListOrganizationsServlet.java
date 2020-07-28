@@ -57,11 +57,21 @@ public class ListOrganizationsServlet extends HttpServlet {
 
     /* All get requests will return a maximum of 5 organization entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
+
+    String startCursor = request.getParameter("cursor");
+    if ((startCursor != null) && (!startCursor.equals("none"))) { //if the given cursor is 'none' no cursor is necessary
+      fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
+    }
+
     Query query = getQueryFromParams(request, currentUser);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
     QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
+
+    Cursor endCursor = results.getCursor();
+    String encodedEndCursor = endCursor.toWebSafeString();
+
     ArrayList<Organization> requestedOrganizations = new ArrayList<Organization>();
 
     /* Fills requestedOrganizations array*/
@@ -73,6 +83,7 @@ public class ListOrganizationsServlet extends HttpServlet {
     Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(requestedOrganizations));
+    response.addHeader("Cursor", encodedEndCursor);
   }
 
   /* This function constructs a query based on the request parameters & user's role */

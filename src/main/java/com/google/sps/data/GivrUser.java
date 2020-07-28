@@ -25,10 +25,14 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.CompositeFilter;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.lang.Object;
 import java.util.logging.Logger;
 import java.util.logging.Level;
@@ -42,6 +46,8 @@ public class GivrUser {
   private boolean isLoggedIn;
   private String url;
   private String email;
+  // In method setModeratingOrgs(), ArrayList will be set with all Organizations that this GivrUser moderates.
+  private ArrayList<Entity> moderatingOrgs = new ArrayList<Entity>();
 
   public GivrUser(String id, boolean isMaintainer, boolean isLoggedIn, String url, String email) {
     this.id = id;
@@ -67,9 +73,13 @@ public class GivrUser {
     return this.isLoggedIn;
   }
 
-  // TODO(): get correct moderator status for organization
-  public boolean isModerator(long organizationId) {
-      return false;
+  public ArrayList<Entity> getModeratingOrgs() {
+    setModeratingOrgs(); // Makes sure that getModeratingOrgs is returning updated information.
+    return this.moderatingOrgs;
+  }
+
+  public boolean isModeratorOfAnyOrg() {
+    return getModeratingOrgs().size() > 0;
   }
 
   // Gets User with propertyName, propertyValue exists within Datastore.
@@ -104,36 +114,69 @@ public class GivrUser {
     datastore.put(entity);
   }
 
-  public static GivrUser getUserById(String userId) {
-    Entity entity = getUserFromDatastoreWithProperty("userId", userId);
+  // Updates Organization entities in Datastore by removing user's email from invitedModerators list and adding user's ID in moderatorlist.
+  public void updateModeratingOrgs() {
+    for (int i = 0; i < this.moderatingOrgs.size(); i++) {
+      OrganizationUpdater organizationUpdater = new OrganizationUpdater(this.moderatingOrgs.get(i));
+      organizationUpdater.updateInvitedModerator(this);
+    }
+  }
+
+  // Properly sets user's moderatingOrgs based on results from querying to Datastore for Organization entity's moderatorList and invitedModerators list. Does not update to the Datastore Organization table.
+  public void setModeratingOrgs() {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    this.moderatingOrgs = new ArrayList<Entity>();
+
+    Query query = new Query("Distributor").addSort("creationTimeStampMillis", SortDirection.DESCENDING);
+
+    ArrayList<Filter> individualFilterCollection = new ArrayList<Filter>();
+
+    individualFilterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, this.id));
+    individualFilterCollection.add(new FilterPredicate("invitedModerators", FilterOperator.EQUAL, this.email));
+
+    CompositeFilter compositeORFilter = new CompositeFilter(CompositeFilterOperator.OR, individualFilterCollection);
+
+    PreparedQuery preparedQuery = datastore.prepare(query.setFilter(compositeORFilter));
+
+    for (Entity entity: preparedQuery.asIterable()) {
+      this.moderatingOrgs.add(entity);
+    }
+  }
+
+  private static GivrUser getUserByIdOrEmail(String userId, String userEmail) {
+    Entity entityRetrievedWithId = null;
+    Entity entityRetrievedWithEmail = null;
+
+    if (userId != null) {
+      entityRetrievedWithId = getUserFromDatastoreWithProperty("userId", userId);
+    }
+    if (userEmail != null) {
+      entityRetrievedWithEmail = getUserFromDatastoreWithProperty("userEmail", userEmail);
+    }
 
     boolean isMaintainer = false;
     boolean isLoggedIn = true;
-    String userEmail = "";
 
-    if (entity != null) {
-      isMaintainer = (boolean) entity.getProperty("isMaintainer");
-      userEmail = (String) entity.getProperty("userEmail");
+    if (entityRetrievedWithId != null) {
+      isMaintainer = (boolean) entityRetrievedWithId.getProperty("isMaintainer");
+      userEmail = (String) entityRetrievedWithId.getProperty("userEmail");
+    } else if (entityRetrievedWithEmail != null) {
+      isMaintainer = (boolean) entityRetrievedWithEmail.getProperty("isMaintainer");
+      userId = (String) entityRetrievedWithEmail.getProperty("userId");
     }
-
+    
     GivrUser user = new GivrUser(userId, isMaintainer, isLoggedIn, "" /* URL is not needed when User is logged in. */, userEmail);
     return user;
   }
 
+  public static GivrUser getUserById(String userId) {
+    return getUserByIdOrEmail(userId, null);
+  }
+
   public static GivrUser getUserByEmail(String email) {
     // TODO: Support OAuth.
-    Entity entity = getUserFromDatastoreWithProperty("userEmail", email);
-
-    String userId = "";
-    boolean isMaintainer = false;
-    boolean isLoggedIn = false;
-    String loginURL = "";
-
-    if (entity != null) {
-      userId = (String) entity.getProperty("userId");
-      isMaintainer = (boolean) entity.getProperty("isMaintainer");
-    }
-    return new GivrUser(userId, isMaintainer, isLoggedIn, loginURL, email);
+    return getUserByIdOrEmail(null, email);
   }
 
   // The email returned in the GivrUser object is the value in the Datastore.
@@ -143,7 +186,7 @@ public class GivrUser {
     String url = "";
     
     if (isUserLoggedIn) {
-      return getUserById(userService.getCurrentUser().getUserId());
+      return getUserByIdOrEmail(userService.getCurrentUser().getUserId(), userService.getCurrentUser().getEmail());
     }
     url = userService.createLoginURL("/");
 
