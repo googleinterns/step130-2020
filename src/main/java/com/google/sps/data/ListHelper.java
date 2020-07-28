@@ -70,7 +70,6 @@ public class ListHelper {
     return getQueryFromFilters(entityKind, filterParamMap, filterCollection);
   }
 
-
   /* Fills all filtering parameters from servlet request into a hashmap */
   public static HashMap<String, ArrayList<String>> parseFilterParams(String entityKind, HttpServletRequest request, GivrUser currentUser, HashMap<String, String> datastoreConstantMap) {
     /* Stores datastore property name as key, and received filter keywords for said property in arraylist */
