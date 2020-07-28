@@ -13,10 +13,11 @@
 // limitations under the License.
 
 class SearchArea {
-  constructor(searchAreaElement, forOrganizationsPage, renderListOfObjects, getListOfObjects) {
+  constructor(searchAreaElement, forOrganizations, renderListOfObjects, getListOfObjects) {
     this.searchAreaContainer = searchAreaElement;
     this.renderListOfObjects = renderListOfObjects;
     this.getListOfObjects = getListOfObjects;
+    this.forOrganizations = forOrganizations;
     this.searchArea = document.createElement("div");
     this.filterParams = new URLSearchParams();
     this.objectsList = [];
@@ -63,7 +64,8 @@ class SearchArea {
 
     this.listArea = document.createElement("div");
     this.popupArea = document.createElement("div");
-    if (forOrganizationsPage) {
+    console.log(this.forOrganizations);
+    if (this.forOrganizations) {
       this.listArea.setAttribute("id", "organization-list");
       this.popupArea.setAttribute("id", "organization-popup-area");
       this.popupArea.classList.add("hide-popup");

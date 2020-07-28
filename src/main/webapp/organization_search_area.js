@@ -18,21 +18,22 @@ document.addEventListener("DOMContentLoaded", async function() {
   let forOrganizationsPage = false;
 
   if (document.getElementById('search-area')) {
-    const mainSearchArea = new OrganizationSearchArea(document.getElementById('search-area'), isMaintainer, forOrganizationsPage);
+    const mainSearchArea = new OrganizationSearchArea(document.getElementById('search-area'), isMaintainer, /*forOrganizations*/ true, forOrganizationsPage);
   }
   isMaintainer = true;
   if (document.getElementById('all-organizations')) {
     forOrganizationsPage = true;
-    const organizationSearchArea = new OrganizationSearchArea(document.getElementById('all-organizations'), isMaintainer, forOrganizationsPage);
+    const organizationSearchArea = new OrganizationSearchArea(document.getElementById('all-organizations'), isMaintainer, /*forOrganizations*/ true, forOrganizationsPage);
   }
 });
 
 class OrganizationSearchArea {
-  constructor(searchAreaElement, isMaintainer, forOrganizationsPage) {
+  constructor(searchAreaElement, isMaintainer, forOrganizations, forOrganizationsPage) {
     this.searchArea = searchAreaElement;
     this.isMaintainer = isMaintainer;
     this.forOrganizationsPage = forOrganizationsPage;
-    this.searchAreaObject = new SearchArea(this.searchArea, this.forOrganizationsPage, this.renderListOfOrganizations, this.getListOfOrganizations);
+    this.forOrganizations = forOrganizations;
+    this.searchAreaObject = new SearchArea(this.searchArea, this.forOrganizations, this.renderListOfOrganizations, this.getListOfOrganizations);
     this.searchAreaObject.handleObjects();
   }
 
