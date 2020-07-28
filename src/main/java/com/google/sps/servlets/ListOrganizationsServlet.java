@@ -86,7 +86,6 @@ public class ListOrganizationsServlet extends HttpServlet {
 
     /* Fills requestedOrganizations array*/
     for (Entity entity : results) {
-      // TODO(): Implement better schema to represent opening and closing hours for different days
       Organization newOrg = new Organization(entity);
       requestedOrganizations.add(newOrg);
     }

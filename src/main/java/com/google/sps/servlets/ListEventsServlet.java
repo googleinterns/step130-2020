@@ -60,12 +60,12 @@ public class ListEventsServlet extends HttpServlet {
 
   /*
    * This get request returns a list of events depending on its query parameters. 
-   * If no parameters are included, it will return a default list of organizations
+   * If no parameters are included, it will return a default list of events
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     GivrUser currentUser = GivrUser.getCurrentLoggedInUser();
 
-    /* All get requests will return a maximum of 5 organization entities */
+    /* All get requests will return a maximum of 5 events entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
 
     String startCursor = request.getParameter("cursor");
@@ -84,9 +84,8 @@ public class ListEventsServlet extends HttpServlet {
 
     ArrayList<Event> requestedEvents = new ArrayList<Event>();
 
-    /* Fills requestedOrganizations array*/
+    /* Fills requestedEvents array*/
     for (Entity entity : results) {
-      // TODO(): Implement better schema to represent opening and closing hours for different days
       Event newEvent = new Event(entity);
       requestedEvents.add(newEvent);
     }
