@@ -39,7 +39,7 @@ public class DeleteOrganizationServlet extends HttpServlet {
     
     GivrUser user = GivrUser.getCurrentLoggedInUser();
 
-    if(!user.isModeratorOfOrganization(organizationId) || !user.isMaintainer()) {
+    if(!user.isModeratorOfOrganization(organizationId) && !user.isMaintainer()) {
       response.sendError(HttpServletResponse.SC_NOT_FOUND);
       return;
     }
