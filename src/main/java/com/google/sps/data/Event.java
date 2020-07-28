@@ -28,8 +28,10 @@ public class Event {
   private String name;
   // Holds ID (type long) of the Organization that owns the Event.
   private long ownerOrgId;
-  // Holds EmbeddedEntity that represents an Organization's ID OR name. A partnering organization could have missing ID.
-  private ArrayList<EmbeddedEntity> partnerIdsOrNames;
+  /* Holds ArrayList of Strings that represents an Organization's name. 
+   * No need to store IDs of partnering organization, as partners will not have the privilege of editing Events.
+   */
+  private ArrayList<String> partnerNames;
   // Represents details of the Event. e.g. "In front of church ABC"
   private String details;
   // Holds Date of Event and their corresponding time(s).
