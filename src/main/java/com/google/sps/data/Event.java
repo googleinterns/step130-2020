@@ -19,8 +19,6 @@ import java.util.Date;
 import java.util.ArrayList;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
-import com.google.sps.data.Contact;
-import com.google.sps.data.Address;
 
 public class Event {
 
