@@ -36,8 +36,6 @@ class OrganizationSearchArea {
     this.searchAreaObject.handleObjects();
   }
 
-
-
   renderListOfOrganizations(objectsList, listArea) {
     objectsList.forEach((organization) => {
       const newOrganization = new Organization(organization, this.isMaintainer, this.forOrganizationsPage);
