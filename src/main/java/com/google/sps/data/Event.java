@@ -36,14 +36,35 @@ public class Event {
   private String description;
   // Holds dates of Event and their corresponding time(s).
   private HashMap<Date, EmbeddedEntity> dateAndHours;
-  // Holds contact information for this Event.
-  private Contact contactInformation;
   // Represents when Event was created. Type is long because java.time.Instant returns a long type.
   private long creationTimeStampMillis;
   // Represents when Event was last updated.
   private long lastEditedTimeStampMillis;
-  // Represents location information for the Event.
-  private Address addressInformation;
+
+  /* Holds contact information for this Event. */
+
+  // Example: help@givr.com
+  private String contactEmail;
+  // Example: 3923421930 (Assume +1 is prepended)
+  private String contactPhone;
+  // Example: Bob Jones
+  private String contactName;
+
+
+  /* Holds location information for the Event. All addresses used in this application are in the United States. */
+
+  /* Street Address includes street name and house number/apartment/suite/room number (if any)
+   * Example: 1600 Amphitheatre Parkway
+   */
+  private String streetAddress;
+  // Example: Mountain View
+  private String city;
+  // Example: CA/California
+  private String state;
+  /* Represents five digit zipcode.
+   * Example: 94043
+   */
+  private String zipcode;
 
   /* An Event object takes in an entity and assigns all of its fields based on the entity's properties. */
   
@@ -54,10 +75,15 @@ public class Event {
     this.partnerIdsOrNames = (ArrayList) entity.getProperty("eventPartnerIdsOrNames");
     this.description = (String) entity.getProperty("eventDescription");
     this.dateAndHours = (HashMap) entity.getProperty("eventDateAndHours");
-    this.contactInformation = (Contact) entity.getProperty("eventContactInfo");
+    this.contactEmail = (String) entity.getProperty("eventContactEmail");
+    this.contactPhone = (String) entity.getProperty("eventContactPhone");
+    this.contactName = (String) entity.getProperty("eventContactName");
     this.creationTimeStampMillis = (long) entity.getProperty("eventCreationTimeStampMillis");
     this.lastEditedTimeStampMillis = (long) entity.getProperty("eventLastEditTimeStampMillis");
-    this.addressInformation = (Address) entity.getProperty("eventAddress");
+    this.streetAddress = (String) entity.getProperty("eventStreetAddress");
+    this.city = (String) entity.getProperty("eventCity");
+    this.state = (String) entity.getProperty("eventState");
+    this.zipcode = (String) entity.getProperty("eventZipcode");
   }
 
 }
