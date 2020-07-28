@@ -15,8 +15,8 @@
 document.addEventListener("DOMContentLoaded", async function() {
   // Looks for the hours-option-area in dom and will append the option to enter times 
   // for when the organization is open on every day of the week
-  const optionArea = document.getElementById("hours-option-area");
   if (document.getElementById("registration-form-area")) {
+    const optionArea = document.getElementById("hours-option-area");
     const mondayTimeOption = new TimeOption("Monday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
     const tuesdayTimeOption = new TimeOption("Tuesday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
     const wednesdayTimeOption = new TimeOption("Wednesday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
