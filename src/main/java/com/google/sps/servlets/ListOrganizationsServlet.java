@@ -40,7 +40,7 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.data.Organization;
-import com.google.sps.data.ListHelper;
+import com.google.sps.data.ListOrganizationsHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.GivrUser;
@@ -73,7 +73,7 @@ public class ListOrganizationsServlet extends HttpServlet {
       fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
     }
 
-    Query query = ListHelper.getQuery("Distributor", request, currentUser);
+    Query query = ListOrganizationsHelper.getQuery("Distributor", request, currentUser);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     

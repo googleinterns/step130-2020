@@ -29,7 +29,7 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.sps.data.GivrUser;
 import com.google.sps.servlets.ListOrganizationsServlet;
-import com.google.sps.data.ListHelper;
+import com.google.sps.data.ListOrganizationsHelper;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
@@ -145,7 +145,7 @@ public final class ListOrgServletTest {
     when(mockRequest.getParameterValues("zipcode")).thenReturn(null);
     when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListHelper.getQuery("Distributor", mockRequest, mockUser);
+    Query receivedQuery = ListOrganizationsHelper.getQuery("Distributor", mockRequest, mockUser);
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
@@ -168,7 +168,7 @@ public final class ListOrgServletTest {
     when(mockRequest.getParameterValues("zipcode")).thenReturn(null);
     when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListHelper.getQuery("Distributor", mockRequest, mockUser);
+    Query receivedQuery = ListOrganizationsHelper.getQuery("Distributor", mockRequest, mockUser);
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
@@ -188,7 +188,7 @@ public final class ListOrgServletTest {
     when(mockRequest.getParameterValues("zipcode")).thenReturn(new String[]{"02763"});
     when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListHelper.getQuery("Distributor", mockRequest, mockUser);
+    Query receivedQuery = ListOrganizationsHelper.getQuery("Distributor", mockRequest, mockUser);
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
  

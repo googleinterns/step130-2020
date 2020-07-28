@@ -39,36 +39,9 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import javax.servlet.http.HttpServletRequest;
 import com.google.sps.data.GivrUser;
-import com.google.sps.servlets.ListOrganizationsServlet;
-import com.google.sps.servlets.ListEventsServlet;
 import java.io.IOException;
 
-public class ListHelper {
-
-  public static Query getQuery(String entityKind, HttpServletRequest request, GivrUser currentUser) {
-    
-    /* allows generic word to reference specific field for given entity kind ("name" -> "orgName", etc.) */
-    HashMap<String, String> datastoreConstantMap;
-    if (entityKind.equals("Distributor")) {
-      datastoreConstantMap = new HashMap<String, String>(ListOrganizationsServlet.constantMap);
-    } else if (entityKind.equals("Event")) {
-      datastoreConstantMap = new HashMap<String, String>(ListEventsServlet.constantMap);
-    } else {
-      throw new IllegalArgumentException("Entity kind must be Distributor or Event");
-    }
-
-    /* First the filter params in the request are parsed into a map that applies each filter to the query */
-    HashMap<String, ArrayList<String>> filterParamMap = parseFilterParams(entityKind, request, currentUser, datastoreConstantMap);
-
-    /* displayForUser is set to true when the user wants whatever entity they are querying
-     * (Distributors, Events), to only return the entities they belong to / are involved with.*/
-    boolean displayForUser = coerceParameterToBoolean(request, "displayForUser");
-
-    ArrayList<Filter> filterCollection = new ArrayList<Filter>();
-    filterCollection = handleUserFiltering(entityKind, currentUser, displayForUser);
-
-    return getQueryFromFilters(entityKind, filterParamMap, filterCollection);
-  }
+public abstract class ListHelper {
 
   /* Fills all filtering parameters from servlet request into a hashmap */
   public static HashMap<String, ArrayList<String>> parseFilterParams(String entityKind, HttpServletRequest request, GivrUser currentUser, HashMap<String, String> datastoreConstantMap) {
@@ -85,37 +58,6 @@ public class ListHelper {
       }
     }
     return filterParamMap;
-  }
-
-  /* handleUserFiltering handles filtering related to a user's role and permissions, and whether that user has requested to only
-   * see organizations or events they belong to */
-  public static ArrayList<Filter> handleUserFiltering(String entityKind, GivrUser currentUser, boolean displayForUser) {
-
-    ArrayList<Filter> filterCollection = new ArrayList<Filter>();
-
-    if (entityKind.equals("Distributor")) {
-      if (currentUser.isLoggedIn() && displayForUser) {
-        /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
-        String userId = currentUser.getUserId();
-        filterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
-      }
-
-      if (!currentUser.isMaintainer()) {
-        /* If the user is not a maintainer, only allow them to see approved orgs */
-        filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
-      }
-    } else if (entityKind.equals("Event")) {
-      if (displayForUser) {
-        ArrayList<Entity> moderatingOrgs = currentUser.getModeratingOrgs();
-
-        ArrayList<Long> moderatingOrgIds = new ArrayList<Long>();
-        for (Entity entity : moderatingOrgs) {
-          moderatingOrgIds.add(entity.getKey().getId());
-        }
-        filterCollection.add(new FilterPredicate("eventOwnerOrgId", FilterOperator.IN, moderatingOrgIds));
-      }
-    }
-    return filterCollection;
   }
 
   /* This function constructs a query based on the entity kind, request parameters and any previously added or new filters */
