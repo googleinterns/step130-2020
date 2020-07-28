@@ -18,6 +18,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.sps.data.GivrUser;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -66,12 +67,12 @@ public final class EventUpdater {
     optionalProperties.add("eventPartnerNames");
     optionalProperties.add("eventDescription");
 
-    for (Map<String, String> entry: properties.entrySet()) {
+    for (Map.Entry<String, String> entry: formProperties.entrySet()) {
       String propertyKey = entry.getValue();
       String formKey = entry.getKey();
       String formValue = "";
 
-      if (optionalProperties.contain(propertyKey)) {
+      if (optionalProperties.contains(propertyKey)) {
         formValue = request.getParameter(formKey) == null ? "" : request.getParameter(formKey);
       } else {
         try {
@@ -119,7 +120,7 @@ public final class EventUpdater {
       this.entity.setProperty("eventCreationTimeStampMillis", milliSecondsSinceEpoch);
     } else {
       // If not registering event, changeHistory property should exist and should be modified.
-      changeHistory = (ArrayList) this.entity.getproperty("changeHistory");
+      changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
     }
 
     this.entity.setProperty("eventLastEditTimeStampMillis", milliSecondsSinceEpoch);
