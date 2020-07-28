@@ -94,10 +94,10 @@ class User {
     getHelpLink.textContent = "Get Help";
     navLinksArea.appendChild(getHelpLink);
 
-    const registrationLink = document.createElement("a");
-    registrationLink.setAttribute("href", "registration.html");
-    registrationLink.textContent = "Register Organization";
-    navLinksArea.appendChild(registrationLink);
+    const registerOrganizationLink = document.createElement("a");
+    registerOrganizationLink.setAttribute("href", "register_organization.html");
+    registerOrganizationLink.textContent = "Register Organization";
+    navLinksArea.appendChild(registerOrganizationLink);
 
     if (this.isMaintainer) {
       const organizationsLink = document.createElement("a");
