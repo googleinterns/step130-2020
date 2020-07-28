@@ -47,7 +47,7 @@ public class GivrUser {
   private String url;
   private String email;
   // In method setModeratingOrgs(), ArrayList will be set with all Organizations that this GivrUser moderates.
-  public ArrayList<Entity> moderatingOrgs = new ArrayList<Entity>();
+  private ArrayList<Entity> moderatingOrgs = new ArrayList<Entity>();
 
   public GivrUser(String id, boolean isMaintainer, boolean isLoggedIn, String url, String email) {
     this.id = id;

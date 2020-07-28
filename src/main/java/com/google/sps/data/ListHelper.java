@@ -78,6 +78,8 @@ public class ListHelper {
     for (String paramString : new String[]{"name", "streetAddress", "resourceCategories", "zipcode"}) {
       ArrayList<String> paramList = new ArrayList<String>();
       if (request.getParameterValues(paramString) != null) {
+        for (String c : request.getParameterValues(paramString)) {
+        }
         Collections.addAll(paramList, request.getParameterValues(paramString));
         filterParamMap.put(datastoreConstantMap.get(paramString), paramList);
       }
@@ -90,7 +92,6 @@ public class ListHelper {
   public static ArrayList<Filter> handleUserFiltering(String entityKind, GivrUser currentUser, boolean displayForUser) {
 
     ArrayList<Filter> filterCollection = new ArrayList<Filter>();
-
 
     if (entityKind.equals("Distributor")) {
       if (currentUser.isLoggedIn() && displayForUser) {
@@ -111,7 +112,7 @@ public class ListHelper {
         for (Entity entity : moderatingOrgs) {
           moderatingOrgIds.add(entity.getKey().getId());
         }
-        filterCollection.add(new FilterPredicate("eventOwnerOrgIds", FilterOperator.IN, moderatingOrgIds));
+        filterCollection.add(new FilterPredicate("eventOwnerOrgId", FilterOperator.IN, moderatingOrgIds));
       }
     }
     return filterCollection;

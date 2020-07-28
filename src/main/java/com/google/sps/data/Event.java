@@ -25,7 +25,7 @@ public class Event {
 
   private long id;
   private String title;
-  private ArrayList<String> ownerOrgIds;
+  private long ownerOrgId;
   private ArrayList<EmbeddedEntity> partnerIdsOrNames;
   private String description;
   private Map<Date, EmbeddedEntity> dateAndHours;
@@ -41,7 +41,7 @@ public class Event {
   public Event(Entity entity) {
     this.id = (long) entity.getKey().getId();
     this.title = (String) entity.getProperty("eventTitle");
-    this.ownerOrgIds = (ArrayList) entity.getProperty("eventOwnerOrgIds");
+    this.ownerOrgId = (long) entity.getProperty("eventOwnerOrgId");
     this.partnerIdsOrNames = (ArrayList) entity.getProperty("eventPartnerOrgIdsOrNames");
     this.description = (String) entity.getProperty("eventDescription");
     this.contactEmail = (String) entity.getProperty("eventEmail");
