@@ -24,15 +24,15 @@ public class Event {
 
   // Represents ID of Event; Type is long because Datastore's Key's getId() return type is long.
   private long id;
-  // Represents the title of the Event.
-  private String title;
-  // Holds IDs (type long) of Organizations that own the Event.
-  private ArrayList<Long> ownerOrgIds;
+  // Represents the name of the Event.
+  private String name;
+  // Holds ID (type long) of the Organization that owns the Event.
+  private long ownerOrgId;
   // Holds EmbeddedEntity that represents an Organization's ID OR name. A partnering organization could have missing ID.
   private ArrayList<EmbeddedEntity> partnerIdsOrNames;
-  // Represents description of the Event. e.g. "In front of church ABC"
-  private String description;
-  // Holds dates of Event and their corresponding time(s).
+  // Represents details of the Event. e.g. "In front of church ABC"
+  private String details;
+  // Holds Date of Event and their corresponding time(s).
   private HashMap<Date, EmbeddedEntity> dateAndHours;
   // Represents when Event was created. Type is long because java.time.Instant returns a long type.
   private long creationTimeStampMillis;
