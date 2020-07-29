@@ -33,6 +33,8 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.PreparedQuery;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public final class EventUpdater {
 
@@ -74,7 +76,7 @@ public final class EventUpdater {
     optionalProperties.add("eventPartnerNames");
     optionalProperties.add("eventDetails");
 
-    long ownerOrgId;
+    long ownerOrgId = 0;
 
     for (Map.Entry<String, String> entry: formProperties.entrySet()) {
       String propertyKey = entry.getValue();
@@ -131,6 +133,21 @@ public final class EventUpdater {
     return result;
   }
 
+  private ArrayList<String> getParameterValuesOrThrow(HttpServletRequest request, String formKey){
+    ArrayList<String> results = new ArrayList<String>(Arrays.asList(request.getParameterValues(formKey)));
+    if (results.isEmpty() || results == null) {
+      throw new IllegalArgumentException("Form value cannot be null");
+    }
+
+    // Checks if there is a value that is empty which means a blank time range was submitted
+    for(int i = 0; i < results.size(); i++) {
+      if(results.get(i).equals("")) {
+        throw new IllegalArgumentException("Form value cannot be null");
+      }
+    }
+    return results;
+  }
+
   // Sets form values based on property key.
   private void setEventProperty(String propertyKey, String formValue) {
     if (propertyKey.equals("eventPartnerNames")) {
@@ -162,13 +179,29 @@ public final class EventUpdater {
   }
 
   private void setEventDateAndHours(HttpServletRequest request) {
-
+    // Example of how event-date would be passed in: "2020-07-10"
     String eventDate = request.getParameter("event-date");
 
-    // TODO: 
-    // 1) extract date and hours from request, then construct embedded entity and set it as eventDateAndHours property
-    // 2) decide on format of date MM/DD/YYYY (in front end as well)
-    // 3) discuss how hours is sent (We don't need "Mon"-"Fri" that Organizations have.)
+    Date date = null;
+    try {
+      date = new SimpleDateFormat("yyyy-MM-dd").parse(eventDate);
+    } catch (java.text.ParseException err) {
+      logger.log(Level.SEVERE, "Date information is in the wrong format.");
+    }
+
+    HashMap<Date, EmbeddedEntity> dateAndHours = new HashMap<Date, EmbeddedEntity>();
+
+    EmbeddedEntity hoursEmbeddedEntity = new EmbeddedEntity();
+
+    ArrayList<String> eventFromTime = getParameterValuesOrThrow(request, "Event hours-from-times");
+    ArrayList<String> eventToTime = getParameterValuesOrThrow(request, "Event hours-to-times");
+
+    hoursEmbeddedEntity.setProperty("event-from-time", eventFromTime);
+    hoursEmbeddedEntity.setProperty("event-to-time", eventToTime);
+
+    dateAndHours.put(date, hoursEmbeddedEntity);
+
+    this.entity.setProperty("eventDateAndHours", dateAndHours);
   }
 
 }

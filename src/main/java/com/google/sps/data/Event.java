@@ -75,7 +75,7 @@ public class Event {
     this.id = (long) entity.getKey().getId();
     this.name = (String) entity.getProperty("eventName");
     this.ownerOrgId = (long) entity.getProperty("eventOwnerOrgId");
-    this.ownerOrgName = (String) entity.getProeprty("eventOwnerOrgName");
+    this.ownerOrgName = (String) entity.getProperty("eventOwnerOrgName");
     this.partnerNames = (ArrayList) entity.getProperty("eventPartnerNames");
     this.details = (String) entity.getProperty("eventDetails");
     this.dateAndHours = (HashMap) entity.getProperty("eventDateAndHours");
