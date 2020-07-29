@@ -102,7 +102,7 @@ class User {
     registerOrganizationLink.setAttribute("href", "register_organization.html");
     registerOrganizationLink.textContent = "Register Organization";
     navLinksArea.appendChild(registerOrganizationLink);
-    
+
     if (this.isMaintainer) {
       const organizationsLink = document.createElement("a");
       organizationsLink.setAttribute("href", "organizations.html");

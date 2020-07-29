@@ -27,7 +27,7 @@
 }
 
 #nav-links {
-  margin: auto 10%;
+  margin: auto 2%;
 }
 
 #nav-bar {
@@ -124,10 +124,13 @@
 }
 
 #search-area,
-#all-organizations,
-#events {
+#all-organizations {
   display: flex;
   justify-content: space-around;
+}
+
+#events-search-area {
+  margin: 0 auto;
 }
 
 #search-result-popup-area {
@@ -364,8 +367,11 @@
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
-  cursor: pointer;
   font-size: 20px;
+}
+
+#my-events-button {
+  cursor: pointer;
 }
 
 #my-events-and-add-buttons a {
