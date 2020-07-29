@@ -29,6 +29,8 @@ public class Event {
   private String name;
   // Holds ID (type long) of the Organization that owns the Event.
   private long ownerOrgId;
+  // Holds name of the Organization that owns the Event. Is set in EventUpdater's setEventOwnerOrgName().
+  private String ownerOrgName;
   /* Holds ArrayList of Strings that represents an Organization's name. 
    * No need to store IDs of partnering organization, as partners will not have the privilege of editing Events.
    */
@@ -73,6 +75,7 @@ public class Event {
     this.id = (long) entity.getKey().getId();
     this.name = (String) entity.getProperty("eventName");
     this.ownerOrgId = (long) entity.getProperty("eventOwnerOrgId");
+    this.ownerOrgName = (String) entity.getProeprty("eventOwnerOrgName");
     this.partnerNames = (ArrayList) entity.getProperty("eventPartnerNames");
     this.details = (String) entity.getProperty("eventDetails");
     this.dateAndHours = (ArrayList) entity.getProperty("eventDateAndHours");
