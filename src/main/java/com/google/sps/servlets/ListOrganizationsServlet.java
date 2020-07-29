@@ -137,10 +137,10 @@ public class ListOrganizationsServlet extends HttpServlet {
       filterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
     }
 
-    if (!userIsMaintainer) {
-      /* If the user is not a maintainer, only allow them to see approved orgs */
-      filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
-    }
+    // if (!userIsMaintainer) {
+    //   /* If the user is not a maintainer, only allow them to see approved orgs */
+    //   filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
+    // }
 
     /* Adds a filter for each keyword in each arraylist of the map, according to its datastore property */
     for (Map.Entry<String, ArrayList<String>> entry : filterParamMap.entrySet()) {

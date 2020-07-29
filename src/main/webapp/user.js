@@ -28,6 +28,7 @@ class User {
 
     if (loginData.isLoggedIn) {
       this.isMaintainer = loginData.isMaintainer;
+      this.isMaintainer = true;
       this.isModerator = loginData.moderatingOrgs.length >= 1;
       this.rebuildNavBar();
     }  else {

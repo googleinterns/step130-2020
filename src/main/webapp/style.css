@@ -378,3 +378,22 @@
   text-decoration: none;
   color: #666666;
 }
+
+.event-date-time {
+  display: flex;
+}
+
+.event-date {
+  margin-right: 10px;
+}
+
+.event-time {
+  margin-left: 10px;
+}
+
+.event {
+  margin: 0px 10px 20px 10px;
+  border: 2px solid #666666;
+  padding: 20px;
+  cursor: pointer;
+}
