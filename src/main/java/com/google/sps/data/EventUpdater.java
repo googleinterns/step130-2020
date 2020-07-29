@@ -189,6 +189,21 @@ public final class EventUpdater {
     this.entity.setProperty("changeHistory", changeHistory);
   }
 
+  private ArrayList<String> getParameterValuesOrThrow(HttpServletRequest request, String formKey){
+    ArrayList<String> results = new ArrayList<String>(Arrays.asList(request.getParameterValues(formKey)));
+    if (results.isEmpty() || results == null) {
+      throw new IllegalArgumentException("Form value cannot be null");
+    }
+
+    // Checks if there is a value that is empty which means a blank time range was submitted
+    for(int i = 0; i < results.size(); i++) {
+      if(results.get(i).equals("")) {
+        throw new IllegalArgumentException("Form value cannot be null");
+      }
+    }
+    return results;
+  }
+
   // Sets form values based on property key.
   private void setEventProperty(String propertyKey, String formValue) {
     if (propertyKey.equals("eventPartnerNames")) {
