@@ -145,7 +145,8 @@ public final class ListOrgServletTest {
     when(mockRequest.getParameterValues("zipcode")).thenReturn(null);
     when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListOrganizationsHelper.getQuery("Distributor", mockRequest, mockUser);
+    ListOrganizationsHelper listOrganizationsHelper = new ListOrganizationsHelper("Distributor", mockRequest, mockUser);
+    Query receivedQuery = listOrganizationsHelper.getQuery();
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
@@ -168,7 +169,8 @@ public final class ListOrgServletTest {
     when(mockRequest.getParameterValues("zipcode")).thenReturn(null);
     when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListOrganizationsHelper.getQuery("Distributor", mockRequest, mockUser);
+    ListOrganizationsHelper listOrganizationsHelper = new ListOrganizationsHelper("Distributor", mockRequest, mockUser);
+    Query receivedQuery = listOrganizationsHelper.getQuery();
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
@@ -188,7 +190,8 @@ public final class ListOrgServletTest {
     when(mockRequest.getParameterValues("zipcode")).thenReturn(new String[]{"02763"});
     when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListOrganizationsHelper.getQuery("Distributor", mockRequest, mockUser);
+    ListOrganizationsHelper listOrganizationsHelper = new ListOrganizationsHelper("Distributor", mockRequest, mockUser);
+    Query receivedQuery = listOrganizationsHelper.getQuery();
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
  

@@ -45,34 +45,31 @@ import java.io.IOException;
 
 public class ListOrganizationsHelper extends ListHelper {
 
-  public static Query getQuery(String entityKind, HttpServletRequest request, GivrUser currentUser) {
-    
-    HashMap<String, String> datastoreConstantMap = new HashMap<String, String>(ListOrganizationsServlet.constantMap);
+  public ListOrganizationsHelper(String entityKind, HttpServletRequest request, GivrUser currentUser) {
+      super(entityKind, request, currentUser);
+  }
 
-    /* First the filter params in the request are parsed into a map that applies each filter to the query */
-    HashMap<String, ArrayList<String>> filterParamMap = parseFilterParams(entityKind, request, currentUser, datastoreConstantMap);
-
-    /* displayForUser is set to true when the user wants whatever entity they are querying
-     * (Distributors, Events), to only return the entities they belong to / are involved with.*/
-    boolean displayForUser = coerceParameterToBoolean(request, "displayForUser");
-
-    ArrayList<Filter> filterCollection = new ArrayList<Filter>();
-    filterCollection = handleUserFiltering(entityKind, currentUser, displayForUser);
-
-    return getQueryFromFilters(entityKind, filterParamMap, filterCollection);
+  public HashMap<String, String> GetDatastoreConstantMap() {
+    /* Events & orgs have different labels for fields (ex: orgCity vs eventCity). This map is used to reference
+     * the event-specific fields easily from ListHelper */
+    HashMap<String, String> constantMap = new HashMap<String, String>();
+    constantMap.put("name", "orgName");
+    constantMap.put("streetAddress", "orgStreetAddress");
+    constantMap.put("zipcode", "orgZipCode");
+    return constantMap;
   }
 
   /* handleUserFiltering handles filtering related to a user's role and permissions, and whether that user has requested to only
    * see organizations or events they belong to */
-  public static ArrayList<Filter> handleUserFiltering(String entityKind, GivrUser currentUser, boolean displayForUser) {
+  public ArrayList<Filter> handleUserFiltering(boolean displayForUser) {
     ArrayList<Filter> filterCollection = new ArrayList<Filter>();
-    if (currentUser.isLoggedIn() && displayForUser) {
+    if (this.currentUser.isLoggedIn() && displayForUser) {
       /* If the user is logged in and wants to just see their orgs, get their user ID & index with it*/
       String userId = currentUser.getUserId();
       filterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
     }
 
-    if (!currentUser.isMaintainer()) {
+    if (!this.currentUser.isMaintainer()) {
       /* If the user is not a maintainer, only allow them to see approved orgs */
       filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
     }

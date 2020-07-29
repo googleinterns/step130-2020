@@ -41,6 +41,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.data.Organization;
 import com.google.sps.data.ListOrganizationsHelper;
+import com.google.sps.data.ListHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.GivrUser;
@@ -48,15 +49,6 @@ import java.io.IOException;
 
 @WebServlet("/list-organizations")
 public class ListOrganizationsServlet extends HttpServlet {
-
-  /* Events & orgs have different labels for fields (ex: orgCity vs eventCity). This map is used to reference
-   * the organization-specific fields easily from ListHelper */
-  public static HashMap<String, String> constantMap = new HashMap<String, String>();
-  static {
-    constantMap.put("name", "orgName");
-    constantMap.put("streetAddress", "orgStreetAddress");
-    constantMap.put("zipcode", "orgZipCode");
-  }
 
   /*
    * This get request returns a list of organizations depending on its query parameters. 
@@ -73,7 +65,8 @@ public class ListOrganizationsServlet extends HttpServlet {
       fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
     }
 
-    Query query = ListOrganizationsHelper.getQuery("Distributor", request, currentUser);
+    ListOrganizationsHelper listOrganizationsHelper = new ListOrganizationsHelper("Distributor", request, currentUser);
+    Query query = listOrganizationsHelper.getQuery();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     

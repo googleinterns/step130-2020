@@ -41,6 +41,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.data.Event;
 import com.google.sps.data.ListEventsHelper;
+import com.google.sps.data.ListHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.GivrUser;
@@ -48,15 +49,6 @@ import java.io.IOException;
 
 @WebServlet("/list-events")
 public class ListEventsServlet extends HttpServlet {
-
-  /* Events & orgs have different labels for fields (ex: orgCity vs eventCity). This map is used to reference
-   * the event-specific fields easily from ListHelper */
-  public static HashMap<String, String> constantMap = new HashMap<String, String>();
-  static {
-    constantMap.put("name", "eventName");
-    constantMap.put("streetAddress", "eventStreetAddress");
-    constantMap.put("zipcode", "eventZipCode");
-  }
 
   /*
    * This get request returns a list of events depending on its query parameters. 
@@ -73,7 +65,8 @@ public class ListEventsServlet extends HttpServlet {
       fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
     }
 
-    Query query = ListEventsHelper.getQuery("Event", request, currentUser);
+    ListEventsHelper listEventsHelper = new ListEventsHelper("Event", request, currentUser);
+    Query query = listEventsHelper.getQuery();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
