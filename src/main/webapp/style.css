@@ -1,6 +1,7 @@
 #get-help-content,
 #registration-content,
-#organizations-content {
+#organizations-content,
+#events-content {
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
   display: flex;
@@ -12,11 +13,6 @@
   text-decoration: none;
   border-bottom: 3px solid transparent;
   margin: 0 20px;
-}
-
-#help-near-me-content a:hover,
-#organizations-content a:hover {
-  border-bottom: 3px solid #666666;
 }
 
 #login-url {
@@ -31,7 +27,7 @@
 }
 
 #nav-links {
-  margin: auto 10%;
+  margin: auto 2%;
 }
 
 #nav-bar {
@@ -131,6 +127,10 @@
 #all-organizations {
   display: flex;
   justify-content: space-around;
+}
+
+#events-search-area {
+  margin: 0 auto;
 }
 
 #search-result-popup-area {
@@ -361,4 +361,20 @@
 
 .hide-load-button {
   display: none;
+}
+
+#my-events-and-add-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+#my-events-button {
+  cursor: pointer;
+}
+
+#my-events-and-add-buttons a {
+  text-decoration: none;
+  color: #666666;
 }

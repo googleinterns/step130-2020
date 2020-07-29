@@ -93,6 +93,11 @@ class User {
     getHelpLink.textContent = "Get Help";
     navLinksArea.appendChild(getHelpLink);
 
+    const eventsLink = document.createElement("a");
+    eventsLink.setAttribute("href", "events.html");
+    eventsLink.textContent = "Events";
+    navLinksArea.appendChild(eventsLink);
+
     const registerOrganizationLink = document.createElement("a");
     registerOrganizationLink.setAttribute("href", "register_organization.html");
     registerOrganizationLink.textContent = "Register Organization";

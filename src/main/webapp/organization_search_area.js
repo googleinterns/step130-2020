@@ -32,7 +32,11 @@ class OrganizationSearchArea {
     this.searchArea = searchAreaElement;
     this.isMaintainer = isMaintainer;
     this.forOrganizationsPage = forOrganizationsPage;
-    this.searchAreaObject = new SearchArea(this.searchArea, (objectsList, listArea) => { return this.renderListOfOrganizations(objectsList, listArea)}, (filterParams, objectsList, lastResultFound, loadMoreButton) => { return this.getListOfOrganizations(filterParams, objectsList, lastResultFound, loadMoreButton)});
+    this.searchAreaObject = new SearchArea(this.searchArea,
+      (objectsList, listArea) => { 
+          return this.renderListOfOrganizations(objectsList, listArea) },
+      (filterParams, objectsList, lastResultFound, loadMoreButton) => {
+           return this.getListOfOrganizations(filterParams, objectsList, lastResultFound, loadMoreButton) });
     this.searchAreaObject.handleObjects();
   }
 
@@ -49,7 +53,7 @@ class OrganizationSearchArea {
       });
 
       newOrganization.closeButtonElement.addEventListener('organization-close', () => {
-      //  Remove the popup from the DOM.
+        //  Remove the popup from the DOM.
         document.getElementById("search-result-popup-area").classList.add("hide-popup");
         document.getElementById("search-result-popup-area").classList.remove("show-popup");
         newOrganization.popupElement.remove();
