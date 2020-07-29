@@ -36,13 +36,14 @@ class EventSearchArea {
     this.myEventsAndAddButtons.appendChild(this.addEventButton);
     this.searchArea.appendChild(this.myEventsAndAddButtons);
 
-    this.searchAreaObject = new SearchArea(this.searchArea, this.renderListOfEvents, this.getListOfEvents);
+    this.searchAreaObject = new SearchArea(this.searchArea, (objectsList, listArea) => { return this.renderListOfEvents(objectsList, listArea)}, (filterParams, objectsList, lastResultFound, loadMoreButton) => { return this.getListOfEvents(filterParams, objectsList, lastResultFound, loadMoreButton)});
     this.searchAreaObject.handleObjects();
   }
 
   renderListOfEvents(objectsList, listArea) {
     // TODO(): for each event send in the event object and the if the user that did the request is a moderator for that event or not
     objectsList.forEach((event) => {
+      // TODO(): set up official event object
       const newEvent = new Event(event, this.isMaintainer);
 
       newEvent.eventElement.addEventListener('event-selected', () => {
@@ -81,6 +82,7 @@ class EventSearchArea {
     if (lastResultFound) {
       loadMoreButton.classList.add("hide-load-button");
     }
+    return objectsList;
   }
 
   addMyEventsFilter() {
