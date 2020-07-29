@@ -19,10 +19,8 @@ document.addEventListener("DOMContentLoaded", async function() {
 });
 
 async function createOrganizationInChargeInput(listArea, currentUser) {
-    // TODO(): fetch organizations that current user is a moderator of or fetch all organizations
+    // fetch organizations that current user is a moderator of or fetch all organizations
     // if it is a maintainer
-
-    console.log("IS MODERATOR: ", currentUser.isModerator, " IS MAINTAINER: ", currentUser.isMaintainer);
 
     let organizations;
     if (currentUser.isModerator && (!currentUser.isMaintainer)) {
