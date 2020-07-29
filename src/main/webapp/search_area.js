@@ -84,7 +84,7 @@ class SearchArea {
 
   async handleObjects() {
     if (!this.lastResultFound) {
-      await this.getListOfObjects(this.filterParams, this.objectsList, this.lastResultFound, this.loadMoreButton);
+      this.objectsList = await this.getListOfObjects(this.filterParams, this.objectsList, this.lastResultFound, this.loadMoreButton);
       this.renderListOfObjects(this.objectsList, this.listArea);
     }
   }

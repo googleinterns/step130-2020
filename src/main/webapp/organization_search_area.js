@@ -76,5 +76,6 @@ class OrganizationSearchArea {
     if (lastResultFound) {
       loadMoreButton.classList.add("hide-load-button");
     }
+    return objectsList;
   }
 }
