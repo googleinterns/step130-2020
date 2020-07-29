@@ -23,8 +23,7 @@ class EventSearchArea {
     this.searchArea = searchAreaElement;
     this.isMaintainer = isMaintainer;
 
-    this.myEventsAndAddButtons = document.createElement("div");
-    this.myEventsAndAddButtons.setAttribute("id", "my-events-and-add-buttons");
+    this.myEventsAndAddButtons = document.getElementById("my-events-and-add-buttons");
     this.myEventsButton = document.createElement("a");
     this.myEventsButton.setAttribute("id", "my-events-button");
     this.myEventsButton.textContent = "My Events";
@@ -34,7 +33,6 @@ class EventSearchArea {
     this.addEventButton.textContent = "Register an Event";
     this.addEventButton.setAttribute("href", "register_event.html");
     this.myEventsAndAddButtons.appendChild(this.addEventButton);
-    this.searchArea.appendChild(this.myEventsAndAddButtons);
 
     this.searchAreaObject = new SearchArea(this.searchArea,
       (objectsList, listArea) => { 
