@@ -18,22 +18,21 @@ document.addEventListener("DOMContentLoaded", async function() {
   let forOrganizationsPage = false;
 
   if (document.getElementById('search-area')) {
-    const mainSearchArea = new OrganizationSearchArea(document.getElementById('search-area'), isMaintainer, /*forOrganizations*/ true, forOrganizationsPage);
+    const mainSearchArea = new OrganizationSearchArea(document.getElementById('search-area'), isMaintainer, forOrganizationsPage);
   }
   isMaintainer = true;
   if (document.getElementById('all-organizations')) {
     forOrganizationsPage = true;
-    const organizationSearchArea = new OrganizationSearchArea(document.getElementById('all-organizations'), isMaintainer, /*forOrganizations*/ true, forOrganizationsPage);
+    const organizationSearchArea = new OrganizationSearchArea(document.getElementById('all-organizations'), isMaintainer, forOrganizationsPage);
   }
 });
 
 class OrganizationSearchArea {
-  constructor(searchAreaElement, isMaintainer, forOrganizations, forOrganizationsPage) {
+  constructor(searchAreaElement, isMaintainer, forOrganizationsPage) {
     this.searchArea = searchAreaElement;
     this.isMaintainer = isMaintainer;
     this.forOrganizationsPage = forOrganizationsPage;
-    this.forOrganizations = forOrganizations;
-    this.searchAreaObject = new SearchArea(this.searchArea, this.forOrganizations, this.renderListOfOrganizations, this.getListOfOrganizations);
+    this.searchAreaObject = new SearchArea(this.searchArea, this.renderListOfOrganizations, this.getListOfOrganizations);
     this.searchAreaObject.handleObjects();
   }
 
@@ -51,8 +50,8 @@ class OrganizationSearchArea {
 
       newOrganization.closeButtonElement.addEventListener('organization-close', () => {
       //  Remove the popup from the DOM.
-        document.getElementById("organization-popup-area").classList.add("hide-popup");
-        document.getElementById("organization-popup-area").classList.remove("show-popup");
+        document.getElementById("search-result-popup-area").classList.add("hide-popup");
+        document.getElementById("search-result-popup-area").classList.remove("show-popup");
         newOrganization.popupElement.remove();
       });
 
