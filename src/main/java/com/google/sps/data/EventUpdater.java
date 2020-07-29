@@ -26,6 +26,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.PreparedQuery;
 
 public final class EventUpdater {
 
@@ -45,8 +52,8 @@ public final class EventUpdater {
     HashMap<String, String> formProperties = new HashMap<String, String>();
 
     // Format is (Form EntryName, Entity PropertyName)
+    formProperties.put("event-primary-organization-id", "eventOwnerOrgId");
     formProperties.put("event-name", "eventName");
-    formProperties.put("event-owner-org-ids", "eventOwnerOrgId");
     formProperties.put("event-partner", "eventPartnerNames");
     formProperties.put("event-details", "eventDetails");
     formProperties.put("event-contact-email", "eventContactEmail");
@@ -65,7 +72,9 @@ public final class EventUpdater {
      */
     Set<String> optionalProperties = new HashSet<String>();
     optionalProperties.add("eventPartnerNames");
-    optionalProperties.add("eventDescription");
+    optionalProperties.add("eventDetails");
+
+    long ownerOrgId;
 
     for (Map.Entry<String, String> entry: formProperties.entrySet()) {
       String propertyKey = entry.getValue();
@@ -80,6 +89,10 @@ public final class EventUpdater {
         } catch (IllegalArgumentException err) {
           logger.log(Level.SEVERE, "Form value for: " + propertyKey + " cannot be left blank.");
         }
+
+        if (formKey.equals("event-primary-organization-id")) {
+          ownerOrgId = Long.parseLong(formValue);
+        }
       }
 
       setEventProperty(propertyKey, formValue);
@@ -88,6 +101,26 @@ public final class EventUpdater {
     setNonFormProperties(forRegistration, historyUpdate);
 
     setEventDateAndHours(request);
+
+    setEventOwnerOrgNameBasedOnId(ownerOrgId);
+  }
+
+  private void setEventOwnerOrgNameBasedOnId(long ownerOrgId) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    Filter queryFilter = new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, ownerOrgId);
+    Query query = new Query("Distributor").setFilter(queryFilter);
+    PreparedQuery preparedQuery = datastore.prepare(query);
+
+    Entity entity = null;
+    try {
+      entity = preparedQuery.asSingleEntity();
+    } catch(PreparedQuery.TooManyResultsException exception) {
+      logger.log(Level.SEVERE, "Multiple Distributor entities found with ID: " + Long.toString(ownerOrgId) + ".");
+    }
+
+    String ownerOrgName = (String) entity.getProperty("orgName");
+    this.entity.setProperty("eventOwnerOrgName", ownerOrgName);
   }
 
   private String getParameterOrThrow(HttpServletRequest request, String formKey) {
