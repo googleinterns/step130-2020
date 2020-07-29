@@ -23,8 +23,7 @@ class EventSearchArea {
     this.searchArea = searchAreaElement;
     this.isMaintainer = isMaintainer;
 
-    this.myEventsAndAddButtons = document.createElement("div");
-    this.myEventsAndAddButtons.setAttribute("id", "my-events-and-add-buttons");
+    this.myEventsAndAddButtons = document.getElementById("my-events-and-add-buttons");
     this.myEventsButton = document.createElement("a");
     this.myEventsButton.setAttribute("id", "my-events-button");
     this.myEventsButton.textContent = "My Events";
@@ -34,15 +33,17 @@ class EventSearchArea {
     this.addEventButton.textContent = "Register an Event";
     this.addEventButton.setAttribute("href", "register_event.html");
     this.myEventsAndAddButtons.appendChild(this.addEventButton);
-    this.searchArea.appendChild(this.myEventsAndAddButtons);
 
     this.searchAreaObject = new SearchArea(this.searchArea,
-      (objectsList, listArea) => { return this.renderListOfEvents(objectsList, listArea) },
-      (filterParams, objectsList, lastResultFound, loadMoreButton) => { return this.getListOfEvents(filterParams, objectsList, lastResultFound, loadMoreButton) });
+      (objectsList, listArea) => { 
+          return this.renderListOfEvents(objectsList, listArea) },
+      (filterParams, objectsList, lastResultFound, loadMoreButton) => { 
+          return this.getListOfEvents(filterParams, objectsList, lastResultFound, loadMoreButton) });
     this.searchAreaObject.handleObjects();
   }
 
   renderListOfEvents(objectsList, listArea) {
+      console.log(objectsList);
     // TODO(): for each event send in the event object and the if the user that did the request is a moderator for that event or not
     objectsList.forEach((event) => {
       // TODO(): set up official event object
@@ -75,15 +76,29 @@ class EventSearchArea {
   }
 
   async getListOfEvents(filterParams, objectsList, lastResultFound, loadMoreButton) {
-    const response = await fetch(`/list-events?${filterParams.toString()}`);
-    objectsList = await response.json();
-    const newCursor = await response.headers.get("Cursor");
-    filterParams.set("cursor", newCursor);
-    /* If < 5 results are returned, the end of the given query has been reached */
-    lastResultFound = (objectsList.length < 5);
-    if (lastResultFound) {
-      loadMoreButton.classList.add("hide-load-button");
-    }
+    // const response = await fetch(`/list-events?${filterParams.toString()}`);
+    // objectsList = await response.json();
+    // const newCursor = await response.headers.get("Cursor");
+    // filterParams.set("cursor", newCursor);
+    // /* If < 5 results are returned, the end of the given query has been reached */
+    // lastResultFound = (objectsList.length < 5);
+    // if (lastResultFound) {
+    //   loadMoreButton.classList.add("hide-load-button");
+    // }
+    objectsList = [{
+    "name": "Event A",
+    "ownerOrgName": "Maize and Blue Cupboard",
+    "contactName": "Sarah Addo",
+    "contactPhone": "2403617510",
+    "contactEmail": "sarahaddo00@gmail.com",
+    "details": "These are the event details",
+    "streetAddress": "13209 Catawba Manor Way",
+    "city": "Clarksburg",
+    "state": "Maryland",
+    "zipcode": "20871",
+    "date": "01-21-2000",
+    "time": "7:30 - 10:00"
+  }];
     return objectsList;
   }
 
