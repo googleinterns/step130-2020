@@ -187,4 +187,7 @@ public final class ListEventServletTest {
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
+
+  // TODO: add a test for when the user is a Maintainer, when the user is a moderator of an org with
+  // no events, and when the user is not a moderator
 }
