@@ -9,22 +9,30 @@
 // limitations under the License.
 
 document.addEventListener("DOMContentLoaded", async function() {
-    createOrganizationInChargeInput(document.getElementById("organization-in-charge-area"));
+    const currentUser = new User();
+    await currentUser.renderLoginStatus();
+    // Called to set log in/out URL when site loads.
+    //currentUser.renderLoginStatus();
+    await createOrganizationInChargeInput(document.getElementById("organization-in-charge-area"), currentUser);
     const optionArea = document.getElementById("hours-option-area");
     const timeOption = new TimeOption("Event hours", true, null, optionArea, false);
 });
 
-function createOrganizationInChargeInput(listArea) {
+async function createOrganizationInChargeInput(listArea, currentUser) {
     // TODO(): fetch organizations that current user is a moderator of or fetch all organizations
     // if it is a maintainer
-    const organizations = [{
-        "name": "Organization A",
-        "id": 1
-    },
-    {
-        "name": "Organization B",
-        "id": 2
-    }];
+
+    console.log("IS MODERATOR: ", currentUser.isModerator, " IS MAINTAINER: ", currentUser.isMaintainer);
+
+    let organizations;
+    if (currentUser.isModerator && (!currentUser.isMaintainer)) {
+      const response = await fetch(`/list-organizations?displayForUser=true&cursor=all`);
+      organizations = await response.json();
+    } else if (currentUser.isMaintainer) {
+      
+      const response = await fetch(`/list-organizations?cursor=all`);
+      organizations = await response.json();
+    }
 
     const options = document.createElement("select");
     options.setAttribute("id", "organizations");

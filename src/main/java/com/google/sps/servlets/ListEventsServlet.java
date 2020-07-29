@@ -55,6 +55,7 @@ public class ListEventsServlet extends HttpServlet {
    * If no parameters are included, it will return a default list of events
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    System.out.println("getting to here");
     GivrUser currentUser = GivrUser.getCurrentLoggedInUser();
 
     /* All get requests will return a maximum of 5 events entities */
@@ -71,7 +72,7 @@ public class ListEventsServlet extends HttpServlet {
     PreparedQuery prepQuery = datastore.prepare(query);
     
     QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
-
+    
     Cursor endCursor = results.getCursor();
     String encodedEndCursor = endCursor.toWebSafeString();
 

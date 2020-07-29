@@ -18,15 +18,19 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.sps.data.GivrUser;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public final class EventUpdater {
 
   private Entity entity;
+  private static Logger logger = Logger.getLogger("EventUpdater logger");
 
   public EventUpdater(Entity entity) {
     this.entity = entity;
@@ -36,7 +40,102 @@ public final class EventUpdater {
     return this.entity;
   }
 
+  // TODO: When editing event (after event has been registered), we must check if the user sending the request has the right credentials - add GivrUser.isModeratorOfOrgWithId(long organizationId)
   public void updateEvent(HttpServletRequest request, GivrUser user, boolean forRegistration, EmbeddedEntity historyUpdate) throws IllegalArgumentException {
-    
+    HashMap<String, String> formProperties = new HashMap<String, String>();
+
+    // Format is (Form EntryName, Entity PropertyName)
+    formProperties.put("event-name", "eventName");
+    formProperties.put("event-owner-org-ids", "eventOwnerOrgId");
+    formProperties.put("event-partner", "eventPartnerNames");
+    formProperties.put("event-details", "eventDetails");
+    formProperties.put("event-contact-email", "eventContactEmail");
+    formProperties.put("event-contact-phone-num", "eventContactPhone");
+    formProperties.put("event-contact-name", "eventContactName");
+    formProperties.put("event-street-address", "eventStreetAddress");
+    formProperties.put("event-city", "eventCity");
+    formProperties.put("event-state", "eventState");
+    formProperties.put("event-zip-code", "eventZipcode");
+
+    /* Optional Properties can be left blank in the request form.
+     *
+     * The following properties are optional:
+     * - eventPartnerNames
+     * - eventDetails
+     */
+    Set<String> optionalProperties = new HashSet<String>();
+    optionalProperties.add("eventPartnerNames");
+    optionalProperties.add("eventDescription");
+
+    for (Map.Entry<String, String> entry: formProperties.entrySet()) {
+      String propertyKey = entry.getValue();
+      String formKey = entry.getKey();
+      String formValue = "";
+
+      if (optionalProperties.contains(propertyKey)) {
+        formValue = request.getParameter(formKey) == null ? "" : request.getParameter(formKey);
+      } else {
+        try {
+          formValue = getParameterOrThrow(request, formKey);
+        } catch (IllegalArgumentException err) {
+          logger.log(Level.SEVERE, "Form value for: " + propertyKey + " cannot be left blank.");
+        }
+      }
+
+      setEventProperty(propertyKey, formValue);
+    }
+
+    setNonFormProperties(forRegistration, historyUpdate);
+
+    setEventDateAndHours(request);
   }
+
+  private String getParameterOrThrow(HttpServletRequest request, String formKey) {
+    String result = request.getParameter(formKey);
+    if (result == null || result.isEmpty()) {
+      throw new IllegalArgumentException();
+    }
+    return result;
+  }
+
+  // Sets form values based on property key.
+  private void setEventProperty(String propertyKey, String formValue) {
+    if (propertyKey.equals("eventPartnerNames")) {
+      // Stores partnering organizations's names; partnering organizations do not have the ability to edit Event, so there is no need to store org IDs.
+      ArrayList<String> parsedNames = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
+
+      this.entity.setProperty(propertyKey, parsedNames);
+      return;
+    }
+
+    this.entity.setProperty(propertyKey, formValue);
+  }
+
+  // Sets values not passed in through the request form such as creation time of Event and last edited time.
+  private void setNonFormProperties(boolean forRegistration, EmbeddedEntity historyUpdate) {
+    long milliSecondsSinceEpoch = (long) historyUpdate.getProperty("changeTimeStampMillis");
+    ArrayList<EmbeddedEntity> changeHistory = new ArrayList<EmbeddedEntity>();
+
+    if (forRegistration) {
+      this.entity.setProperty("creationTimeStampMillis", milliSecondsSinceEpoch);
+    } else {
+      // If not registering event, changeHistory property should exist and should be modified.
+      changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
+    }
+
+    this.entity.setProperty("lastEditTimeStampMillis", milliSecondsSinceEpoch);
+    changeHistory.add(historyUpdate);
+    this.entity.setProperty("changeHistory", changeHistory);
+  }
+
+  private void setEventDateAndHours(HttpServletRequest request) {
+
+    String eventDate = request.getParameter("event-date");
+
+    // TODO: 
+    // 1) extract date and hours from request, then construct embedded entity and set it as eventDateAndHours property
+    // 2) decide on format of date MM/DD/YYYY (in front end as well)
+    // 3) discuss how hours is sent (We don't need "Mon"-"Fri" that Organizations have.)
+  }
+
 }

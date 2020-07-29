@@ -40,10 +40,10 @@ public class AddEventServlet extends HttpServlet {
     }
 
     // Only Moderators can add Events.
-    if (user.isModeratorOfAnyOrg()) {
-      // TODO: Can Maintainers add Events?
-      throw new IllegalArgumentException("ERROR: User does not have the permission to perform addition of Events.");
-    }
+    // if (user.isModeratorOfAnyOrg()) {
+    //   // TODO: Can Maintainers add Events?
+    //   throw new IllegalArgumentException("ERROR: User does not have the permission to perform addition of Events.");
+    // }
 
     Entity newEventEntity = new Entity("Event");
 
