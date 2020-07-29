@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Givr</title>
+	<link rel="stylesheet" href="style.css">
+	<script src="open_hours.js"></script>
+	<script src="event_registration.js"></script>
+</head>
+
+<body>
+	<div id="registration-content">
+		<div id="site-title">Givr</div>
+		<div id="registration-form-header">Register An Event</div>
+		<div id="event-registration-form-area">
+			<form action="/add-event" method="POST">
+				<label>Event Name: </label>
+				<input class = "registration-entry" type = "text" name = "event-name"/>
+				<label>Event Date: </label>
+				<input class = "registration-entry" type = "date" name = "event-date"/>
+				<div id="hours-option-area"></div>
+				<label>Primary Organization In Charge:</label>
+				<div id="organization-in-charge-area"></div>
+				<label>Event Street Address: </label>
+				<input class = "registration-entry" type = "text" name = "event-street-address"/>
+				<label>Event City:</label>
+				<input class = "registration-entry" type = "text" name = "event-city"/>
+				<label>Event State:</label>
+				<input class = "registration-entry" type = "text" name = "event-state"/>
+				<label>Event Zip Code: </label>
+				<input class = "registration-entry" type = "text" name = "event-zip-code"/>
+                <label>Contact Name: </label>
+				<input class = "registration-entry" type = "text" name = "event-contact-name"/>
+				<label>Contact Email: </label>
+				<input class = "registration-entry" type = "text" name = "event-contact-email"/>
+				<label>Contact Phone Number: </label>
+				<input class = "registration-entry" type = "text" pattern = "[0-9]{10}" name = "event-contact-phone-num"/>
+				<label>Event Details: </label>
+				<textarea class = "registration-entry" name ="event-details" maxlength = "180"></textarea>
+				<label>Event Partners: </label>
+				<textarea class = "registration-entry" name ="event-partners" maxlength = "180"></textarea>
+				<input class = "enter-button" type="submit"/>
+	    </form>
+		</div>
+	</div>
+</body>
+
+</html>
