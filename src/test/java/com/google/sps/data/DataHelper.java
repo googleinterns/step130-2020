@@ -15,19 +15,24 @@
 package com.google.sps.data;
 
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 
 
-/**
-  * DataHelper prepares the Datastore data (Distributor and User) and sets up the LocalServiceTestHelper.*/
+ /*
+  * DataHelper prepares the Datastore data (Distributor and User) and sets up the LocalServiceTestHelper.
+  */
 public class DataHelper {
 
   private LocalServiceTestHelper helper;
-  private Arraylist<Entity> listOfUserEntities = new ArrayList<>();
+  private ArrayList<Entity> listOfUserEntities = new ArrayList<>();
   private ArrayList<Entity> listOfDistributorEntities = new ArrayList<>();
   private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
   LocalUserServiceTestConfig userServiceConfig;
@@ -126,6 +131,8 @@ public class DataHelper {
 
     String org2Moderators[] = new String[] {"User4"};
     String org2InvitedMods[] = new String[] {"baikj+test7@google.com", "baikj+test6@google.com"};
+
+    Entity distributor2 = new Entity("Distributor");
     distributor2.setProperty("orgName", "Org2");
     distributor2.setProperty("moderatorList", Arrays.asList(org2Moderators));
     distributor2.setProperty("invitedModerators", Arrays.asList(org2InvitedMods));
@@ -138,6 +145,7 @@ public class DataHelper {
     return datastore;
   }
 
+  // If user is a Maintainer, userId is not expected to have a value.
   private void setUserServiceConfig(boolean userIsMaintainer, String userId) {
     if (userIsMaintainer) {
       setUserAsMaintainer();
@@ -146,6 +154,7 @@ public class DataHelper {
     }
   }
 
+  // Sets up local UserService test config with Maintainer info from User table.
   private void setUserAsMaintainer() {
     userServiceConfig = new LocalUserServiceTestConfig();
     userServiceConfig.setOAuthEmail("baikj+test0@google.com");
@@ -153,6 +162,7 @@ public class DataHelper {
     userServiceConfig.setOAuthAuthDomain("google.com");
   }
 
+  // Sets up local UserService test config with Moderator (User 0 through 9) info from User table.
   private void setUserAsModeratorOfOrg(String userId) {
     userServiceConfig = new LocalUserServiceTestConfig();
     userServiceConfig.setOAuthEmail("baikj+test" + userId.charAt(4) + "@google.com");
@@ -164,22 +174,40 @@ public class DataHelper {
     return userServiceConfig;
   }
 
-  public getLocalServiceTestHelper(boolean userIsMaintainer, String userId) {
+  public ArrayList<Entity> getListOfUserEntities() {
+    return listOfUserEntities;
+  }
+
+  public ArrayList<Entity> getListOfDistributorEntities() {
+    return listOfDistributorEntities;
+  }
+
+  // Sets up Datastore and UserService local test configs and sets up environment variable based on what kind of User is being tested.
+  public LocalServiceTestHelper setUpAndReturnLocalServiceTestHelper(boolean userIsMaintainer, String userId) {
     LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
+
+    addUsersToDatastore();
+    addDistributorsToDatastore();
 
     setUserServiceConfig(userIsMaintainer, userId);
 
     LocalUserServiceTestConfig userServiceConfig = getUserServiceConfig();
 
     helper = new LocalServiceTestHelper(datastoreConfig, userServiceConfig);
+    helper.setEnvIsLoggedIn(true);
+    helper.setEnvAuthDomain("google.com");
+    Map<String,Object> envAttributeMap = new HashMap<String,Object>();
 
     if (userIsMaintainer) {
-      helper.setEnvIsLoggedIn(true);
       helper.setEnvEmail("baikj+test0@google.com");
-      helper.setEnvAuthDomain("google.com");
-
-      
+      envAttributeMap.put("com.google.appengine.api.users.UserService.user_id_key", "User0");
+    } else {
+      helper.setEnvEmail("baikj+test" + userId.charAt(4) + "@google.com");
+      envAttributeMap.put("com.google.appengine.api.users.UserService.user_id_key", userId);
     }
+
+    helper.setEnvAttributes(envAttributeMap);
+    helper.setUp();
 
     return helper;
   }
