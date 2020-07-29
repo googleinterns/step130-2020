@@ -17,13 +17,13 @@ document.addEventListener("DOMContentLoaded", async function() {
   // for when the organization is open on every day of the week
   if (document.getElementById("registration-form-area")) {
     const optionArea = document.getElementById("hours-option-area");
-    const mondayTimeOption = new TimeOption("Monday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
-    const tuesdayTimeOption = new TimeOption("Tuesday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
-    const wednesdayTimeOption = new TimeOption("Wednesday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
-    const thursdayTimeOption = new TimeOption("Thursday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
-    const fridayTimeOption = new TimeOption("Friday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
-    const saturdayTimeOption = new TimeOption("Saturday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
-    const sundayTimeOption = new TimeOption("Sunday", /*forRegistration*/ true, null, optionArea, /*showOpenClosedOptions*/ true);
+    const mondayTimeOption = new TimeOption("Monday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const tuesdayTimeOption = new TimeOption("Tuesday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const wednesdayTimeOption = new TimeOption("Wednesday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const thursdayTimeOption = new TimeOption("Thursday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const fridayTimeOption = new TimeOption("Friday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const saturdayTimeOption = new TimeOption("Saturday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const sundayTimeOption = new TimeOption("Sunday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
   }
 });
 
@@ -46,8 +46,6 @@ class TimeOption {
     this.dayLabel.classList.add("day-label");
     this.dayOptionArea.appendChild(this.dayLabel);
 
-
-    // Only show open closed options for organization modification
     if (this.showOpenClosedOptions) {
       this.dayOpenLabel = document.createElement("label");
       this.dayOpenLabel.textContent = "Open";
