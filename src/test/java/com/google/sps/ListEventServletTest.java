@@ -153,7 +153,8 @@ public final class ListEventServletTest {
     expectedList.add(masterEntityList.get(1));
     expectedList.add(masterEntityList.get(0));
  
-    Query receivedQuery = ListEventsHelper.getQuery("Event", mockRequest, mockUser);
+    ListEventsHelper listEventsHelper = new ListEventsHelper("Event", mockRequest, mockUser);
+    Query receivedQuery = listEventsHelper.getQuery();
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
@@ -180,7 +181,8 @@ public final class ListEventServletTest {
     ArrayList<Entity> expectedList = new ArrayList<Entity>();
     expectedList.add(masterEntityList.get(4));
  
-    Query receivedQuery = ListEventsHelper.getQuery("Event", mockRequest, mockUser);
+    ListEventsHelper listEventsHelper = new ListEventsHelper("Event", mockRequest, mockUser);
+    Query receivedQuery = listEventsHelper.getQuery();
 
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
