@@ -41,7 +41,7 @@ class OrganizationSearchArea {
       const newOrganization = new Organization(organization, this.isMaintainer, this.forOrganizationsPage);
 
       newOrganization.organizationElement.addEventListener('organization-selected', () => {
-        const organizationPopupArea = document.getElementById("organization-popup-area");
+        const organizationPopupArea = document.getElementById("search-result-popup-area");
         organizationPopupArea.textContent = "";
         organizationPopupArea.appendChild(newOrganization.createOrganizationPopup());
         organizationPopupArea.classList.add("show-popup");
