@@ -44,7 +44,7 @@ class FilterTagArea {
     });
     this.activeFilterArea.appendChild(this.addFilterButton);
 
-    this.parentSearchArea.organizationSearchArea.appendChild(this.activeFilterArea);
+    this.parentSearchArea.searchArea.appendChild(this.activeFilterArea);
   }
 
    onRemoveCallback() {
