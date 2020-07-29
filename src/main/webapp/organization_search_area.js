@@ -33,8 +33,10 @@ class OrganizationSearchArea {
     this.isMaintainer = isMaintainer;
     this.forOrganizationsPage = forOrganizationsPage;
     this.searchAreaObject = new SearchArea(this.searchArea,
-      (objectsList, listArea) => { return this.renderListOfOrganizations(objectsList, listArea) },
-      (filterParams, objectsList, lastResultFound, loadMoreButton) => { return this.getListOfOrganizations(filterParams, objectsList, lastResultFound, loadMoreButton) });
+      (objectsList, listArea) => { 
+          return this.renderListOfOrganizations(objectsList, listArea) },
+      (filterParams, objectsList, lastResultFound, loadMoreButton) => {
+           return this.getListOfOrganizations(filterParams, objectsList, lastResultFound, loadMoreButton) });
     this.searchAreaObject.handleObjects();
   }
 

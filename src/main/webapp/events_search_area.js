@@ -37,8 +37,10 @@ class EventSearchArea {
     this.searchArea.appendChild(this.myEventsAndAddButtons);
 
     this.searchAreaObject = new SearchArea(this.searchArea,
-      (objectsList, listArea) => { return this.renderListOfEvents(objectsList, listArea) },
-      (filterParams, objectsList, lastResultFound, loadMoreButton) => { return this.getListOfEvents(filterParams, objectsList, lastResultFound, loadMoreButton) });
+      (objectsList, listArea) => { 
+          return this.renderListOfEvents(objectsList, listArea) },
+      (filterParams, objectsList, lastResultFound, loadMoreButton) => { 
+          return this.getListOfEvents(filterParams, objectsList, lastResultFound, loadMoreButton) });
     this.searchAreaObject.handleObjects();
   }
 
