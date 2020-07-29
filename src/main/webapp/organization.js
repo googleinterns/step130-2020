@@ -283,7 +283,7 @@ class Organization {
     //creates time input options for each day
     for(let i = 0; i < 7; i++) {
         const day = organization.hoursOpen[i].propertyMap.day;
-        const timeOption = new TimeOption(day, false, organization.hoursOpen[i], orgOpenHoursArea);
+        const timeOption = new TimeOption(day, /*forRegistration*/ false, organization.hoursOpen[i], orgOpenHoursArea, /*showOpenClosedOption*/ true);
     }
     editForm.appendChild(orgOpenHoursArea);
 
