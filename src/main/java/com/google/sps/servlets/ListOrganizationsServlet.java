@@ -64,7 +64,7 @@ public class ListOrganizationsServlet extends HttpServlet {
     if ((startCursor != null) && (!startCursor.equals("none"))) { //if the given cursor is 'none' no cursor is necessary
       fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
     } else {
-      startCursor = "";
+      startCursor = ""; //ensures startCursor is not null
     }
 
     ListOrganizationsHelper listOrganizationsHelper = new ListOrganizationsHelper("Distributor", request, currentUser);
