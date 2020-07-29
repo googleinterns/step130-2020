@@ -85,7 +85,7 @@
   float: right;
 }
 
-#organization-list {
+#search-result-list {
   margin: 0 auto;
   width: 700px;
   height: 495px;
@@ -133,7 +133,7 @@
   justify-content: space-around;
 }
 
-#organization-popup-area {
+#search-result-popup-area {
   width: 50%;
   font-size: 20px;
   background-color: #ffffff;
