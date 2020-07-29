@@ -52,6 +52,7 @@ public abstract class ListHelper {
     this.currentUser = currentUser;
   }
 
+  /* When called by servlets, uses filtering classes to create query from request parameters */
   public Query getQuery() {
     return this.getQueryFromFilters(
         this.handleUserFiltering(coerceParameterToBoolean(this.request, "displayForUser")));
@@ -107,75 +108,9 @@ public abstract class ListHelper {
     return query;
   }
 
+  /* Takes in string param, outputs boolean form of it */
   public boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
     String requestParameter = request.getParameter(key);
     return (requestParameter != null) && (requestParameter.equals("true"));
   }
 }
-
-
-// public abstract class ListHelper {
-
-//   public static Query getQuery(String entityKind, HttpServletRequest request, GivrUser currentUser, HashMap<String, String> datastoreConstantMap) {
-
-//     /* First the filter params in the request are parsed into a map that applies each filter to the query */
-//     HashMap<String, ArrayList<String>> filterParamMap = parseFilterParams(entityKind, request, currentUser, datastoreConstantMap);
-
-//     /* displayForUser is set to true when the user wants whatever entity they are querying
-//      * (Distributors, Events), to only return the entities they belong to / are involved with.*/
-//     boolean displayForUser = coerceParameterToBoolean(request, "displayForUser");
-
-//     ArrayList<Filter> filterCollection = new ArrayList<Filter>();
-//     filterCollection = handleUserFiltering(entityKind, currentUser, displayForUser);
-
-//     return getQueryFromFilters(entityKind, filterParamMap, filterCollection);
-//   }
-
-//   /* Fills all filtering parameters from servlet request into a hashmap */
-//   public static HashMap<String, ArrayList<String>> parseFilterParams(String entityKind, HttpServletRequest request, GivrUser currentUser, HashMap<String, String> datastoreConstantMap) {
-//     /* Stores datastore property name as key, and received filter keywords for said property in arraylist */
-//     HashMap<String, ArrayList<String>> filterParamMap = new HashMap<String, ArrayList<String>>();
-
-//     for (String paramString : new String[]{"name", "streetAddress", "resourceCategories", "zipcode"}) {
-//       ArrayList<String> paramList = new ArrayList<String>();
-//       if (request.getParameterValues(paramString) != null) {
-//         for (String c : request.getParameterValues(paramString)) {
-//         }
-//         Collections.addAll(paramList, request.getParameterValues(paramString));
-//         filterParamMap.put(datastoreConstantMap.get(paramString), paramList);
-//       }
-//     }
-//     return filterParamMap;
-//   }
-
-//   /* This function constructs a query based on the entity kind, request parameters and any previously added or new filters */
-//   public static Query getQueryFromFilters(String entityKind, HashMap<String, ArrayList<String>> filterParamMap, ArrayList<Filter> filterCollection) throws IllegalArgumentException {
-//     if ((entityKind == "") || (entityKind == null)) {
-//       throw new IllegalArgumentException("Entity kind must not be null");
-//     }
-    
-//     Query query = new Query(entityKind).addSort("creationTimeStampMillis", SortDirection.DESCENDING);
-
-//     /* Adds a filter for each keyword in each arraylist of the map, according to its datastore property */
-//     for (Map.Entry<String, ArrayList<String>> entry : filterParamMap.entrySet()) {
-//       for (String filterParam : entry.getValue()) {
-//         filterCollection.add(new FilterPredicate(entry.getKey(), FilterOperator.EQUAL, filterParam));
-//       }
-//     }
-
-//     if (filterCollection.size() >= 2) {
-//       /* Composite Filter only works with 2 or more filters. */
-//       CompositeFilter combinedQueryFilter = new CompositeFilter(CompositeFilterOperator.AND, filterCollection);
-//       query.setFilter(combinedQueryFilter);
-//     } else if (filterCollection.size() == 1) {
-//       /* If a filter exists but it can't be composite, normal one is applied */
-//       query.setFilter(filterCollection.get(0));
-//     }
-//     return query;
-//   }
-
-//   public static boolean coerceParameterToBoolean(HttpServletRequest request, String key) {
-//     String requestParameter = request.getParameter(key);
-//     return (requestParameter != null) && (requestParameter.equals("true"));
-//   }
-// }

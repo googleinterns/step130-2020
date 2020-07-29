@@ -49,9 +49,9 @@ public class ListEventsHelper extends ListHelper {
       super(entityKind, request, currentUser);
   }
 
+  /* Events & orgs have different labels for fields (ex: orgCity vs eventCity). This map is used to reference
+   * the event-specific fields easily from ListHelper */
   public HashMap<String, String> GetDatastoreConstantMap() {
-    /* Events & orgs have different labels for fields (ex: orgCity vs eventCity). This map is used to reference
-     * the event-specific fields easily from ListHelper */
     HashMap<String, String> constantMap = new HashMap<String, String>();
     constantMap.put("name", "eventName");
     constantMap.put("streetAddress", "eventStreetAddress");
