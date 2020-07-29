@@ -68,9 +68,9 @@ class SearchArea {
     this.popupArea.classList.add("hide-popup");
 
     this.searchArea.appendChild(this.listArea);
-    this.searchAreaContainer.appendChild(this.popupArea);
     this.searchArea.appendChild(this.loadMoreButton);
     this.searchAreaContainer.appendChild(this.searchArea);
+    this.searchAreaContainer.appendChild(this.popupArea);
   }
 
   refreshObjectsList() {
