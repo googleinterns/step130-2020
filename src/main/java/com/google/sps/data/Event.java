@@ -14,6 +14,7 @@
 
 package com.google.sps.data;
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.Date;
 import java.util.ArrayList;
@@ -85,5 +86,4 @@ public class Event {
     this.state = (String) entity.getProperty("eventState");
     this.zipcode = (String) entity.getProperty("eventZipcode");
   }
-
 }

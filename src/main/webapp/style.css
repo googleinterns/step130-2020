@@ -1,6 +1,7 @@
 #get-help-content,
 #registration-content,
-#organizations-content {
+#organizations-content,
+#events-content {
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
   display: flex;
@@ -12,11 +13,6 @@
   text-decoration: none;
   border-bottom: 3px solid transparent;
   margin: 0 20px;
-}
-
-#help-near-me-content a:hover,
-#organizations-content a:hover {
-  border-bottom: 3px solid #666666;
 }
 
 #login-url {
@@ -31,7 +27,7 @@
 }
 
 #nav-links {
-  margin: auto 10%;
+  margin: auto 2%;
 }
 
 #nav-bar {
@@ -85,7 +81,7 @@
   float: right;
 }
 
-#organization-list {
+#search-result-list {
   margin: 0 auto;
   width: 700px;
   height: 495px;
@@ -133,7 +129,11 @@
   justify-content: space-around;
 }
 
-#organization-popup-area {
+#events-search-area {
+  margin: 0 auto;
+}
+
+#search-result-popup-area {
   width: 50%;
   font-size: 20px;
   background-color: #ffffff;
@@ -187,7 +187,8 @@
   font-size: 30px;
 }
 
-#registration-form-area {
+#registration-form-area,
+#event-registration-form-area {
   width: 60%;
   margin: 0 auto;
 }
@@ -200,6 +201,11 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+}
+
+#organization-in-charge-area {
+  width: 100%;
+  margin: 8px 0;
 }
 
 .edit-entry {
@@ -355,4 +361,20 @@
 
 .hide-load-button {
   display: none;
+}
+
+#my-events-and-add-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+#my-events-button {
+  cursor: pointer;
+}
+
+#my-events-and-add-buttons a {
+  text-decoration: none;
+  color: #666666;
 }
