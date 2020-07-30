@@ -14,13 +14,14 @@
 
 document.addEventListener("DOMContentLoaded", async function() {
   // This checks that requester User has valid credentials to edit/delete/view ALL organizations. (by checking userID)
-  let isMaintainer = false;
+  const currentUser = new User();
+  await currentUser.renderLoginStatus();
+  let isMaintainer = currentUser.isMaintainer;
   let forOrganizationsPage = false;
 
   if (document.getElementById('search-area')) {
     const mainSearchArea = new OrganizationSearchArea(document.getElementById('search-area'), isMaintainer, forOrganizationsPage);
   }
-  isMaintainer = true;
   if (document.getElementById('all-organizations')) {
     forOrganizationsPage = true;
     const organizationSearchArea = new OrganizationSearchArea(document.getElementById('all-organizations'), isMaintainer, forOrganizationsPage);
@@ -38,6 +39,9 @@ class OrganizationSearchArea {
           return this.renderListOfOrganizations(objectsList, listArea) },
       (filterParams, objectsList, lastResultFound, loadMoreButton) => {
            return this.getListOfOrganizations(filterParams, objectsList, lastResultFound, loadMoreButton) });
+    if ((this.forOrganizationsPage) && !(this.isMaintainer)) {
+      this.searchAreaObject.filterParams.set("displayForUser", "true");
+    }
     this.searchAreaObject.handleObjects();
   }
 

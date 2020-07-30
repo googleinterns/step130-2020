@@ -35,15 +35,15 @@ public class AddEventServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     GivrUser user = GivrUser.getCurrentLoggedInUser();
 
-    if (!user.isLoggedIn()) {
+    if (!user.isLoggedIn() && !user.isMaintainer()) {
       throw new IllegalArgumentException("ERROR: Unable to register event if user is not logged in.");
     }
 
-    // Only Moderators can add Events.
-    // if (user.isModeratorOfAnyOrg()) {
-    //   // TODO: Can Maintainers add Events?
-    //   throw new IllegalArgumentException("ERROR: User does not have the permission to perform addition of Events.");
-    // }
+    //Only Moderators can add Events.
+    if (!user.isModeratorOfAnyOrg()) {
+      // TODO: Can Maintainers add Events?
+      throw new IllegalArgumentException("ERROR: User does not have the permission to perform addition of Events.");
+    }
 
     Entity newEventEntity = new Entity("Event");
 

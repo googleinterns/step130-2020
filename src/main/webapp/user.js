@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   const currentUser = new User();
   // Called to set log in/out URL when site loads.
   await currentUser.renderLoginStatus();
-  console.log("IS MODERATOR: ", currentUser.isModerator, " IS MAINTAINER: ", currentUser.isMaintainer);
   if (currentUser.loginData.isLoggedIn && (document.getElementById("nav-bar"))) {
     rebuildNavBar(currentUser);
   }

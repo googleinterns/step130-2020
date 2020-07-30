@@ -60,10 +60,10 @@ public class ListEventsServlet extends HttpServlet {
     /* All get requests will return a maximum of 5 events entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
 
-    String startCursor = request.getParameter("cursor");
-    if ((startCursor != null) && (!startCursor.equals("none"))) { //if the given cursor is 'none' no cursor is necessary
-      fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
-    }
+    // String startCursor = request.getParameter("cursor");
+    // if ((startCursor != null) && (!startCursor.equals("none"))) { //if the given cursor is 'none' no cursor is necessary
+    //   fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
+    // }
 
     ListEventsHelper listEventsHelper = new ListEventsHelper("Event", request, currentUser);
     Query query = listEventsHelper.getQuery();
@@ -72,8 +72,8 @@ public class ListEventsServlet extends HttpServlet {
     
     QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
 
-    Cursor endCursor = results.getCursor();
-    String encodedEndCursor = endCursor.toWebSafeString();
+    // Cursor endCursor = results.getCursor();
+    // String encodedEndCursor = endCursor.toWebSafeString();
 
     ArrayList<Event> requestedEvents = new ArrayList<Event>();
 
@@ -85,6 +85,6 @@ public class ListEventsServlet extends HttpServlet {
     Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(requestedEvents));
-    response.addHeader("Cursor", encodedEndCursor);
+    //response.addHeader("Cursor", encodedEndCursor);
   }
 }
