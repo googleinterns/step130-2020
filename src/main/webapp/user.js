@@ -29,7 +29,6 @@ class User {
     if (this.loginData.isLoggedIn) {
       this.isMaintainer = this.loginData.isMaintainer;
       this.isModerator = this.loginData.moderatingOrgs.length >= 1;
-      console.log("maint is: ", this.isMaintainer, " mod is:", this.isModerator);
     } else {
       const loginLink = document.getElementById("login-url");
       loginLink.textContent = "Log In";
@@ -81,7 +80,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   const currentUser = new User();
   // Called to set log in/out URL when site loads.
   await currentUser.renderLoginStatus();
-  console.log("IS MODERATOR: ", currentUser.isModerator, " IS MAINTAINER: ", currentUser.isMaintainer);
   if (currentUser.loginData.isLoggedIn && (document.getElementById("nav-bar"))) {
     rebuildNavBar(currentUser);
   }
