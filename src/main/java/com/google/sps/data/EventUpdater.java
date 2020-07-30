@@ -109,10 +109,6 @@ public final class EventUpdater {
         } catch (IllegalArgumentException err) {
           logger.log(Level.SEVERE, "Form value for: " + propertyKey + " cannot be left blank.");
         }
-
-        if (formKey.equals("event-primary-organization-id")) {
-          ownerOrgId = Long.parseLong(formValue);
-        }
       }
 
       setEventProperty(propertyKey, formValue);
