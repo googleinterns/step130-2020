@@ -174,7 +174,7 @@ public final class OrganizationUpdater {
       GivrUser newUser = GivrUser.getUserByEmail(email);
       String userId = newUser.getUserId();
       // UserId can equal "" if that user has never logged in. User email will be added to the invitedModerators list, and not the moderatorList.
-      if (userId.equals("")) {
+      if (userId == null || userId.equals("")) {
         if (this.entity.getProperty("invitedModerators") == null) {
           invitedModeratorEmails = new ArrayList<String>();
         } else {
@@ -192,7 +192,7 @@ public final class OrganizationUpdater {
       GivrUser newUser = GivrUser.getUserByEmail(email);
       String userId = newUser.getUserId();
       // UserId can equal "" if that user has never logged in. User email will be added to the invitedModerators list, and not the moderatorList.
-      if (!userId.equals("")) {
+      if (userId != null && !userId.equals("")) {
         moderatorIds.add(newUser.getUserId());
       }
     }

@@ -21,13 +21,12 @@ document.addEventListener("DOMContentLoaded", async function() {
 async function createOrganizationInChargeInput(listArea, currentUser) {
     // fetch organizations that current user is a moderator of or fetch all organizations
     // if it is a maintainer
-
+    console.log("maint: ", this.isMaintainer, " mod: ", this.isModerator);
     let organizations;
     if (currentUser.isModerator && (!currentUser.isMaintainer)) {
       const response = await fetch(`/list-organizations?displayForUser=true&cursor=all`);
       organizations = await response.json();
     } else if (currentUser.isMaintainer) {
-      
       const response = await fetch(`/list-organizations?cursor=all`);
       organizations = await response.json();
     }

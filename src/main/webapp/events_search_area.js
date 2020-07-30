@@ -22,16 +22,18 @@ class EventSearchArea {
   constructor(searchAreaElement, isMaintainer) {
     this.searchArea = searchAreaElement;
     this.isMaintainer = isMaintainer;
+    this.showMyEvents = false;
 
     this.myEventsAndAddButtons = document.createElement("div");
     this.myEventsAndAddButtons.setAttribute("id", "my-events-and-add-buttons");
     this.myEventsButton = document.createElement("a");
-    this.myEventsButton.setAttribute("id", "my-events-button");
-    this.myEventsButton.textContent = "My Events";
-    this.myEventsButton.addEventListener('click', () => this.addMyEventsFilter());
+    this.myEventsButton.setAttribute("id", "events-button");
+    this.myEventsButton.textContent = "Show My Events";
+    this.myEventsButton.addEventListener('click', () => this.toggleMyEventsFilter());
     this.myEventsAndAddButtons.appendChild(this.myEventsButton);
     this.addEventButton = document.createElement("a");
     this.addEventButton.textContent = "Register an Event";
+    this.addEventButton.setAttribute("id", "events-button");
     this.addEventButton.setAttribute("href", "register_event.html");
     this.myEventsAndAddButtons.appendChild(this.addEventButton);
     this.searchArea.appendChild(this.myEventsAndAddButtons);
@@ -89,8 +91,19 @@ class EventSearchArea {
     return objectsList;
   }
 
-  addMyEventsFilter() {
-    // TODO(): Refine events by the ones fetching a list of events that are organized by 
-    // organizations that they are a moderator of
+  /* Changes my events filter to show / not show my events */
+  async toggleMyEventsFilter() {
+    this.showMyEvents = !this.showMyEvents;
+    this.searchAreaObject.filterParams.set("displayForUser", this.showMyEvents);
+
+    if (this.showMyEvents) {
+      this.myEventsButton.classList.add("selected");
+      this.myEventsButton.textContent = "Show My Events";
+    } else {
+      this.myEventsButton.classList.remove("selected");
+      this.myEventsButton.textContent = "Show All Events";
+    }
+
+    await this.searchAreaObject.refreshObjectsList();
   }
 }
