@@ -27,7 +27,7 @@ public class Event {
   private long id;
   // Represents the name of the Event.
   private String name;
-  // Holds ID (type long) of the Organization that owns the Event.
+  // Holds ID (type String) of the Organization that owns the Event.
   private long ownerOrgId;
   // Holds name of the Organization that owns the Event. Is set in EventUpdater's setEventOwnerOrgName().
   private String ownerOrgName;
