@@ -59,8 +59,7 @@ class Event {
 
     const eventLocationElement = document.createElement("div");
     eventLocationElement.classList.add("event-location");
-    eventLocationElement.textContent = this.event.streetAddress + ", " + 
-    this.event.city + ", " + this.event.state + " " + this.event.zipcode;
+    eventLocationElement.textContent = `${this.event.streetAddress}, ${this.event.city}, ${this.event.state} ${this.event.zipcode}`;
 
     this.eventElement.appendChild(eventNameElement);
     this.eventElement.appendChild(eventDateTimeElement);
@@ -83,8 +82,7 @@ class Event {
 
     const popupAddressElement = document.createElement('div');
     popupAddressElement.classList.add("event-popup-address");
-    popupAddressElement.textContent = this.event.streetAddress + ", " + 
-    this.event.city + ", " + this.event.state + " " + this.event.zipcode;
+    popupAddressElement.textContent = `${this.event.streetAddress}, ${this.event.city}, ${this.event.state} ${this.event.zipcode}`;
     
     const popupContactNameElement = document.createElement('div');
     popupContactNameElement.classList.add("event-popup-contact-name");
