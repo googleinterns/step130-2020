@@ -19,21 +19,20 @@ class User {
 
   async renderLoginStatus() {
     const response = await fetch('/authenticate');
-    const loginData = await response.json();
+    this.loginData = await response.json();
 
     if (response.status !== 200) {
       throw new Error('Did not successfully authenticate user.');
       return;
     }
 
-    if (loginData.isLoggedIn) {
-      this.isMaintainer = loginData.isMaintainer;
-      this.isModerator = loginData.moderatingOrgs.length >= 1;
-      this.rebuildNavBar();
-    }  else {
+    if (this.loginData.isLoggedIn) {
+      this.isMaintainer = this.loginData.isMaintainer;
+      this.isModerator = this.loginData.moderatingOrgs.length >= 1;
+    } else {
       const loginLink = document.getElementById("login-url");
       loginLink.textContent = "Log In";
-      loginLink.setAttribute("href", loginData.url);
+      loginLink.setAttribute("href", this.loginData.url);
     }
   }
 
@@ -75,68 +74,13 @@ class User {
     addMaintainerModal.appendChild(emailForm);
     return addMaintainerModal;
   }
-
-  rebuildNavBar() {
-    const navBar = document.getElementById("nav-bar");
-    navBar.textContent = "";
-
-    const siteTitle = document.createElement("div");
-    siteTitle.setAttribute("id", "site-title");
-    siteTitle.textContent = "Givr";
-    navBar.appendChild(siteTitle);
-
-    const navLinksArea = document.createElement("div");
-    navLinksArea.setAttribute("id", "nav-links");
-
-    const getHelpLink = document.createElement("a");
-    getHelpLink.setAttribute("href", "index.html");
-    getHelpLink.textContent = "Get Help";
-    navLinksArea.appendChild(getHelpLink);
-
-    const eventsLink = document.createElement("a");
-    eventsLink.setAttribute("href", "events.html");
-    eventsLink.textContent = "Events";
-    navLinksArea.appendChild(eventsLink);
-
-    const registerOrganizationLink = document.createElement("a");
-    registerOrganizationLink.setAttribute("href", "register_organization.html");
-    registerOrganizationLink.textContent = "Register Organization";
-    navLinksArea.appendChild(registerOrganizationLink);
-
-    if (this.isMaintainer) {
-      const organizationsLink = document.createElement("a");
-      organizationsLink.setAttribute("href", "organizations.html");
-      organizationsLink.textContent = "Organizations";
-      navLinksArea.appendChild(organizationsLink);
-
-      const addMaintainerPopup = this.createAddMaintainerPopup();
-      const addMaintainerLabel = document.createElement("a");
-      addMaintainerLabel.textContent = "Add Maintainer";
-      addMaintainerLabel.setAttribute("id", "add-maintainer-label");
-      addMaintainerLabel.addEventListener("click", () => {
-        const addMaintainerPopupBackground = document.createElement("div");
-        addMaintainerPopupBackground.setAttribute("id", "modal-popup-background");
-        addMaintainerPopupBackground.classList.add("add-maintainer-popup-modal-background");
-        addMaintainerPopupBackground.appendChild(addMaintainerPopup);
-
-        document.body.prepend(addMaintainerPopupBackground);
-
-        addMaintainerPopup.classList.add("show-popup");
-        addMaintainerPopup.classList.remove("hide-popup");
-      });
-      navLinksArea.appendChild(addMaintainerLabel);   
-    } else if (this.isModerator) {
-      const organizationsLink = document.createElement("a");
-      organizationsLink.setAttribute("href", "organizations.html");
-      organizationsLink.textContent = "My Organizations";
-      navLinksArea.appendChild(organizationsLink);
-    }
-      navBar.appendChild(navLinksArea);
-  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async function() {
   const currentUser = new User();
   // Called to set log in/out URL when site loads.
-  currentUser.renderLoginStatus();
+  await currentUser.renderLoginStatus();
+  if (currentUser.loginData.isLoggedIn && (document.getElementById("nav-bar"))) {
+    rebuildNavBar(currentUser);
+  }
 });

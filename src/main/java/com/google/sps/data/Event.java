@@ -37,10 +37,6 @@ public class Event {
   private String details;
   // Holds Date of Event and their corresponding time(s).
   private HashMap<Date, EmbeddedEntity> dateAndHours;
-  // Represents when Event was created. Type is long because java.time.Instant returns a long type.
-  private long creationTimeStampMillis;
-  // Represents when Event was last updated.
-  private long lastEditedTimeStampMillis;
 
   /* Holds contact information for this Event. */
 
@@ -79,8 +75,6 @@ public class Event {
     this.contactEmail = (String) entity.getProperty("eventContactEmail");
     this.contactPhone = (String) entity.getProperty("eventContactPhone");
     this.contactName = (String) entity.getProperty("eventContactName");
-    this.creationTimeStampMillis = (long) entity.getProperty("eventCreationTimeStampMillis");
-    this.lastEditedTimeStampMillis = (long) entity.getProperty("eventLastEditTimeStampMillis");
     this.streetAddress = (String) entity.getProperty("eventStreetAddress");
     this.city = (String) entity.getProperty("eventCity");
     this.state = (String) entity.getProperty("eventState");
