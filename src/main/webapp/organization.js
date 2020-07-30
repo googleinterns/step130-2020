@@ -122,7 +122,7 @@ class Organization {
 
   editOrganization(organization) {
     // all entry fields will be prepopulated with the current values for user experience
-
+    console.log(organization.moderators);
     // TODO(): Convert user ids to emails
     const moderatorListString = this.convertIdsToEmails(organization.moderators);
 

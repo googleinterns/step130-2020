@@ -15,6 +15,8 @@
 package com.google.sps.data;
 
 import java.util.ArrayList;
+import com.google.sps.data.GivrUser;
+import com.google.sps.data.ModeratorInformation;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 
@@ -35,7 +37,7 @@ public final class Organization {
   private boolean isApproved;
   private String urlLink;
   private ArrayList<String> resourceCategories;
-  private ArrayList<String> moderators;
+  private ArrayList<ModeratorInformation> moderators;
 
   /* An Organization Object takes in an entity and assigns all of its fields based on the entity's
    * properties */
@@ -56,6 +58,13 @@ public final class Organization {
     this.isApproved = (boolean) entity.getProperty("isApproved");
     this.urlLink = (String) entity.getProperty("orgUrl");
     this.resourceCategories = (ArrayList) entity.getProperty("resourceCategories");
-    this.moderators = (ArrayList) entity.getProperty("moderatorList");
+
+    ArrayList<String> moderatorIds = (ArrayList) entity.getProperty("moderatorList");
+    for(String userId : moderatorIds) {
+      GivrUser currUser = GivrUser.getUserById(userId);
+      ModeratorInformation moderatorInfo = new ModeratorInformation(userId, currUser.getUserEmail());
+      System.out.println(moderatorInfo.getId() + " " + moderatorInfo.getEmail());
+      this.moderators.add(moderatorInfo);
+    }
   }
 }
