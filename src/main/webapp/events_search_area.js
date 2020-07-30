@@ -22,15 +22,17 @@ class EventSearchArea {
   constructor(searchAreaElement, isMaintainer) {
     this.searchArea = searchAreaElement;
     this.isMaintainer = isMaintainer;
+    this.showMyEvents = false;
 
     this.myEventsAndAddButtons = document.getElementById("my-events-and-add-buttons");
     this.myEventsButton = document.createElement("a");
-    this.myEventsButton.setAttribute("id", "my-events-button");
-    this.myEventsButton.textContent = "My Events";
-    this.myEventsButton.addEventListener('click', () => this.addMyEventsFilter());
+    this.myEventsButton.setAttribute("id", "events-button");
+    this.myEventsButton.textContent = "Show My Events";
+    this.myEventsButton.addEventListener('click', () => this.toggleMyEventsFilter());
     this.myEventsAndAddButtons.appendChild(this.myEventsButton);
     this.addEventButton = document.createElement("a");
     this.addEventButton.textContent = "Register an Event";
+    this.addEventButton.setAttribute("id", "events-button");
     this.addEventButton.setAttribute("href", "register_event.html");
     this.myEventsAndAddButtons.appendChild(this.addEventButton);
 
@@ -43,7 +45,6 @@ class EventSearchArea {
   }
 
   renderListOfEvents(objectsList, listArea) {
-      console.log(objectsList);
     // TODO(): for each event send in the event object and the if the user that did the request is a moderator for that event or not
     objectsList.forEach((event) => {
       // TODO(): set up official event object
@@ -76,34 +77,30 @@ class EventSearchArea {
   }
 
   async getListOfEvents(filterParams, objectsList, lastResultFound, loadMoreButton) {
-    // const response = await fetch(`/list-events?${filterParams.toString()}`);
-    // objectsList = await response.json();
-    // const newCursor = await response.headers.get("Cursor");
-    // filterParams.set("cursor", newCursor);
-    // /* If < 5 results are returned, the end of the given query has been reached */
-    // lastResultFound = (objectsList.length < 5);
-    // if (lastResultFound) {
-    //   loadMoreButton.classList.add("hide-load-button");
-    // }
-    objectsList = [{
-    "name": "Event A",
-    "ownerOrgName": "Maize and Blue Cupboard",
-    "contactName": "Sarah Addo",
-    "contactPhone": "2403617510",
-    "contactEmail": "sarahaddo00@gmail.com",
-    "details": "These are the event details",
-    "streetAddress": "13209 Catawba Manor Way",
-    "city": "Clarksburg",
-    "state": "Maryland",
-    "zipcode": "20871",
-    "date": "01-21-2000",
-    "time": "7:30 - 10:00"
-  }];
+    const response = await fetch(`/list-events?${filterParams.toString()}`);
+    objectsList = await response.json();
+    /* If < 5 results are returned, the end of the given query has been reached */
+    lastResultFound = (objectsList.length < 5);
+    if (lastResultFound) {
+      loadMoreButton.classList.add("hide-load-button");
+    }
+    
     return objectsList;
   }
 
-  addMyEventsFilter() {
-    // TODO(): Refine events by the ones fetching a list of events that are organized by 
-    // organizations that they are a moderator of
+  /* Changes my events filter to show / not show my events */
+  async toggleMyEventsFilter() {
+    this.showMyEvents = !this.showMyEvents;
+    this.searchAreaObject.filterParams.set("displayForUser", this.showMyEvents);
+
+    if (this.showMyEvents) {
+      this.myEventsButton.classList.add("selected");
+      this.myEventsButton.textContent = "Show All Events";
+    } else {
+      this.myEventsButton.classList.remove("selected");
+      this.myEventsButton.textContent = "Show My Events";
+    }
+    await this.searchAreaObject.refreshObjectsList();
+    this.searchAreaObject.loadMoreButton.classList.add("hide-load-button");
   }
 }
