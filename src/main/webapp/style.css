@@ -124,7 +124,8 @@
 }
 
 #search-area,
-#all-organizations {
+#all-organizations,
+#events-search-area {
   display: flex;
   justify-content: space-around;
 }
@@ -151,7 +152,13 @@
 .organization-popup-hours,
 .organization-popup-email,
 .organization-popup-url-link,
-.organization-popup-description {
+.organization-popup-description,
+.event-popup-name,
+.event-popup-contact-name,
+.event-popup-phone,
+.event-popup-email,
+.event-popup-date-time,
+.event-popup-details {
   margin: 2% 0;
 }
 
@@ -365,7 +372,7 @@
 
 #my-events-and-add-buttons {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   margin-bottom: 20px;
   font-size: 20px;
 }
@@ -384,4 +391,24 @@
 #my-events-and-add-buttons a {
   text-decoration: none;
   color: #666666;
+}
+
+.event-date-time,
+.event-popup-date-time {
+  display: flex;
+}
+
+.event-date {
+  margin-right: 10px;
+}
+
+.event-time {
+  margin-left: 10px;
+}
+
+.event {
+  margin: 0px 10px 20px 10px;
+  border: 2px solid #666666;
+  padding: 20px;
+  cursor: pointer;
 }

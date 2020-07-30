@@ -139,13 +139,9 @@ public class GivrUser {
 
     PreparedQuery preparedQuery = datastore.prepare(query.setFilter(compositeORFilter));
 
-    System.out.println("*****");
     for (Entity entity: preparedQuery.asIterable()) {
-      System.out.println("one!");
-      System.out.println(entity.getProperty("orgName"));
       this.moderatingOrgs.add(entity);
     }
-    System.out.println("********");
   }
 
   private static GivrUser getUserByIdOrEmail(String userId, String userEmail) {

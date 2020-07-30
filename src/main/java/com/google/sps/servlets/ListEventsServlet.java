@@ -30,7 +30,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultList;
-import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -60,20 +59,12 @@ public class ListEventsServlet extends HttpServlet {
     /* All get requests will return a maximum of 5 events entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
 
-    // String startCursor = request.getParameter("cursor");
-    // if ((startCursor != null) && (!startCursor.equals("none"))) { //if the given cursor is 'none' no cursor is necessary
-    //   fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
-    // }
-
     ListEventsHelper listEventsHelper = new ListEventsHelper("Event", request, currentUser);
     Query query = listEventsHelper.getQuery();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
     QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
-
-    // Cursor endCursor = results.getCursor();
-    // String encodedEndCursor = endCursor.toWebSafeString();
 
     ArrayList<Event> requestedEvents = new ArrayList<Event>();
 
@@ -85,6 +76,5 @@ public class ListEventsServlet extends HttpServlet {
     Gson gson = new Gson();
     response.setContentType("application/json;");
     response.getWriter().println(gson.toJson(requestedEvents));
-    //response.addHeader("Cursor", encodedEndCursor);
   }
 }
