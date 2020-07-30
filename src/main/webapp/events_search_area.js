@@ -88,7 +88,7 @@ class EventSearchArea {
     return objectsList;
   }
 
-  /* Changes my events filter to show / not show my events */
+  /* Click of my events button toggles events to show my events vs all events */
   async toggleMyEventsFilter() {
     this.showMyEvents = !this.showMyEvents;
     this.searchAreaObject.filterParams.set("displayForUser", this.showMyEvents);
