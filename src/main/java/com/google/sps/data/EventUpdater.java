@@ -33,6 +33,8 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Key;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -49,8 +51,22 @@ public final class EventUpdater {
     return this.entity;
   }
 
-  // TODO: When editing event (after event has been registered), we must check if the user sending the request has the right credentials - add GivrUser.isModeratorOfOrgWithId(long organizationId)
-  public void updateEvent(HttpServletRequest request, GivrUser user, boolean forRegistration, EmbeddedEntity historyUpdate) throws IllegalArgumentException {
+  // Called when creating and updating Event from AddEventServlet and EditEventServlet.
+  public void updateEvent(HttpServletRequest request, GivrUser user, boolean forRegistration, EmbeddedEntity historyUpdate) throws IllegalArgumentException {    
+    // Must check if requesting User is a Moderator of the Event's Organization.
+    long ownerOrgId = -1;
+    try {
+      ownerOrgId = Long.parseLong(getParameterOrThrow(request, "event-primary-organization-id"));
+    } catch (IllegalArgumentException err) {
+      logger.log(Level.SEVERE, "The primary organization ID is not valid.");
+    }
+    System.out.println(ownerOrgId);
+
+    if (!doesUserHasCredentialsToUpdateEvent(user, ownerOrgId)) {
+      System.out.println("User does not have correct credentials to update the event");
+      throw new IllegalArgumentException("Requesting user does not have the right credentials to create or update this Event.");
+    }
+System.out.println("HELLO");
     HashMap<String, String> formProperties = new HashMap<String, String>();
 
     // Format is (Form EntryName, Entity PropertyName)
@@ -76,12 +92,14 @@ public final class EventUpdater {
     optionalProperties.add("eventPartnerNames");
     optionalProperties.add("eventDetails");
 
-    long ownerOrgId = 0;
-
     for (Map.Entry<String, String> entry: formProperties.entrySet()) {
       String propertyKey = entry.getValue();
       String formKey = entry.getKey();
       String formValue = "";
+
+      if (formKey.equals("event-primary-organization-id")) {
+        continue;
+      }
 
       if (optionalProperties.contains(propertyKey)) {
         formValue = request.getParameter(formKey) == null ? "" : request.getParameter(formKey);
@@ -90,10 +108,6 @@ public final class EventUpdater {
           formValue = getParameterOrThrow(request, formKey);
         } catch (IllegalArgumentException err) {
           logger.log(Level.SEVERE, "Form value for: " + propertyKey + " cannot be left blank.");
-        }
-
-        if (formKey.equals("event-primary-organization-id")) {
-          ownerOrgId = Long.parseLong(formValue);
         }
       }
 
@@ -107,10 +121,13 @@ public final class EventUpdater {
     setEventOwnerOrgNameBasedOnId(ownerOrgId);
   }
 
-  private void setEventOwnerOrgNameBasedOnId(long ownerOrgId) {
+  private Entity getOrgEntityWithId(long orgId) throws IllegalArgumentException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-    Filter queryFilter = new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, ownerOrgId);
+System.out.println("line 126" + orgId); // 5981343255101440 ID/Name 
+    // Key key = KeyFactory.createKey("Distributor", "5981343255101440");
+    orgId = 5981343255101440;
+    Key key = KeyFactory.stringToKey("aglub19hcHBfaWRyGAsSC0Rpc3RyaWJ1dG9yGICAgICAgNAKDA");
+    Filter queryFilter = new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, key);
     Query query = new Query("Distributor").setFilter(queryFilter);
     PreparedQuery preparedQuery = datastore.prepare(query);
 
@@ -118,9 +135,32 @@ public final class EventUpdater {
     try {
       entity = preparedQuery.asSingleEntity();
     } catch(PreparedQuery.TooManyResultsException exception) {
-      logger.log(Level.SEVERE, "Multiple Distributor entities found with ID: " + Long.toString(ownerOrgId) + ".");
+      logger.log(Level.SEVERE, "Multiple Distributor entities found with ID: " + Long.toString(orgId) + ".");
     }
 
+    if (entity == null) {
+      System.out.println("Entity is null");
+      throw new IllegalArgumentException("There is no Organization with ID: " + Long.toString(orgId));
+    } else {
+      System.out.println(entity.getProperty("orgName"));
+    }
+
+    return entity;
+  }
+
+  private boolean doesUserHasCredentialsToUpdateEvent(GivrUser user, long orgId) {
+    System.out.println("line 147");
+    Entity entity = getOrgEntityWithId(orgId);
+    ArrayList<String> moderatorList = (ArrayList) entity.getProperty("moderatorList");
+System.out.println("line 150");
+    String userId = user.getUserId();
+System.out.println("line 152" + userId);
+    return moderatorList.contains(userId);
+  }
+
+  private void setEventOwnerOrgNameBasedOnId(long ownerOrgId) {
+    Entity entity = getOrgEntityWithId(ownerOrgId);
+    
     String ownerOrgName = (String) entity.getProperty("orgName");
     this.entity.setProperty("eventOwnerOrgName", ownerOrgName);
   }
@@ -167,13 +207,13 @@ public final class EventUpdater {
     ArrayList<EmbeddedEntity> changeHistory = new ArrayList<EmbeddedEntity>();
 
     if (forRegistration) {
-      this.entity.setProperty("eventCreationTimeStampMillis", milliSecondsSinceEpoch);
+      this.entity.setProperty("creationTimeStampMillis", milliSecondsSinceEpoch);
     } else {
       // If not registering event, changeHistory property should exist and should be modified.
       changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
     }
 
-    this.entity.setProperty("eventLastEditTimeStampMillis", milliSecondsSinceEpoch);
+    this.entity.setProperty("lastEditTimeStampMillis", milliSecondsSinceEpoch);
     changeHistory.add(historyUpdate);
     this.entity.setProperty("changeHistory", changeHistory);
   }

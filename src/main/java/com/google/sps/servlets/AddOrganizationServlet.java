@@ -37,7 +37,7 @@ public class AddOrganizationServlet extends HttpServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     GivrUser user = GivrUser.getCurrentLoggedInUser();
-
+    System.out.println(user.getUserId());
     if (user.getUserId().equals("")) {
       throw new IllegalArgumentException("Error: unable to register organization if user is not logged in.");
     }

@@ -82,8 +82,8 @@ public class Event {
     this.contactEmail = (String) entity.getProperty("eventContactEmail");
     this.contactPhone = (String) entity.getProperty("eventContactPhone");
     this.contactName = (String) entity.getProperty("eventContactName");
-    this.creationTimeStampMillis = (long) entity.getProperty("eventCreationTimeStampMillis");
-    this.lastEditedTimeStampMillis = (long) entity.getProperty("eventLastEditTimeStampMillis");
+    this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");
+    this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
     this.streetAddress = (String) entity.getProperty("eventStreetAddress");
     this.city = (String) entity.getProperty("eventCity");
     this.state = (String) entity.getProperty("eventState");
