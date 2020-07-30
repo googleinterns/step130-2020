@@ -26,6 +26,8 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.sps.data.GivrUser;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import com.google.sps.data.RequestHandler;
+import com.google.sps.data.ParserHelper;
 
 public final class OrganizationUpdater {
 
@@ -54,7 +56,7 @@ public final class OrganizationUpdater {
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
     boolean isMaintainer = user.isMaintainer();
-    boolean isModerator = isModerator = user.isModeratorOfAnyOrg();
+    boolean isModerator = user.isModeratorOfAnyOrg();
 
     requiresMaintainer.add("isApproved");
     requiresModerator.add("moderatorList");
@@ -99,7 +101,7 @@ public final class OrganizationUpdater {
       // setting organization description is optional
       if(!propertyKey.equals("orgDescription")) {
         try {
-          formValue = getParameterOrThrow(request, formKey);
+          formValue = RequestHandler.getParameterOrThrow(request, formKey);
         } catch(IllegalArgumentException err) {
           throw new IllegalArgumentException();
         }
@@ -118,29 +120,6 @@ public final class OrganizationUpdater {
     // Updates non form properties such as change history, lastEditTimeStamp, etc
     updateNonFormProperties(user, forRegistration, historyUpdate);
 
-  }
-
-  private String getParameterOrThrow(HttpServletRequest request, String formKey) {
-    String result = request.getParameter(formKey);
-    if(result == null || result.isEmpty()) {
-      throw new IllegalArgumentException("Form value cannot be null");
-    }
-    return result;
-  }
-
-  private ArrayList<String> getParameterValuesOrThrow(HttpServletRequest request, String formKey){
-    ArrayList<String> results = new ArrayList<String>(Arrays.asList(request.getParameterValues(formKey)));
-    if(results.isEmpty() || results == null) {
-      throw new IllegalArgumentException("Form value cannot be null");
-    }
-
-    // checks if there is a value that is empty which means a blank time range was submitted
-    for(int i = 0; i < results.size(); i++) {
-      if(results.get(i).equals("")) {
-        throw new IllegalArgumentException("Form value cannot be null");
-      }
-    }
-    return results;
   }
 
   private void setOrganizationProperty(String propertyKey, String formValue) {
@@ -257,16 +236,16 @@ public final class OrganizationUpdater {
     for (DayOfWeek currDay : DayOfWeek.values()) {
       EmbeddedEntity dayOption = new EmbeddedEntity();
       dayOption.setProperty("day", currDay.toString());
-      String isOpen = getParameterOrThrow(request, currDay.toString() + "-isOpen");
+      String isOpen = RequestHandler.getParameterOrThrow(request, currDay.toString() + "-isOpen");
       if(isOpen.equals("open")) {
         ArrayList<String> dayOptionFromTimes = new ArrayList<String>();
         ArrayList<String> dayOptionToTimes = new ArrayList<String>();
         dayOption.setProperty("isOpen", true);
-        dayOptionFromTimes = getParameterValuesOrThrow(request, currDay.toString() + "-from-times");
-        dayOptionToTimes = getParameterValuesOrThrow(request, currDay.toString() + "-to-times");
+        dayOptionFromTimes = RequestHandler.getParameterValuesOrThrow(request, currDay.toString() + "-from-times");
+        dayOptionToTimes = RequestHandler.getParameterValuesOrThrow(request, currDay.toString() + "-to-times");
 
         // create from to pairs as embedded entity to support multiple time ranges for a day
-        ArrayList<EmbeddedEntity> fromToPairs = createFromToPairs(dayOptionFromTimes, dayOptionToTimes);
+        ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createFromToPairs(dayOptionFromTimes, dayOptionToTimes);
         dayOption.setProperty("fromToPairs", fromToPairs);
       } else {
         dayOption.setProperty("isOpen", false);
@@ -275,19 +254,5 @@ public final class OrganizationUpdater {
     }
 
     this.entity.setProperty("orgHoursOpen", hoursOpen);
-  }
-
-  private ArrayList<EmbeddedEntity> createFromToPairs(ArrayList<String> dayOptionFromTimes, ArrayList<String> dayOptionToTimes) {
-    ArrayList<EmbeddedEntity> pairs = new ArrayList<EmbeddedEntity>();
-    if(dayOptionFromTimes.size() != dayOptionToTimes.size()) {
-      throw new IllegalArgumentException("Form value cannot be null");
-    }
-    for(int i = 0; i < dayOptionFromTimes.size(); i++) {
-      EmbeddedEntity fromToPair = new EmbeddedEntity();
-      fromToPair.setProperty("from", dayOptionFromTimes.get(i));
-      fromToPair.setProperty("to", dayOptionToTimes.get(i));
-      pairs.add(fromToPair);
-    }
-    return pairs;
   }
 }
