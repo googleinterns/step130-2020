@@ -230,6 +230,20 @@ public final class EventUpdater {
     this.entity.setProperty("changeHistory", changeHistory);
   }
 
+  private ArrayList<EmbeddedEntity> createFromToPairs(ArrayList<String> dayOptionFromTimes, ArrayList<String> dayOptionToTimes) {
+    ArrayList<EmbeddedEntity> pairs = new ArrayList<EmbeddedEntity>();
+    if(dayOptionFromTimes.size() != dayOptionToTimes.size()) {
+      throw new IllegalArgumentException("Form value cannot be null");
+    }
+    for(int i = 0; i < dayOptionFromTimes.size(); i++) {
+      EmbeddedEntity fromToPair = new EmbeddedEntity();
+      fromToPair.setProperty("from", dayOptionFromTimes.get(i));
+      fromToPair.setProperty("to", dayOptionToTimes.get(i));
+      pairs.add(fromToPair);
+    }
+    return pairs;
+  }
+
   private void setEventDateAndHours(HttpServletRequest request) {
     // Example of how event-date would be passed in: "2020-07-10"
     String eventDate = request.getParameter("event-date");
