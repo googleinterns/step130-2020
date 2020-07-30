@@ -54,19 +54,17 @@ public final class EventUpdater {
   // Called when creating and updating Event from AddEventServlet and EditEventServlet.
   public void updateEvent(HttpServletRequest request, GivrUser user, boolean forRegistration, EmbeddedEntity historyUpdate) throws IllegalArgumentException {    
     // Must check if requesting User is a Moderator of the Event's Organization.
-    long ownerOrgId = -1;
+    long ownerOrgId = 0;
     try {
       ownerOrgId = Long.parseLong(getParameterOrThrow(request, "event-primary-organization-id"));
     } catch (IllegalArgumentException err) {
       logger.log(Level.SEVERE, "The primary organization ID is not valid.");
     }
-    System.out.println(ownerOrgId);
 
     if (!doesUserHasCredentialsToUpdateEvent(user, ownerOrgId)) {
-      System.out.println("User does not have correct credentials to update the event");
       throw new IllegalArgumentException("Requesting user does not have the right credentials to create or update this Event.");
     }
-System.out.println("HELLO");
+
     HashMap<String, String> formProperties = new HashMap<String, String>();
 
     // Format is (Form EntryName, Entity PropertyName)
@@ -123,38 +121,27 @@ System.out.println("HELLO");
 
   private Entity getOrgEntityWithId(long orgId) throws IllegalArgumentException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-System.out.println("line 126" + orgId); // 5981343255101440 ID/Name 
-    // Key key = KeyFactory.createKey("Distributor", "5981343255101440");
-    // orgId = 5981343255101440;
-    Key key = KeyFactory.stringToKey("aglub19hcHBfaWRyGAsSC0Rpc3RyaWJ1dG9yGICAgICAgNAKDA");
-    Filter queryFilter = new FilterPredicate(Entity.KEY_RESERVED_PROPERTY, FilterOperator.EQUAL, key);
-    Query query = new Query("Distributor").setFilter(queryFilter);
-    PreparedQuery preparedQuery = datastore.prepare(query);
+    Key organizationKey = KeyFactory.createKey("Distributor", orgId);
 
-    Entity entity = null;
+    Entity organizationEntity = null;
     try {
-      entity = preparedQuery.asSingleEntity();
-    } catch(PreparedQuery.TooManyResultsException exception) {
-      logger.log(Level.SEVERE, "Multiple Distributor entities found with ID: " + Long.toString(orgId) + ".");
+      organizationEntity = datastore.get(organizationKey);
+    } catch (com.google.appengine.api.datastore.EntityNotFoundException err) {
+      throw new IllegalArgumentException("Organization entity with orgID " + orgId + " was not found.");
     }
 
-    if (entity == null) {
-      System.out.println("Entity is null");
-      throw new IllegalArgumentException("There is no Organization with ID: " + Long.toString(orgId));
-    } else {
-      System.out.println(entity.getProperty("orgName"));
+    if (organizationEntity == null) {
+      throw new IllegalArgumentException("There is no Organization with ID: " + orgId);
     }
 
-    return entity;
+    return organizationEntity;
   }
 
   private boolean doesUserHasCredentialsToUpdateEvent(GivrUser user, long orgId) {
-    System.out.println("line 147");
     Entity entity = getOrgEntityWithId(orgId);
     ArrayList<String> moderatorList = (ArrayList) entity.getProperty("moderatorList");
-System.out.println("line 150");
+
     String userId = user.getUserId();
-System.out.println("line 152" + userId);
     return moderatorList.contains(userId);
   }
 
