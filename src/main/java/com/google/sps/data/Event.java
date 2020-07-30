@@ -35,8 +35,8 @@ public class Event {
   private ArrayList<String> partnerNames;
   // Represents details of the Event. e.g. "In front of church ABC"
   private String details;
-  // Holds Date of Event and their corresponding time(s).
-  private HashMap<Date, EmbeddedEntity> dateAndHours;
+  // Holds Date of Event and their corresponding time(s). EmbeddedEntity holds a Date and an ArrayList of EmbeddedEntities that represents the time range(s) for that specific Date. This was chosen over a Map because Datastore does not support Maps.
+  private ArrayList<EmbeddedEntity> dateAndHours;
   // Represents when Event was created. Type is long because java.time.Instant returns a long type.
   private long creationTimeStampMillis;
   // Represents when Event was last updated.
@@ -75,12 +75,12 @@ public class Event {
     this.ownerOrgId = (long) entity.getProperty("eventOwnerOrgId");
     this.partnerNames = (ArrayList) entity.getProperty("eventPartnerNames");
     this.details = (String) entity.getProperty("eventDetails");
-    this.dateAndHours = (HashMap) entity.getProperty("eventDateAndHours");
+    this.dateAndHours = (ArrayList) entity.getProperty("eventDateAndHours");
     this.contactEmail = (String) entity.getProperty("eventContactEmail");
     this.contactPhone = (String) entity.getProperty("eventContactPhone");
     this.contactName = (String) entity.getProperty("eventContactName");
-    this.creationTimeStampMillis = (long) entity.getProperty("eventCreationTimeStampMillis");
-    this.lastEditedTimeStampMillis = (long) entity.getProperty("eventLastEditTimeStampMillis");
+    this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");
+    this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
     this.streetAddress = (String) entity.getProperty("eventStreetAddress");
     this.city = (String) entity.getProperty("eventCity");
     this.state = (String) entity.getProperty("eventState");

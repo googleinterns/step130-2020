@@ -19,7 +19,7 @@ function createOrganizationInChargeInput(listArea) {
     // if it is a maintainer
     const organizations = [{
         "name": "Organization A",
-        "id": 1
+        "id": 5981343255101440
     },
     {
         "name": "Organization B",
