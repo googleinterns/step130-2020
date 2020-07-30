@@ -10,9 +10,8 @@
 
 document.addEventListener("DOMContentLoaded", async function() {
     const currentUser = new User();
-    await currentUser.renderLoginStatus();
     // Called to set log in/out URL when site loads.
-    //currentUser.renderLoginStatus();
+    await currentUser.renderLoginStatus();
     await createOrganizationInChargeInput(document.getElementById("organization-in-charge-area"), currentUser);
     const optionArea = document.getElementById("hours-option-area");
     const timeOption = new TimeOption("Event hours", true, null, optionArea, false);
