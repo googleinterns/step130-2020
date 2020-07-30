@@ -174,51 +174,6 @@ public final class EventUpdater {
     ArrayList<EmbeddedEntity> changeHistory = new ArrayList<EmbeddedEntity>();
 
     if (forRegistration) {
-      this.entity.setProperty("eventCreationTimeStampMillis", milliSecondsSinceEpoch);
-    } else {
-      // If not registering event, changeHistory property should exist and should be modified.
-      changeHistory = (ArrayList) this.entity.getProperty("changeHistory");
-    }
-
-    this.entity.setProperty("eventLastEditTimeStampMillis", milliSecondsSinceEpoch);
-    changeHistory.add(historyUpdate);
-    this.entity.setProperty("changeHistory", changeHistory);
-  }
-
-  private ArrayList<String> getParameterValuesOrThrow(HttpServletRequest request, String formKey){
-    ArrayList<String> results = new ArrayList<String>(Arrays.asList(request.getParameterValues(formKey)));
-    if (results.isEmpty() || results == null) {
-      throw new IllegalArgumentException("Form value cannot be null");
-    }
-
-    // Checks if there is a value that is empty which means a blank time range was submitted
-    for(int i = 0; i < results.size(); i++) {
-      if(results.get(i).equals("")) {
-        throw new IllegalArgumentException("Form value cannot be null");
-      }
-    }
-    return results;
-  }
-
-  // Sets form values based on property key.
-  private void setEventProperty(String propertyKey, String formValue) {
-    if (propertyKey.equals("eventPartnerNames")) {
-      // Stores partnering organizations's names; partnering organizations do not have the ability to edit Event, so there is no need to store org IDs.
-      ArrayList<String> parsedNames = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
-
-      this.entity.setProperty(propertyKey, parsedNames);
-      return;
-    }
-
-    this.entity.setProperty(propertyKey, formValue);
-  }
-
-  // Sets values not passed in through the request form such as creation time of Event and last edited time.
-  private void setNonFormProperties(boolean forRegistration, EmbeddedEntity historyUpdate) {
-    long milliSecondsSinceEpoch = (long) historyUpdate.getProperty("changeTimeStampMillis");
-    ArrayList<EmbeddedEntity> changeHistory = new ArrayList<EmbeddedEntity>();
-
-    if (forRegistration) {
       this.entity.setProperty("creationTimeStampMillis", milliSecondsSinceEpoch);
     } else {
       // If not registering event, changeHistory property should exist and should be modified.
