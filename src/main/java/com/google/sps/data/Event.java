@@ -73,7 +73,7 @@ public class Event {
     this.ownerOrgId = (long) entity.getProperty("ownerOrgId");
     this.ownerOrgName = (String) entity.getProperty("ownerOrgName");
     this.partnerNames = (ArrayList) entity.getProperty("partnerOrgNames");
-    this.details = (String) entity.getProperty("eventDetails");
+    this.details = (String) entity.getProperty("description");
     this.dateAndHours = (ArrayList) entity.getProperty("dateAndHours");
     this.contactEmail = (String) entity.getProperty("email");
     this.contactPhone = (String) entity.getProperty("phone");
@@ -81,6 +81,6 @@ public class Event {
     this.streetAddress = (String) entity.getProperty("streetAddress");
     this.city = (String) entity.getProperty("city");
     this.state = (String) entity.getProperty("state");
-    this.zipcode = (String) entity.getProperty("eventZipcode");
+    this.zipcode = (String) entity.getProperty("zipcode");
   }
 }
