@@ -162,8 +162,8 @@ public class DataHelper {
     userServiceConfig.setOAuthAuthDomain("google.com");
   }
 
-  // Sets up local UserService test config with Moderator (User 0 through 9) info from User table.
-  private void setUserAsModeratorOfOrg(String userId) {
+  // Sets up local UserService test config with Moderator (User 0-4, 6-9) info from User table.
+  private void setUserAs(String userId) {
     userServiceConfig = new LocalUserServiceTestConfig();
     userServiceConfig.setOAuthEmail("baikj+test" + userId.charAt(4) + "@google.com");
     userServiceConfig.setOAuthUserId(userId);
