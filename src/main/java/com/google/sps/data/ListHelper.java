@@ -59,13 +59,10 @@ public abstract class ListHelper {
   }
 
   // Impemented by the subclass.
-  // Gets the constant map that translates from known key -> datastore property for the entity.
-  public abstract HashMap<String, String> GetDatastoreConstantMap();
   // Returns the filter for this.entity against this.user
   public abstract ArrayList<Filter> handleUserFiltering(boolean displayForUser);
 
   private HashMap<String, ArrayList<String>> parseFilterParams() {
-    HashMap<String, String> datastoreConstantMap = this.GetDatastoreConstantMap();
     /* Stores datastore property name as key, and received filter keywords for said property in arraylist */
     HashMap<String, ArrayList<String>> filterParamMap = new HashMap<String, ArrayList<String>>();
 
@@ -73,7 +70,7 @@ public abstract class ListHelper {
       ArrayList<String> paramList = new ArrayList<String>();
       if (this.request.getParameterValues(paramString) != null) {
         Collections.addAll(paramList, request.getParameterValues(paramString));
-        filterParamMap.put(datastoreConstantMap.get(paramString), paramList);
+        filterParamMap.put(paramString, paramList);
       }
     }
     return filterParamMap;

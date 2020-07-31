@@ -48,19 +48,19 @@ public final class Organization {
 
   public Organization(Entity entity) {
     this.id = (long) entity.getKey().getId();
-    this.name = (String) entity.getProperty("orgName");
-    this.email = (String) entity.getProperty("orgEmail");
-    this.address = (String) entity.getProperty("orgStreetAddress");
-    this.city = (String) entity.getProperty("orgCity");
-    this.state = (String) entity.getProperty("orgState");
-    this.zipcode = (String) entity.getProperty("orgZipCode");
-    this.hoursOpen = (ArrayList) entity.getProperty("orgHoursOpen");
-    this.description = (String) entity.getProperty("orgDescription");
-    this.phoneNum = (String) entity.getProperty("orgPhoneNum");
+    this.name = (String) entity.getProperty("name");
+    this.email = (String) entity.getProperty("email");
+    this.address = (String) entity.getProperty("streetAddress");
+    this.city = (String) entity.getProperty("city");
+    this.state = (String) entity.getProperty("state");
+    this.zipcode = (String) entity.getProperty("zipcode");
+    this.hoursOpen = (ArrayList) entity.getProperty("dateAndHours");
+    this.description = (String) entity.getProperty("description");
+    this.phoneNum = (String) entity.getProperty("phone");
     this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");
     this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
     this.isApproved = (boolean) entity.getProperty("isApproved");
-    this.urlLink = (String) entity.getProperty("orgUrl");
+    this.urlLink = (String) entity.getProperty("url");
     this.resourceCategories = (ArrayList) entity.getProperty("resourceCategories");
 
     ArrayList<String> moderatorIds = (ArrayList) entity.getProperty("moderatorList");

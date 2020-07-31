@@ -64,7 +64,6 @@ public final class EventUpdater {
       logger.log(Level.SEVERE, "The primary organization ID is not valid.");
       throw new IllegalArgumentException();
     }
-
     if (!user.isModeratorOfOrgWithId(ownerOrgId)) {
       throw new IllegalArgumentException("Requesting user does not have the right credentials to create or update this Event.");
     }
@@ -72,26 +71,26 @@ public final class EventUpdater {
     HashMap<String, String> formProperties = new HashMap<String, String>();
 
     // Format is (Form EntryName, Entity PropertyName)
-    formProperties.put("event-primary-organization-id", "eventOwnerOrgId");
-    formProperties.put("event-name", "eventName");
-    formProperties.put("event-partner", "eventPartnerNames");
+    formProperties.put("event-primary-organization-id", "ownerOrgId");
+    formProperties.put("event-name", "name");
+    formProperties.put("event-partner", "partnerOrgNames");
     formProperties.put("event-details", "eventDetails");
-    formProperties.put("event-contact-email", "eventContactEmail");
-    formProperties.put("event-contact-phone-num", "eventContactPhone");
-    formProperties.put("event-contact-name", "eventContactName");
-    formProperties.put("event-street-address", "eventStreetAddress");
-    formProperties.put("event-city", "eventCity");
-    formProperties.put("event-state", "eventState");
+    formProperties.put("event-contact-email", "email");
+    formProperties.put("event-contact-phone-num", "phone");
+    formProperties.put("event-contact-name", "contactName");
+    formProperties.put("event-street-address", "streetAddress");
+    formProperties.put("event-city", "city");
+    formProperties.put("event-state", "state");
     formProperties.put("event-zip-code", "eventZipcode");
 
     /* Optional Properties can be left blank in the request form.
      *
      * The following properties are optional:
-     * - eventPartnerNames
+     * - partnerOrgNames
      * - eventDetails
      */
     Set<String> optionalProperties = new HashSet<String>();
-    optionalProperties.add("eventPartnerNames");
+    optionalProperties.add("partnerOrgNames");
     optionalProperties.add("eventDetails");
 
     for (Map.Entry<String, String> entry: formProperties.entrySet()) {
@@ -134,7 +133,7 @@ public final class EventUpdater {
 
   // Sets form values based on property key.
   private void setEventProperty(String propertyKey, String formValue) {
-    if (propertyKey.equals("eventPartnerNames")) {
+    if (propertyKey.equals("partnerOrgNames")) {
       // Stores partnering organizations's names; partnering organizations do not have the ability to edit Event, so there is no need to store org IDs.
       ArrayList<String> parsedNames = new ArrayList<String>(Arrays.asList(formValue.split("\\s*,\\s*")));
 
@@ -186,5 +185,4 @@ public final class EventUpdater {
     dateAndHours.add(dateAndHoursEmbeddedEntity);
     this.entity.setProperty("eventDateAndHours", dateAndHours);
   }
-
 }
