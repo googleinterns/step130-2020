@@ -74,14 +74,14 @@ public final class EventUpdater {
     formProperties.put("event-primary-organization-id", "ownerOrgId");
     formProperties.put("event-name", "name");
     formProperties.put("event-partner", "partnerOrgNames");
-    formProperties.put("event-details", "eventDetails");
+    formProperties.put("event-details", "description");
     formProperties.put("event-contact-email", "email");
     formProperties.put("event-contact-phone-num", "phone");
     formProperties.put("event-contact-name", "contactName");
     formProperties.put("event-street-address", "streetAddress");
     formProperties.put("event-city", "city");
     formProperties.put("event-state", "state");
-    formProperties.put("event-zip-code", "eventZipcode");
+    formProperties.put("event-zip-code", "zipcode");
 
     /* Optional Properties can be left blank in the request form.
      *
@@ -91,7 +91,7 @@ public final class EventUpdater {
      */
     Set<String> optionalProperties = new HashSet<String>();
     optionalProperties.add("partnerOrgNames");
-    optionalProperties.add("eventDetails");
+    optionalProperties.add("description");
 
     for (Map.Entry<String, String> entry: formProperties.entrySet()) {
       String propertyKey = entry.getValue();
@@ -127,8 +127,8 @@ public final class EventUpdater {
     Entity entity = Organization.getOrgEntityWithId(ownerOrgId);
     
     String ownerOrgName = (String) entity.getProperty("orgName");
-    this.entity.setProperty("eventOwnerOrgName", ownerOrgName);
-    this.entity.setProperty("eventOwnerOrgId", ownerOrgId);
+    this.entity.setProperty("ownerOrgName", ownerOrgName);
+    this.entity.setProperty("ownerOrgId", ownerOrgId);
   }
 
   // Sets form values based on property key.
@@ -179,10 +179,10 @@ public final class EventUpdater {
     ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createHoursFromAndHoursToPairs(eventFromTime, eventToTime);
 
     EmbeddedEntity dateAndHoursEmbeddedEntity = new EmbeddedEntity();
-    dateAndHoursEmbeddedEntity.setProperty("eventDate", date);
+    dateAndHoursEmbeddedEntity.setProperty("date", date);
     dateAndHoursEmbeddedEntity.setProperty("fromToPairs", fromToPairs);
 
     dateAndHours.add(dateAndHoursEmbeddedEntity);
-    this.entity.setProperty("eventDateAndHours", dateAndHours);
+    this.entity.setProperty("dateAndHours", dateAndHours);
   }
 }
