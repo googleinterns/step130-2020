@@ -72,8 +72,6 @@ public abstract class ListHelper {
     for (String paramString : new String[]{"name", "streetAddress", "resourceCategories", "zipcode"}) {
       ArrayList<String> paramList = new ArrayList<String>();
       if (this.request.getParameterValues(paramString) != null) {
-        for (String c : request.getParameterValues(paramString)) {
-        }
         Collections.addAll(paramList, request.getParameterValues(paramString));
         filterParamMap.put(datastoreConstantMap.get(paramString), paramList);
       }
