@@ -37,7 +37,7 @@ public class Event {
   private ArrayList<String> partnerNames;
   // Represents details of the Event. e.g. "In front of church ABC"
   private String details;
-  // Holds Date of Event and their corresponding time(s). EmbeddedEntity holds a Date and an ArrayList of EmbeddedEntities that represents the time range(s) for that specific Date. This was chosen over a Map because Datastore does not support Maps and will be mainly used in servlets + modifying data in Datastore. For converting to Json using Gson in ListEventsServlet, it would be more appropriate to store this as a HashMap.
+  // Holds Date of Event and their corresponding time(s). EmbeddedEntity holds a Date and an ArrayList of EmbeddedEntities that represents the time range(s) for that specific Date. This was chosen over a Map because Datastore does not support Maps and will be mainly used in servlets + modifying data in Datastore.
   private ArrayList<EmbeddedEntity> dateAndHours;
 
   /* Holds contact information for this Event. */
