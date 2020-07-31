@@ -82,7 +82,7 @@ class FilterEntry{
       this.filterFieldInput.value = "";
       this.filterEntryArea.removeChild(this.filterParamInput);
       this.filterEntryArea.removeChild(this.filterParamLabel);
-      this.filterEntryArea.dispatchEvent(new Event('onRemove'));
+      this.filterEntryArea.dispatchEvent(new CustomEvent('onRemove'));
     });
 
     this.filterEntryClose = document.createElement("div");
@@ -90,9 +90,8 @@ class FilterEntry{
     this.filterEntryClose.setAttribute("class", "filter-tag-close");
     this.filterEntryClose.addEventListener('click', () => {
       this.filterEntryArea.textContent = "";
-      this.filterEntryArea.dispatchEvent(new Event('onRemove'));
+      this.filterEntryArea.dispatchEvent(new CustomEvent('onRemove'));
     });
-
   }
 
   hasFilterField() {

@@ -61,6 +61,7 @@ public final class EventUpdater {
       ownerOrgId = Long.parseLong(RequestHandler.getParameterOrThrow(request, "event-primary-organization-id"));
     } catch (IllegalArgumentException err) {
       logger.log(Level.SEVERE, "The primary organization ID is not valid.");
+      throw new IllegalArgumentException();
     }
 
     if (!doesUserHasCredentialsToUpdateEvent(user, ownerOrgId)) {
@@ -108,6 +109,7 @@ public final class EventUpdater {
           formValue = RequestHandler.getParameterOrThrow(request, formKey);
         } catch (IllegalArgumentException err) {
           logger.log(Level.SEVERE, "Form value for: " + propertyKey + " cannot be left blank.");
+          throw new IllegalArgumentException();
         }
       }
 
@@ -193,6 +195,7 @@ public final class EventUpdater {
       date = new SimpleDateFormat("yyyy-MM-dd").parse(eventDate);
     } catch (java.text.ParseException err) {
       logger.log(Level.SEVERE, "Date information is in the wrong format.");
+      throw new IllegalArgumentException();
     }
 
     ArrayList<EmbeddedEntity> dateAndHours = new ArrayList<EmbeddedEntity>();
