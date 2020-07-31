@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.lang.Object;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import com.google.sps.data.Organization;
 
 
 public class GivrUser {
@@ -80,6 +81,14 @@ public class GivrUser {
 
   public boolean isModeratorOfAnyOrg() {
     return getModeratingOrgs().size() > 0;
+  }
+
+  public boolean isModeratorOfOrgWithId(long orgId) {
+    Entity entity = Organization.getOrgEntityWithId(orgId);
+    ArrayList<String> moderatorList = (ArrayList) entity.getProperty("moderatorList");
+
+    String userId = getUserId();
+    return moderatorList.contains(userId);
   }
 
   // Gets User with propertyName, propertyValue exists within Datastore.
