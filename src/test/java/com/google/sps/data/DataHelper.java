@@ -150,7 +150,7 @@ public class DataHelper {
     if (userIsMaintainer) {
       setUserAsMaintainer();
     } else {
-      setUserAsModeratorOfOrg(userId);
+      setUserAs(userId);
     }
   }
 
