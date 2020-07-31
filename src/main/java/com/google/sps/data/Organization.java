@@ -60,6 +60,7 @@ public final class Organization {
     this.resourceCategories = (ArrayList) entity.getProperty("resourceCategories");
 
     ArrayList<String> moderatorIds = (ArrayList) entity.getProperty("moderatorList");
+    this.moderators = new ArrayList<ModeratorInformation>();
     for(String userId : moderatorIds) {
       GivrUser currUser = GivrUser.getUserById(userId);
       ModeratorInformation moderatorInfo = new ModeratorInformation(userId, currUser.getUserEmail());
