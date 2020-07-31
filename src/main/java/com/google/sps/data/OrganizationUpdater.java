@@ -245,7 +245,7 @@ public final class OrganizationUpdater {
         dayOptionToTimes = RequestHandler.getParameterValuesOrThrow(request, currDay.toString() + "-to-times");
 
         // create from to pairs as embedded entity to support multiple time ranges for a day
-        ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createFromToPairs(dayOptionFromTimes, dayOptionToTimes);
+        ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createHoursFromAndHoursToPairs(dayOptionFromTimes, dayOptionToTimes);
         dayOption.setProperty("fromToPairs", fromToPairs);
       } else {
         dayOption.setProperty("isOpen", false);
