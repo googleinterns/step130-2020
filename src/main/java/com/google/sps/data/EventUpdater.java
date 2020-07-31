@@ -37,6 +37,9 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Key;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import com.google.sps.data.RequestHandler;
+import com.google.sps.data.ParserHelper;
+import com.google.sps.data.Organization;
 
 public final class EventUpdater {
 
@@ -56,12 +59,13 @@ public final class EventUpdater {
     // Must check if requesting User is a Moderator of the Event's Organization.
     long ownerOrgId = 0;
     try {
-      ownerOrgId = Long.parseLong(getParameterOrThrow(request, "event-primary-organization-id"));
+      ownerOrgId = Long.parseLong(RequestHandler.getParameterOrThrow(request, "event-primary-organization-id"));
     } catch (IllegalArgumentException err) {
       logger.log(Level.SEVERE, "The primary organization ID is not valid.");
+      throw new IllegalArgumentException();
     }
 
-    if (!doesUserHasCredentialsToUpdateEvent(user, ownerOrgId)) {
+    if (!user.isModeratorOfOrgWithId(ownerOrgId)) {
       throw new IllegalArgumentException("Requesting user does not have the right credentials to create or update this Event.");
     }
 
@@ -103,9 +107,10 @@ public final class EventUpdater {
         formValue = request.getParameter(formKey) == null ? "" : request.getParameter(formKey);
       } else {
         try {
-          formValue = getParameterOrThrow(request, formKey);
+          formValue = RequestHandler.getParameterOrThrow(request, formKey);
         } catch (IllegalArgumentException err) {
           logger.log(Level.SEVERE, "Form value for: " + propertyKey + " cannot be left blank.");
+          throw new IllegalArgumentException();
         }
       }
 
@@ -116,63 +121,15 @@ public final class EventUpdater {
 
     setEventDateAndHours(request);
 
-    setEventOwnerOrgNameBasedOnId(ownerOrgId);
+    setEventOwnerOrgIdAndName(ownerOrgId);
   }
 
-  private Entity getOrgEntityWithId(long orgId) throws IllegalArgumentException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Key organizationKey = KeyFactory.createKey("Distributor", orgId);
-
-    Entity organizationEntity = null;
-    try {
-      organizationEntity = datastore.get(organizationKey);
-    } catch (com.google.appengine.api.datastore.EntityNotFoundException err) {
-      throw new IllegalArgumentException("Organization entity with orgID " + orgId + " was not found.");
-    }
-
-    if (organizationEntity == null) {
-      throw new IllegalArgumentException("There is no Organization with ID: " + orgId);
-    }
-
-    return organizationEntity;
-  }
-
-  private boolean doesUserHasCredentialsToUpdateEvent(GivrUser user, long orgId) {
-    Entity entity = getOrgEntityWithId(orgId);
-    ArrayList<String> moderatorList = (ArrayList) entity.getProperty("moderatorList");
-
-    String userId = user.getUserId();
-    return moderatorList.contains(userId);
-  }
-
-  private void setEventOwnerOrgNameBasedOnId(long ownerOrgId) {
-    Entity entity = getOrgEntityWithId(ownerOrgId);
+  private void setEventOwnerOrgIdAndName(long ownerOrgId) {
+    Entity entity = Organization.getOrgEntityWithId(ownerOrgId);
     
     String ownerOrgName = (String) entity.getProperty("orgName");
     this.entity.setProperty("eventOwnerOrgName", ownerOrgName);
-  }
-
-  private String getParameterOrThrow(HttpServletRequest request, String formKey) {
-    String result = request.getParameter(formKey);
-    if (result == null || result.isEmpty()) {
-      throw new IllegalArgumentException();
-    }
-    return result;
-  }
-
-  private ArrayList<String> getParameterValuesOrThrow(HttpServletRequest request, String formKey){
-    ArrayList<String> results = new ArrayList<String>(Arrays.asList(request.getParameterValues(formKey)));
-    if (results.isEmpty() || results == null) {
-      throw new IllegalArgumentException("Form value cannot be null");
-    }
-
-    // Checks if there is a value that is empty which means a blank time range was submitted
-    for(int i = 0; i < results.size(); i++) {
-      if(results.get(i).equals("")) {
-        throw new IllegalArgumentException("Form value cannot be null");
-      }
-    }
-    return results;
+    this.entity.setProperty("eventOwnerOrgId", ownerOrgId);
   }
 
   // Sets form values based on property key.
@@ -208,26 +165,25 @@ public final class EventUpdater {
   private void setEventDateAndHours(HttpServletRequest request) {
     // Example of how event-date would be passed in: "2020-07-10"
     String eventDate = request.getParameter("event-date");
-
     Date date = null;
     try {
       date = new SimpleDateFormat("yyyy-MM-dd").parse(eventDate);
     } catch (java.text.ParseException err) {
       logger.log(Level.SEVERE, "Date information is in the wrong format.");
+      throw new IllegalArgumentException();
     }
 
-    HashMap<Date, EmbeddedEntity> dateAndHours = new HashMap<Date, EmbeddedEntity>();
+    ArrayList<EmbeddedEntity> dateAndHours = new ArrayList<EmbeddedEntity>();
 
-    EmbeddedEntity hoursEmbeddedEntity = new EmbeddedEntity();
+    ArrayList<String> eventFromTime = RequestHandler.getParameterValuesOrThrow(request, "Event hours-from-times");
+    ArrayList<String> eventToTime = RequestHandler.getParameterValuesOrThrow(request, "Event hours-to-times");
+    ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createHoursFromAndHoursToPairs(eventFromTime, eventToTime);
 
-    ArrayList<String> eventFromTime = getParameterValuesOrThrow(request, "Event hours-from-times");
-    ArrayList<String> eventToTime = getParameterValuesOrThrow(request, "Event hours-to-times");
+    EmbeddedEntity dateAndHoursEmbeddedEntity = new EmbeddedEntity();
+    dateAndHoursEmbeddedEntity.setProperty("eventDate", date);
+    dateAndHoursEmbeddedEntity.setProperty("fromToPairs", fromToPairs);
 
-    hoursEmbeddedEntity.setProperty("event-from-time", eventFromTime);
-    hoursEmbeddedEntity.setProperty("event-to-time", eventToTime);
-
-    dateAndHours.put(date, hoursEmbeddedEntity);
-
+    dateAndHours.add(dateAndHoursEmbeddedEntity);
     this.entity.setProperty("eventDateAndHours", dateAndHours);
   }
 

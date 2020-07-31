@@ -27,7 +27,7 @@ public class Event {
   private long id;
   // Represents the name of the Event.
   private String name;
-  // Holds ID (type String) of the Organization that owns the Event.
+  // Holds ID (type long) of the Organization that owns the Event.
   private long ownerOrgId;
   // Holds name of the Organization that owns the Event. Is set in EventUpdater's setEventOwnerOrgName().
   private String ownerOrgName;
@@ -37,8 +37,8 @@ public class Event {
   private ArrayList<String> partnerNames;
   // Represents details of the Event. e.g. "In front of church ABC"
   private String details;
-  // Holds Date of Event and their corresponding time(s).
-  private HashMap<Date, EmbeddedEntity> dateAndHours;
+  // Holds Date of Event and their corresponding time(s). EmbeddedEntity holds a Date and an ArrayList of EmbeddedEntities that represents the time range(s) for that specific Date. This was chosen over a Map because Datastore does not support Maps and will be mainly used in servlets + modifying data in Datastore.
+  private ArrayList<EmbeddedEntity> dateAndHours;
 
   /* Holds contact information for this Event. */
 
@@ -74,7 +74,7 @@ public class Event {
     this.ownerOrgName = (String) entity.getProperty("eventOwnerOrgName");
     this.partnerNames = (ArrayList) entity.getProperty("eventPartnerNames");
     this.details = (String) entity.getProperty("eventDetails");
-    this.dateAndHours = (HashMap) entity.getProperty("eventDateAndHours");
+    this.dateAndHours = (ArrayList) entity.getProperty("eventDateAndHours");
     this.contactEmail = (String) entity.getProperty("eventContactEmail");
     this.contactPhone = (String) entity.getProperty("eventContactPhone");
     this.contactName = (String) entity.getProperty("eventContactName");
