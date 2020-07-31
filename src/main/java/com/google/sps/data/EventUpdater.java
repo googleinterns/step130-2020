@@ -39,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import com.google.sps.data.RequestHandler;
 import com.google.sps.data.ParserHelper;
+import com.google.sps.data.Organization;
 
 public final class EventUpdater {
 
@@ -61,9 +62,9 @@ public final class EventUpdater {
       ownerOrgId = Long.parseLong(RequestHandler.getParameterOrThrow(request, "event-primary-organization-id"));
     } catch (IllegalArgumentException err) {
       logger.log(Level.SEVERE, "The primary organization ID is not valid.");
+      throw new IllegalArgumentException();
     }
-
-    if (!doesUserHasCredentialsToUpdateEvent(user, ownerOrgId)) {
+    if (!user.isModeratorOfOrgWithId(ownerOrgId)) {
       throw new IllegalArgumentException("Requesting user does not have the right credentials to create or update this Event.");
     }
 
@@ -108,6 +109,7 @@ public final class EventUpdater {
           formValue = RequestHandler.getParameterOrThrow(request, formKey);
         } catch (IllegalArgumentException err) {
           logger.log(Level.SEVERE, "Form value for: " + propertyKey + " cannot be left blank.");
+          throw new IllegalArgumentException();
         }
       }
 
@@ -121,38 +123,12 @@ public final class EventUpdater {
     setEventOwnerOrgIdAndName(ownerOrgId);
   }
 
-  private Entity getOrgEntityWithId(long orgId) throws IllegalArgumentException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Key organizationKey = KeyFactory.createKey("Distributor", orgId);
-
-    Entity organizationEntity = null;
-    try {
-      organizationEntity = datastore.get(organizationKey);
-    } catch (com.google.appengine.api.datastore.EntityNotFoundException err) {
-      throw new IllegalArgumentException("Organization entity with orgID " + orgId + " was not found.");
-    }
-
-    if (organizationEntity == null) {
-      throw new IllegalArgumentException("There is no Organization with ID: " + orgId);
-    }
-
-    return organizationEntity;
-  }
-
-  private boolean doesUserHasCredentialsToUpdateEvent(GivrUser user, long orgId) {
-    Entity entity = getOrgEntityWithId(orgId);
-    ArrayList<String> moderatorList = (ArrayList) entity.getProperty("moderatorList");
-
-    String userId = user.getUserId();
-    return moderatorList.contains(userId);
-  }
-
   private void setEventOwnerOrgIdAndName(long ownerOrgId) {
-    Entity entity = getOrgEntityWithId(ownerOrgId);
+    Entity entity = Organization.getOrgEntityWithId(ownerOrgId);
     
-    String ownerOrgName = (String) entity.getProperty("name");
-    this.entity.setProperty("ownerOrgName", ownerOrgName);
-    this.entity.setProperty("ownerOrgId", ownerOrgId);
+    String ownerOrgName = (String) entity.getProperty("orgName");
+    this.entity.setProperty("eventOwnerOrgName", ownerOrgName);
+    this.entity.setProperty("eventOwnerOrgId", ownerOrgId);
   }
 
   // Sets form values based on property key.
@@ -193,6 +169,7 @@ public final class EventUpdater {
       date = new SimpleDateFormat("yyyy-MM-dd").parse(eventDate);
     } catch (java.text.ParseException err) {
       logger.log(Level.SEVERE, "Date information is in the wrong format.");
+      throw new IllegalArgumentException();
     }
 
     ArrayList<EmbeddedEntity> dateAndHours = new ArrayList<EmbeddedEntity>();
@@ -206,6 +183,6 @@ public final class EventUpdater {
     dateAndHoursEmbeddedEntity.setProperty("fromToPairs", fromToPairs);
 
     dateAndHours.add(dateAndHoursEmbeddedEntity);
-    this.entity.setProperty("dateAndHours", dateAndHours);
+    this.entity.setProperty("eventDateAndHours", dateAndHours);
   }
 }
