@@ -199,7 +199,7 @@ public final class EventUpdater {
 
     ArrayList<String> eventFromTime = RequestHandler.getParameterValuesOrThrow(request, "Event hours-from-times");
     ArrayList<String> eventToTime = RequestHandler.getParameterValuesOrThrow(request, "Event hours-to-times");
-    ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createFromToPairs(eventFromTime, eventToTime);
+    ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createHoursFromAndHoursToPairs(eventFromTime, eventToTime);
 
     EmbeddedEntity dateAndHoursEmbeddedEntity = new EmbeddedEntity();
     dateAndHoursEmbeddedEntity.setProperty("eventDate", date);

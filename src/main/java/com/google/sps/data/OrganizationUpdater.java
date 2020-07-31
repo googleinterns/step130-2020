@@ -56,21 +56,22 @@ public final class OrganizationUpdater {
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
     boolean isMaintainer = user.isMaintainer();
+    // TODO: This should be if the user is a moderator of the org listed in the request.
     boolean isModerator = user.isModeratorOfAnyOrg();
 
     requiresMaintainer.add("isApproved");
     requiresModerator.add("moderatorList");
 
     // Format is Form Name, Entity Property 
-    properties.put("org-name", "name");
-    properties.put("org-email", "email");
-    properties.put("org-street-address", "streetAddress");
-    properties.put("org-city", "city");
-    properties.put("org-state", "state");
-    properties.put("org-zip-code", "zipcode");
-    properties.put("org-phone-num", "phone");
-    properties.put("org-url", "url");
-    properties.put("org-description","description");
+    properties.put("org-name", "orgName");
+    properties.put("org-email", "orgEmail");
+    properties.put("org-street-address", "orgStreetAddress");
+    properties.put("org-city", "orgCity");
+    properties.put("org-state", "orgState");
+    properties.put("org-zip-code", "orgZipCode");
+    properties.put("org-phone-num", "orgPhoneNum");
+    properties.put("org-url", "orgUrl");
+    properties.put("org-description","orgDescription");
     properties.put("approval", "isApproved");
     properties.put("moderator-list", "moderatorList");
     properties.put("org-resource-categories", "resourceCategories");
@@ -99,7 +100,7 @@ public final class OrganizationUpdater {
       String formKey = entry.getKey();
       String formValue = "";
       // setting organization description is optional
-      if(!propertyKey.equals("description")) {
+      if(!propertyKey.equals("orgDescription")) {
         try {
           formValue = RequestHandler.getParameterOrThrow(request, formKey);
         } catch(IllegalArgumentException err) {
@@ -245,7 +246,7 @@ public final class OrganizationUpdater {
         dayOptionToTimes = RequestHandler.getParameterValuesOrThrow(request, currDay.toString() + "-to-times");
 
         // create from to pairs as embedded entity to support multiple time ranges for a day
-        ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createFromToPairs(dayOptionFromTimes, dayOptionToTimes);
+        ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createHoursFromAndHoursToPairs(dayOptionFromTimes, dayOptionToTimes);
         dayOption.setProperty("fromToPairs", fromToPairs);
       } else {
         dayOption.setProperty("isOpen", false);
@@ -253,6 +254,6 @@ public final class OrganizationUpdater {
       hoursOpen.add(dayOption);
     }
 
-    this.entity.setProperty("dateAndHours", hoursOpen);
+    this.entity.setProperty("orgHoursOpen", hoursOpen);
   }
 }

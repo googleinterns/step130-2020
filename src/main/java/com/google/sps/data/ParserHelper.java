@@ -20,7 +20,7 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 public class ParserHelper {
 
   // Helper function for constructing hour ranges to allow multiple ranges for single dates.
-  public static ArrayList<EmbeddedEntity> createFromToPairs(ArrayList<String> dayOptionFromTimes, ArrayList<String> dayOptionToTimes) {
+  public static ArrayList<EmbeddedEntity> createHoursFromAndHoursToPairs(ArrayList<String> dayOptionFromTimes, ArrayList<String> dayOptionToTimes) {
     ArrayList<EmbeddedEntity> pairs = new ArrayList<EmbeddedEntity>();
     if(dayOptionFromTimes.size() != dayOptionToTimes.size()) {
       throw new IllegalArgumentException("Form value cannot be null");
