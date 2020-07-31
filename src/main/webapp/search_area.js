@@ -96,16 +96,7 @@ class SearchArea {
       return;
     }
 
-    /* if the param is a zipcode, remove tag of any existing one & set new one*/
-    if (urlParamKey === "zipcode") {
-      if (this.filterParams.get("zipcode")) {
-        /* If there is a zipcode being displayed, remove its tag so both aren't displayed */
-        this.removeFilterTag("zipcode", this.filterParams.get("zipcode"), document.getElementById("zipcodeTag"));
-      }
-      this.filterParams.set(urlParamKey, urlParamValue);
-    } else {
-      this.filterParams.append(urlParamKey, urlParamValue);
-    }
+    this.filterParams.append(urlParamKey, urlParamValue);
     this.form.reset();
     this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);
   }

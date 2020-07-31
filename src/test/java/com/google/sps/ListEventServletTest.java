@@ -60,7 +60,7 @@ public final class ListEventServletTest {
     helper.setUp();
     //                                Existing entity table
     // +-------+-------------------------+------------------+---------+---------------+
-    // | Index | creationTimeStampMillis | eventOwnerOrgId  | zipCode | streetAddress |
+    // | Index | creationTimeStampMillis | ownerOrgId  | zipCode | streetAddress |
     // +-------+-------------------------+------------------+---------+---------------+
     // |     0 |                       0 | 1                |   12345 | 12 Oak st.    |
     // |     1 |                       1 | 3                |   02763 | 12 Oak st.    |
@@ -73,57 +73,57 @@ public final class ListEventServletTest {
 
     Entity entity0 = new Entity("Event");
     entity0.setProperty("creationTimeStampMillis", 0);
-    entity0.setProperty("eventOwnerOrgId", new Long(1));
-    entity0.setProperty("eventZipCode", "12345");
-    entity0.setProperty("eventStreetAddress", "12 Oak st.");
+    entity0.setProperty("ownerOrgId", new Long(1));
+    entity0.setProperty("zipcode", "12345");
+    entity0.setProperty("streetAddress", "12 Oak st.");
     masterEntityList.add(entity0);
     datastore.put(entity0);
  
     Entity entity1 = new Entity("Event");
     entity1.setProperty("creationTimeStampMillis", 1);
-    entity1.setProperty("eventOwnerOrgId", new Long(3));
-    entity1.setProperty("eventZipCode", "02763");
-    entity1.setProperty("eventStreetAddress", "12 Oak st.");
+    entity1.setProperty("ownerOrgId", new Long(3));
+    entity1.setProperty("zipcode", "02763");
+    entity1.setProperty("streetAddress", "12 Oak st.");
     masterEntityList.add(entity1);
     datastore.put(entity1);
  
     Entity entity2 = new Entity("Event");
     entity2.setProperty("creationTimeStampMillis", 2);
-    entity2.setProperty("eventOwnerOrgId", new Long(0));
-    entity2.setProperty("eventZipCode", "47906");
-    entity2.setProperty("eventStreetAddress", "10 Main st.");
+    entity2.setProperty("ownerOrgId", new Long(0));
+    entity2.setProperty("zipcode", "47906");
+    entity2.setProperty("streetAddress", "10 Main st.");
     masterEntityList.add(entity2);
     datastore.put(entity2);
  
     Entity entity3 = new Entity("Event");
     entity3.setProperty("creationTimeStampMillis", 3);
-    entity3.setProperty("eventOwnerOrgId", new Long(4));
-    entity3.setProperty("eventZipCode", "02763");
-    entity3.setProperty("eventStreetAddress", "123 Park ln.");
+    entity3.setProperty("ownerOrgId", new Long(4));
+    entity3.setProperty("zipcode", "02763");
+    entity3.setProperty("streetAddress", "123 Park ln.");
     masterEntityList.add(entity3);
     datastore.put(entity3);
  
     Entity entity4 = new Entity("Event");
     entity4.setProperty("creationTimeStampMillis", 4);
-    entity4.setProperty("eventOwnerOrgId", new Long(5));
-    entity4.setProperty("eventZipCode", "02763");
-    entity4.setProperty("eventStreetAddress", "10 Main st.");
+    entity4.setProperty("ownerOrgId", new Long(5));
+    entity4.setProperty("zipcode", "02763");
+    entity4.setProperty("streetAddress", "10 Main st.");
     masterEntityList.add(entity4);
     datastore.put(entity4);
  
     Entity entity5 = new Entity("Event");
     entity5.setProperty("creationTimeStampMillis", 5);
-    entity5.setProperty("eventOwnerOrgId", new Long(1));
-    entity5.setProperty("eventZipCode", "02763");
-    entity5.setProperty("eventStreetAddress", "14 Oak st.");
+    entity5.setProperty("ownerOrgId", new Long(1));
+    entity5.setProperty("zipcode", "02763");
+    entity5.setProperty("streetAddress", "14 Oak st.");
     masterEntityList.add(entity5);
     datastore.put(entity5);
  
     Entity entity6 = new Entity("Event");
     entity6.setProperty("creationTimeStampMillis", 6);
-    entity6.setProperty("eventOwnerOrgId", new Long(6));
-    entity6.setProperty("eventZipCode", "94566");
-    entity6.setProperty("eventStreetAddress", "100 Birch st.");
+    entity6.setProperty("ownerOrgId", new Long(6));
+    entity6.setProperty("zipcode", "94566");
+    entity6.setProperty("streetAddress", "100 Birch st.");
     masterEntityList.add(entity6);
     datastore.put(entity6);
   }

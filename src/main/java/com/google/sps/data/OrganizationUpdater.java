@@ -26,6 +26,8 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.sps.data.GivrUser;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import com.google.sps.data.RequestHandler;
+import com.google.sps.data.ParserHelper;
 
 public final class OrganizationUpdater {
 
@@ -60,15 +62,15 @@ public final class OrganizationUpdater {
     requiresModerator.add("moderatorList");
 
     // Format is Form Name, Entity Property 
-    properties.put("org-name", "orgName");
-    properties.put("org-email", "orgEmail");
-    properties.put("org-street-address", "orgStreetAddress");
-    properties.put("org-city", "orgCity");
-    properties.put("org-state", "orgState");
-    properties.put("org-zip-code", "orgZipCode");
-    properties.put("org-phone-num", "orgPhoneNum");
-    properties.put("org-url", "orgUrl");
-    properties.put("org-description","orgDescription");
+    properties.put("org-name", "name");
+    properties.put("org-email", "email");
+    properties.put("org-street-address", "streetAddress");
+    properties.put("org-city", "city");
+    properties.put("org-state", "state");
+    properties.put("org-zip-code", "zipcode");
+    properties.put("org-phone-num", "phone");
+    properties.put("org-url", "url");
+    properties.put("org-description","description");
     properties.put("approval", "isApproved");
     properties.put("moderator-list", "moderatorList");
     properties.put("org-resource-categories", "resourceCategories");
@@ -97,9 +99,9 @@ public final class OrganizationUpdater {
       String formKey = entry.getKey();
       String formValue = "";
       // setting organization description is optional
-      if(!propertyKey.equals("orgDescription")) {
+      if(!propertyKey.equals("description")) {
         try {
-          formValue = getParameterOrThrow(request, formKey);
+          formValue = RequestHandler.getParameterOrThrow(request, formKey);
         } catch(IllegalArgumentException err) {
           throw new IllegalArgumentException();
         }
@@ -118,29 +120,6 @@ public final class OrganizationUpdater {
     // Updates non form properties such as change history, lastEditTimeStamp, etc
     updateNonFormProperties(user, forRegistration, historyUpdate);
 
-  }
-
-  private String getParameterOrThrow(HttpServletRequest request, String formKey) {
-    String result = request.getParameter(formKey);
-    if(result == null || result.isEmpty()) {
-      throw new IllegalArgumentException("Form value cannot be null");
-    }
-    return result;
-  }
-
-  private ArrayList<String> getParameterValuesOrThrow(HttpServletRequest request, String formKey){
-    ArrayList<String> results = new ArrayList<String>(Arrays.asList(request.getParameterValues(formKey)));
-    if(results.isEmpty() || results == null) {
-      throw new IllegalArgumentException("Form value cannot be null");
-    }
-
-    // checks if there is a value that is empty which means a blank time range was submitted
-    for(int i = 0; i < results.size(); i++) {
-      if(results.get(i).equals("")) {
-        throw new IllegalArgumentException("Form value cannot be null");
-      }
-    }
-    return results;
   }
 
   private void setOrganizationProperty(String propertyKey, String formValue) {
@@ -174,7 +153,7 @@ public final class OrganizationUpdater {
       GivrUser newUser = GivrUser.getUserByEmail(email);
       String userId = newUser.getUserId();
       // UserId can equal "" if that user has never logged in. User email will be added to the invitedModerators list, and not the moderatorList.
-      if (userId.equals("")) {
+      if (userId == null || userId.equals("")) {
         if (this.entity.getProperty("invitedModerators") == null) {
           invitedModeratorEmails = new ArrayList<String>();
         } else {
@@ -192,7 +171,7 @@ public final class OrganizationUpdater {
       GivrUser newUser = GivrUser.getUserByEmail(email);
       String userId = newUser.getUserId();
       // UserId can equal "" if that user has never logged in. User email will be added to the invitedModerators list, and not the moderatorList.
-      if (!userId.equals("")) {
+      if (userId != null && !userId.equals("")) {
         moderatorIds.add(newUser.getUserId());
       }
     }
@@ -257,16 +236,16 @@ public final class OrganizationUpdater {
     for (DayOfWeek currDay : DayOfWeek.values()) {
       EmbeddedEntity dayOption = new EmbeddedEntity();
       dayOption.setProperty("day", currDay.toString());
-      String isOpen = getParameterOrThrow(request, currDay.toString() + "-isOpen");
+      String isOpen = RequestHandler.getParameterOrThrow(request, currDay.toString() + "-isOpen");
       if(isOpen.equals("open")) {
         ArrayList<String> dayOptionFromTimes = new ArrayList<String>();
         ArrayList<String> dayOptionToTimes = new ArrayList<String>();
         dayOption.setProperty("isOpen", true);
-        dayOptionFromTimes = getParameterValuesOrThrow(request, currDay.toString() + "-from-times");
-        dayOptionToTimes = getParameterValuesOrThrow(request, currDay.toString() + "-to-times");
+        dayOptionFromTimes = RequestHandler.getParameterValuesOrThrow(request, currDay.toString() + "-from-times");
+        dayOptionToTimes = RequestHandler.getParameterValuesOrThrow(request, currDay.toString() + "-to-times");
 
         // create from to pairs as embedded entity to support multiple time ranges for a day
-        ArrayList<EmbeddedEntity> fromToPairs = createFromToPairs(dayOptionFromTimes, dayOptionToTimes);
+        ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createFromToPairs(dayOptionFromTimes, dayOptionToTimes);
         dayOption.setProperty("fromToPairs", fromToPairs);
       } else {
         dayOption.setProperty("isOpen", false);
@@ -274,20 +253,6 @@ public final class OrganizationUpdater {
       hoursOpen.add(dayOption);
     }
 
-    this.entity.setProperty("orgHoursOpen", hoursOpen);
-  }
-
-  private ArrayList<EmbeddedEntity> createFromToPairs(ArrayList<String> dayOptionFromTimes, ArrayList<String> dayOptionToTimes) {
-    ArrayList<EmbeddedEntity> pairs = new ArrayList<EmbeddedEntity>();
-    if(dayOptionFromTimes.size() != dayOptionToTimes.size()) {
-      throw new IllegalArgumentException("Form value cannot be null");
-    }
-    for(int i = 0; i < dayOptionFromTimes.size(); i++) {
-      EmbeddedEntity fromToPair = new EmbeddedEntity();
-      fromToPair.setProperty("from", dayOptionFromTimes.get(i));
-      fromToPair.setProperty("to", dayOptionToTimes.get(i));
-      pairs.add(fromToPair);
-    }
-    return pairs;
+    this.entity.setProperty("dateAndHours", hoursOpen);
   }
 }

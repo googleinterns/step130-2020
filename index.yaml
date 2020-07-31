@@ -3,11 +3,76 @@ indexes:
 - kind: Distributor
   ancestor: no  
   properties:
-  - name: orgStreetAddress
-  - name: orgPhoneNum
-  - name: orgName
-  - name: isApproved
+  - name: name
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  ancestor: no  
+  properties:
+  - name: streetAddress
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  ancestor: no  
+  properties:
+  - name: resourceCategories
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  ancestor: no  
+  properties:
+  - name: zipcode
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  ancestor: no  
+  properties:
   - name: moderatorList
-  - name: orgZipCode
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  ancestor: no  
+  properties:
+  - name: isApproved
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Event
+  ancestor: no  
+  properties:
+  - name: name
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Event
+  ancestor: no  
+  properties:
+  - name: streetAddress
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Event
+  ancestor: no  
+  properties:
+  - name: resourceCategories
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Event
+  ancestor: no  
+  properties:
+  - name: zipcode
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Event
+  ancestor: no  
+  properties:
+  - name: ownerOrgId
   - name: creationTimeStampMillis
     direction: desc

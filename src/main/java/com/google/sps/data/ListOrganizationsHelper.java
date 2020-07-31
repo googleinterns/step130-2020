@@ -49,16 +49,6 @@ public class ListOrganizationsHelper extends ListHelper {
       super(entityKind, request, currentUser);
   }
 
-  /* Events & orgs have different labels for fields (ex: orgCity vs eventCity). This map is used to reference
-     * the event-specific fields easily from ListHelper */
-  public HashMap<String, String> GetDatastoreConstantMap() {
-    HashMap<String, String> constantMap = new HashMap<String, String>();
-    constantMap.put("name", "orgName");
-    constantMap.put("streetAddress", "orgStreetAddress");
-    constantMap.put("zipcode", "orgZipCode");
-    return constantMap;
-  }
-
   /* handleUserFiltering handles filtering related to a user's role and permissions, and whether that user has requested to only
    * see organizations or events they belong to */
   public ArrayList<Filter> handleUserFiltering(boolean displayForUser) {
