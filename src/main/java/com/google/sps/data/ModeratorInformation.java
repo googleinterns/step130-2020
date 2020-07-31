@@ -15,7 +15,9 @@
 package com.google.sps.data;
 
 public class ModeratorInformation {
+  // Represents the UserService ID
   private String id;
+  // Represents the email for the logged in user
   private String email;
 
   public ModeratorInformation(String id, String email) {

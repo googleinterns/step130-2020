@@ -380,6 +380,8 @@ class Organization {
     return editFormAreaContent;
   }
 
+  // Takes in array of monderator information and returns a string of moderator emails
+  // joined with commas
   convertIdsToEmails(moderators) {
     let moderatorEmails = [];
     moderators.forEach((moderatorInfo) => {
