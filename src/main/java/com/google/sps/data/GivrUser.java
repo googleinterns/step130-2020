@@ -147,8 +147,6 @@ public class GivrUser {
   private static GivrUser getUserByIdOrEmail(String userId, String userEmail) {
     Entity entityRetrievedWithId = null;
     Entity entityRetrievedWithEmail = null;
-    System.out.println(userId);
-    System.out.println(userEmail);
 
     if (userId != null) {
       entityRetrievedWithId = getUserFromDatastoreWithProperty("userId", userId);

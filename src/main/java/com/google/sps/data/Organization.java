@@ -64,7 +64,6 @@ public final class Organization {
     for(String userId : moderatorIds) {
       GivrUser currUser = GivrUser.getUserById(userId);
       ModeratorInformation moderatorInfo = new ModeratorInformation(userId, currUser.getUserEmail());
-      System.out.println(moderatorInfo.getId() + " " + moderatorInfo.getEmail());
       this.moderators.add(moderatorInfo);
     }
   }

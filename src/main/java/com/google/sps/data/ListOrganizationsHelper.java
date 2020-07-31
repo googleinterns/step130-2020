@@ -69,10 +69,10 @@ public class ListOrganizationsHelper extends ListHelper {
       filterCollection.add(new FilterPredicate("moderatorList", FilterOperator.EQUAL, userId));
     }
 
-    // if (!this.currentUser.isMaintainer()) {
-    //   /* If the user is not a maintainer, only allow them to see approved orgs */
-    //   filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
-    // }
+    if (!this.currentUser.isMaintainer()) {
+      /* If the user is not a maintainer, only allow them to see approved orgs */
+      filterCollection.add(new FilterPredicate("isApproved", FilterOperator.EQUAL, true));
+    }
     return filterCollection;
   }
 }
