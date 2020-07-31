@@ -121,9 +121,6 @@ class Organization {
   }
 
   editOrganization(organization) {
-    // all entry fields will be prepopulated with the current values for user experience
-    console.log(organization.moderators);
-    // TODO(): Convert user ids to emails
     const moderatorListString = this.convertIdsToEmails(organization.moderators);
 
     //use param list to pass in id to servlet
@@ -384,7 +381,11 @@ class Organization {
   }
 
   convertIdsToEmails(moderators) {
-    return "placeholder";
+    let moderatorEmails = [];
+    moderators.forEach((moderatorInfo) => {
+        moderatorEmails.push(moderatorInfo.email);
+    });
+    return moderatorEmails.join(", ");
   }
 
   createOpenHoursText(organizationDay) {
