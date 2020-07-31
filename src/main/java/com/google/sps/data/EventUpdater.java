@@ -126,7 +126,7 @@ public final class EventUpdater {
   private void setEventOwnerOrgIdAndName(long ownerOrgId) {
     Entity entity = Organization.getOrgEntityWithId(ownerOrgId);
     
-    String ownerOrgName = (String) entity.getProperty("orgName");
+    String ownerOrgName = (String) entity.getProperty("name");
     this.entity.setProperty("ownerOrgName", ownerOrgName);
     this.entity.setProperty("ownerOrgId", ownerOrgId);
   }
