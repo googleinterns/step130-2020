@@ -40,7 +40,7 @@ class OrganizationSearchArea {
           return this.renderListOfOrganizations(objectsList, listArea) },
       (filterParams, objectsList, lastResultFound, loadMoreButton) => {
            return this.getListOfOrganizations(filterParams, objectsList, lastResultFound, loadMoreButton) });
-    if ((this.forOrganizationsPage) && !(this.isMaintainer)) {
+    if (this.forOrganizationsPage && !this.isMaintainer) {
       this.searchAreaObject.filterParams.set("displayForUser", "true");
     }
     this.searchAreaObject.handleObjects();
