@@ -17,6 +17,10 @@ package com.google.sps.data;
 import java.util.ArrayList;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Key;
 
 public final class Organization {
 
@@ -57,5 +61,23 @@ public final class Organization {
     this.urlLink = (String) entity.getProperty("orgUrl");
     this.resourceCategories = (ArrayList) entity.getProperty("resourceCategories");
     this.moderators = (ArrayList) entity.getProperty("moderatorList");
+  }
+
+  public static Entity getOrgEntityWithId(long orgId) throws IllegalArgumentException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Key organizationKey = KeyFactory.createKey("Distributor", orgId);
+
+    Entity organizationEntity = null;
+    try {
+      organizationEntity = datastore.get(organizationKey);
+    } catch (com.google.appengine.api.datastore.EntityNotFoundException err) {
+      throw new IllegalArgumentException("Organization entity with orgID " + orgId + " was not found.");
+    }
+
+    if (organizationEntity == null) {
+      throw new IllegalArgumentException("There is no Organization with ID: " + orgId);
+    }
+
+    return organizationEntity;
   }
 }

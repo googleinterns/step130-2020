@@ -39,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import com.google.sps.data.RequestHandler;
 import com.google.sps.data.ParserHelper;
+import com.google.sps.data.Organization;
 
 public final class EventUpdater {
 
@@ -64,7 +65,7 @@ public final class EventUpdater {
       throw new IllegalArgumentException();
     }
 
-    if (!doesUserHasCredentialsToUpdateEvent(user, ownerOrgId)) {
+    if (!user.isModeratorOfOrgWithId(ownerOrgId)) {
       throw new IllegalArgumentException("Requesting user does not have the right credentials to create or update this Event.");
     }
 
@@ -123,34 +124,8 @@ public final class EventUpdater {
     setEventOwnerOrgIdAndName(ownerOrgId);
   }
 
-  private Entity getOrgEntityWithId(long orgId) throws IllegalArgumentException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Key organizationKey = KeyFactory.createKey("Distributor", orgId);
-
-    Entity organizationEntity = null;
-    try {
-      organizationEntity = datastore.get(organizationKey);
-    } catch (com.google.appengine.api.datastore.EntityNotFoundException err) {
-      throw new IllegalArgumentException("Organization entity with orgID " + orgId + " was not found.");
-    }
-
-    if (organizationEntity == null) {
-      throw new IllegalArgumentException("There is no Organization with ID: " + orgId);
-    }
-
-    return organizationEntity;
-  }
-
-  private boolean doesUserHasCredentialsToUpdateEvent(GivrUser user, long orgId) {
-    Entity entity = getOrgEntityWithId(orgId);
-    ArrayList<String> moderatorList = (ArrayList) entity.getProperty("moderatorList");
-
-    String userId = user.getUserId();
-    return moderatorList.contains(userId);
-  }
-
   private void setEventOwnerOrgIdAndName(long ownerOrgId) {
-    Entity entity = getOrgEntityWithId(ownerOrgId);
+    Entity entity = Organization.getOrgEntityWithId(ownerOrgId);
     
     String ownerOrgName = (String) entity.getProperty("orgName");
     this.entity.setProperty("eventOwnerOrgName", ownerOrgName);
