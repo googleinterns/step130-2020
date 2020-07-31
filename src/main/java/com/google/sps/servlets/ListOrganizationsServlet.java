@@ -63,6 +63,8 @@ public class ListOrganizationsServlet extends HttpServlet {
     String startCursor = request.getParameter("cursor");
     if ((startCursor != null) && (!startCursor.equals("none"))) { //if the given cursor is 'none' no cursor is necessary
       fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
+    } else {
+      startCursor = ""; //ensures startCursor is not null
     }
 
     ListOrganizationsHelper listOrganizationsHelper = new ListOrganizationsHelper("Distributor", request, currentUser);
@@ -70,7 +72,15 @@ public class ListOrganizationsServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
-    QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
+    QueryResultList<Entity> results;
+
+    if (startCursor.equals("all")) {
+      /* No fetch options limits are applied if cursor = 'all' */
+      FetchOptions noLimitFetchOptions = FetchOptions.Builder.withLimit(Integer.MAX_VALUE);
+      results = prepQuery.asQueryResultList(noLimitFetchOptions);
+    } else {
+      results = prepQuery.asQueryResultList(fetchOptions);
+    }
 
     Cursor endCursor = results.getCursor();
     String encodedEndCursor = endCursor.toWebSafeString();
