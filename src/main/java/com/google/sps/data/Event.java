@@ -27,7 +27,7 @@ public class Event {
   private long id;
   // Represents the name of the Event.
   private String name;
-  // Holds ID (type long) of the Organization that owns the Event.
+  // Holds ID (type String) of the Organization that owns the Event.
   private long ownerOrgId;
   // Holds name of the Organization that owns the Event. Is set in EventUpdater's setEventOwnerOrgName().
   private String ownerOrgName;
@@ -69,18 +69,18 @@ public class Event {
   
   public Event(Entity entity) {
     this.id = (long) entity.getKey().getId();
-    this.name = (String) entity.getProperty("eventName");
-    this.ownerOrgId = (long) entity.getProperty("eventOwnerOrgId");
-    this.ownerOrgName = (String) entity.getProperty("eventOwnerOrgName");
-    this.partnerNames = (ArrayList) entity.getProperty("eventPartnerNames");
+    this.name = (String) entity.getProperty("name");
+    this.ownerOrgId = (long) entity.getProperty("ownerOrgId");
+    this.ownerOrgName = (String) entity.getProperty("ownerOrgName");
+    this.partnerNames = (ArrayList) entity.getProperty("partnerOrgNames");
     this.details = (String) entity.getProperty("eventDetails");
-    this.dateAndHours = (ArrayList) entity.getProperty("eventDateAndHours");
-    this.contactEmail = (String) entity.getProperty("eventContactEmail");
-    this.contactPhone = (String) entity.getProperty("eventContactPhone");
-    this.contactName = (String) entity.getProperty("eventContactName");
-    this.streetAddress = (String) entity.getProperty("eventStreetAddress");
-    this.city = (String) entity.getProperty("eventCity");
-    this.state = (String) entity.getProperty("eventState");
+    this.dateAndHours = (ArrayList) entity.getProperty("dateAndHours");
+    this.contactEmail = (String) entity.getProperty("email");
+    this.contactPhone = (String) entity.getProperty("phone");
+    this.contactName = (String) entity.getProperty("contactName");
+    this.streetAddress = (String) entity.getProperty("streetAddress");
+    this.city = (String) entity.getProperty("city");
+    this.state = (String) entity.getProperty("state");
     this.zipcode = (String) entity.getProperty("eventZipcode");
   }
 }
