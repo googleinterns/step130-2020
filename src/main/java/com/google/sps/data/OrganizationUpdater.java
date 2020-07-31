@@ -56,6 +56,7 @@ public final class OrganizationUpdater {
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
     boolean isMaintainer = user.isMaintainer();
+    // TODO: This should be if the user is a moderator of the org listed in the request.
     boolean isModerator = user.isModeratorOfAnyOrg();
 
     requiresMaintainer.add("isApproved");
@@ -245,7 +246,7 @@ public final class OrganizationUpdater {
         dayOptionToTimes = RequestHandler.getParameterValuesOrThrow(request, currDay.toString() + "-to-times");
 
         // create from to pairs as embedded entity to support multiple time ranges for a day
-        ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createFromToPairs(dayOptionFromTimes, dayOptionToTimes);
+        ArrayList<EmbeddedEntity> fromToPairs = ParserHelper.createHoursFromAndHoursToPairs(dayOptionFromTimes, dayOptionToTimes);
         dayOption.setProperty("fromToPairs", fromToPairs);
       } else {
         dayOption.setProperty("isOpen", false);
