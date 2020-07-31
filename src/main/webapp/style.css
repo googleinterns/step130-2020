@@ -377,9 +377,16 @@
   font-size: 20px;
 }
 
-#my-events-button {
-  margin-right: 40px;
-  cursor: pointer;
+#events-button {
+  margin-right: 40px;	
+  cursor: pointer;	  cursor: pointer;
+  border: 3px solid rgb(121, 121, 121);
+  border-radius: 10px;
+  padding: 5px 20px;
+}
+
+.selected {
+  background-color: rgb(172, 172, 172);
 }
 
 #my-events-and-add-buttons a {
