@@ -14,10 +14,6 @@
 
 package com.google.sps.data;
 
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
-
-
 public class ModeratorInformation {
   private String id;
   private String email;
