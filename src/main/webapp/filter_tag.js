@@ -24,9 +24,7 @@ class FilterTag {
     this.filterTagArea = document.createElement("div");
     this.filterTagArea.setAttribute("class", "filter-tag-area");
     /* ID is given to zipcode tag so it can be removed if new one is added */
-    if (urlParamKey === "zipcode") {
-      this.filterTagArea.setAttribute("id", "zipcodeTag");
-    }
+    this.filterTagArea.setAttribute("id", urlParamKey);
  
     this.filterTagLabel = document.createElement("div");
     this.filterTagLabel.setAttribute("class", "filter-tag-label");

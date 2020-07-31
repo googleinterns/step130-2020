@@ -96,15 +96,15 @@ class SearchArea {
       return;
     }
 
-    /* if the param is a zipcode, remove tag of any existing one & set new one*/
-    if (urlParamKey === "zipcode") {	
-      if (this.filterParams.get("zipcode")) {	
-        /* If there is a zipcode being displayed, remove its tag so both aren't displayed */	
-        this.removeFilterTag("zipcode", this.filterParams.get("zipcode"), document.getElementById("zipcodeTag"));	
-      }	
-      this.filterParams.set(urlParamKey, urlParamValue);	
+    /* Only resource categories can have multiple active filters */
+    if (urlParamKey === "resourceCategories") {	
+      this.filterParams.append(urlParamKey, urlParamValue);
     } else {	
-      this.filterParams.append(urlParamKey, urlParamValue);	
+      if (this.filterParams.get(urlParamKey)) {
+        /* If there is an active param for this key, remove its tag so both aren't displayed */
+        this.filterTagArea.removeFilterTag(urlParamKey, this.filterParams.get(urlParamKey), document.getElementById(urlParamKey));
+      }
+      this.filterParams.set(urlParamKey, urlParamValue);
     }
     this.form.reset();
     this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);

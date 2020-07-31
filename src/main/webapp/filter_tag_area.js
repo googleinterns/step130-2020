@@ -58,9 +58,7 @@ class FilterTagArea {
   }
 
   async removeFilterTag(urlParamKey, urlParamValue, filterTag) {
-    if (urlParamKey === "zipcode") {
-      this.parentSearchArea.filterParams.delete("zipcode");
-    } else {
+    if (urlParamKey === "resourceCategories") {
       if (this.parentSearchArea.filterParams.getAll(urlParamKey).length === 1) {
         /* If only 1 filter param, delete the array */
         this.parentSearchArea.filterParams.delete(urlParamKey);
@@ -70,6 +68,8 @@ class FilterTagArea {
         filterArray.splice(filterArray.indexOf(urlParamValue), 1);
         this.parentSearchArea.filterParams.set(urlParamKey, filterArray);
       }
+    } else {
+      this.parentSearchArea.filterParams.delete(urlParamKey);
     }
     this.activeFilterArea.removeChild(filterTag.filterTagArea);
     this.parentSearchArea.refreshObjectsList();
