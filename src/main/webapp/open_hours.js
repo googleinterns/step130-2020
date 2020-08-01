@@ -100,7 +100,13 @@ class TimeOption {
 
     // for edit page get the number of pairs of time input options to preset the values
     let numPairs = 0;
-    if (!forRegistration && this.organizationDay.propertyMap.isOpen) {
+    if (!forRegistration && !this.showOpenClosedOptions) {
+      numPairs = this.organizationDay.propertyMap.fromToPairs.value.length;
+
+      // set initial from to pair, if organization is open there is at least one pair
+      this.dayFromInput.setAttribute("value", this.organizationDay.propertyMap.fromToPairs.value[0].propertyMap.from);
+      this.dayToInput.setAttribute("value", this.organizationDay.propertyMap.fromToPairs.value[0].propertyMap.to);
+    } else if (!forRegistration && this.organizationDay.propertyMap.isOpen) {
       numPairs = this.organizationDay.propertyMap.fromToPairs.value.length;
 
       // set initial from to pair, if organization is open there is at least one pair

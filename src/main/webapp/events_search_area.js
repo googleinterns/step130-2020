@@ -47,6 +47,7 @@ class EventSearchArea {
   renderListOfEvents(objectsList, listArea) {
     // TODO(): for each event send in the event object and the if the user that did the request is a moderator for that event or not
     objectsList.forEach((event) => {
+        console.log(event);
       // TODO(): set up official event object
       const newEvent = new Event(event, this.isMaintainer);
 
