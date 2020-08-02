@@ -440,6 +440,7 @@ body {
   display: flex;
   justify-content: space-evenly;
   background-color: #24292e;
+  margin-top: 20px;
 }
 
 .teammate-name {
