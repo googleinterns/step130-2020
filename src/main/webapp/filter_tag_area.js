@@ -35,7 +35,7 @@ class FilterTagArea {
     this.addFilterButton = document.createElement("div");
     this.addFilterButton.setAttribute("class", "filter-tag-area");
     this.addFilterButton.setAttribute("id", "add-filter-button");
-    this.addFilterButton.textContent = "+ Add Filter";
+    this.addFilterButton.textContent = "Add Filter";
     this.addFilterButton.addEventListener('click', () => {
       /* If the user is on the second part of entering a filter, add filter is disabled */
       if (!this.filterEntry.hasFilterField()) {

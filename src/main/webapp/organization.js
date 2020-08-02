@@ -44,7 +44,27 @@ class Organization {
     organizationNameElement.classList.add("organization-name");
     organizationNameElement.textContent = this.organization.name;
 
+    const organizationAddressElement = document.createElement('div');
+    organizationAddressElement.classList.add("organization-address");
+    organizationAddressElement.textContent = this.organization.address + ", " + 
+    this.organization.city + ", " + this.organization.state + " " + this.organization.zipcode;
+
+    const organizationPhoneElement = document.createElement('div');
+    organizationPhoneElement.classList.add("organization-phone");
+    organizationPhoneElement.textContent = this.organization.phoneNum;
+
+    const organizationCategoriesElement = document.createElement("div");
+    this.organization.resourceCategories.forEach((category) => {
+        const categoryChip = document.createElement("div");
+        categoryChip.classList.add("category-chip");
+        categoryChip.textContent = category;
+        organizationCategoriesElement.appendChild(categoryChip);
+    })
+
     this.organizationElement.appendChild(organizationNameElement);
+    this.organizationElement.appendChild(organizationAddressElement);
+    this.organizationElement.appendChild(organizationPhoneElement);
+    this.organizationElement.appendChild(organizationCategoriesElement);
   }
 
   createCloseButton() {
