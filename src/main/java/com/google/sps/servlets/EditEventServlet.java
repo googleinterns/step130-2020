@@ -38,14 +38,9 @@ public class EditEventServlet extends HttpServlet {
     GivrUser user = GivrUser.getCurrentLoggedInUser();
 
     if (!user.isLoggedIn()) {
-      throw new IllegalArgumentException("ERROR: Unable to register event if user is not logged in.");
+      throw new IllegalArgumentException("ERROR: Unable to edit event if user is not logged in.");
     }
 
-    // Only Moderators can add Events.
-    if (!user.isModeratorOfAnyOrg() && !user.isMaintainer()) {
-      throw new IllegalArgumentException("ERROR: User does not have the permission to perform addition of Events.");
-    }
-    
     //Get the proper event entity for updating
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     long eventId = Long.parseLong(request.getParameter("id"));
