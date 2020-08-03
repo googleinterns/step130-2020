@@ -60,7 +60,8 @@ public class EditEventServlet extends HttpServlet {
     HistoryManager history = new HistoryManager();
     EmbeddedEntity historyUpdate = history.recordHistory("Event was edited.", millisecondsSinceEpoch);
 
-    // Update rest of Event properties from request form.
+    // Update rest of Event properties from request form. Will not update event if user that
+    // requested is not a moderator for the event or a maintainer
     try {
       eventUpdater.updateEvent(request, user, /* forRegistration */ false, historyUpdate);
     } catch (IllegalArgumentException err) {

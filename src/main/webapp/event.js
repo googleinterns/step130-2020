@@ -394,7 +394,7 @@ class Event {
   }
 
   parseDate(dateAndHours) {
-    // Will change format from MM DD, YYYY 00:00AM to MM DD, YYYY
+    // Will change format from Java Date representation, MM DD, YYYY 00:00AM, to MM DD, YYYY
     const date = dateAndHours.propertyMap.date.slice(0, -12);
     return date;
   }
