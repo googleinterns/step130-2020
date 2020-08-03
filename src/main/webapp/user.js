@@ -29,6 +29,7 @@ class User {
     if (this.loginData.isLoggedIn) {
       this.isMaintainer = this.loginData.isMaintainer;
       this.isModerator = this.loginData.moderatingOrgs.length >= 1;
+      this.moderatingOrgs = this.loginData.moderatingOrgs;
     } else {
       const loginLink = document.getElementById("login-url");
       loginLink.textContent = "Log In";

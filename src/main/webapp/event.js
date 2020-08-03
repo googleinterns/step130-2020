@@ -113,7 +113,7 @@ class Event {
     const popupDetailsElement = document.createElement('div');
     popupDetailsElement.classList.add("event-popup-details");
     popupDetailsElement.textContent = "Details: " + this.event.details;
-
+    
     const popupEditElement = document.createElement('button');
     popupEditElement.classList.add("enter-button");
     popupEditElement.textContent = "Edit";
@@ -146,6 +146,7 @@ class Event {
     //use param list to pass in id to servlet
     const params = new URLSearchParams();
     params.append("id", event.id);
+    params.append("event-primary-organization-id", event.ownerOrgId);
 
     const editFormAreaContent = document.createElement("div");
     editFormAreaContent.setAttribute("id", "edit-form-area-content");
@@ -183,19 +184,19 @@ class Event {
     editForm.appendChild(eventNameEntry);
 
     // // label and entry area for event date
-    // const eventDateLabel = document.createElement("label");
-    // eventDateLabel.setAttribute("for", "date");
-    // eventDateLabel.setAttribute("id", "date-label");
-    // eventDateLabel.textContent = "Event Date: ";
-    // editForm.appendChild(eventDateLabel);
+    const eventDateLabel = document.createElement("label");
+    eventDateLabel.setAttribute("for", "date");
+    eventDateLabel.setAttribute("id", "date-label");
+    eventDateLabel.textContent = "Event Date: ";
+    editForm.appendChild(eventDateLabel);
 
-    // const eventDateEntry = document.createElement("input");
-    // eventDateEntry.setAttribute("type", "date");
-    // eventDateEntry.setAttribute("id", "date");
-    // eventDateEntry.setAttribute("value", `${this.parseDateForValue(this.event.dateAndHours[0])}`);
-    // eventDateEntry.setAttribute("name", "event-date");
-    // eventDateEntry.classList.add("edit-entry");
-    // editForm.appendChild(eventDateEntry);
+    const eventDateEntry = document.createElement("input");
+    eventDateEntry.setAttribute("type", "date");
+    eventDateEntry.setAttribute("id", "date");
+    eventDateEntry.setAttribute("value", `${this.parseDateForValue(event.dateAndHours[0])}`);
+    eventDateEntry.setAttribute("name", "event-date");
+    eventDateEntry.classList.add("edit-entry");
+    editForm.appendChild(eventDateEntry);
 
     // label and entry area for event name
     const eventTimeArea = document.createElement("div");
@@ -307,7 +308,7 @@ class Event {
     eventPhoneEntry.setAttribute("id", "phone-num");
     eventPhoneEntry.setAttribute("pattern", "[0-9]{10}");
     eventPhoneEntry.setAttribute("value", `${event.contactPhone}`);
-    eventPhoneEntry.setAttribute("name", "event-phone-num");
+    eventPhoneEntry.setAttribute("name", "event-contact-phone-num");
     eventPhoneEntry.classList.add("edit-entry");
     editForm.appendChild(eventPhoneEntry);
 
@@ -393,34 +394,38 @@ class Event {
   }
 
   parseDate(dateAndHours) {
-    // Will change format from (Month, Day Year Time) to (Month, Day Year);
+    // Will change format from MM DD, YYYY 00:00AM to MM DD, YYYY
     const date = dateAndHours.propertyMap.date.slice(0, -12);
     return date;
   }
 
-  //   parseDateForValue(dateAndHours) {
-  //       let months = {
-  //     'Jan' : '01',
-  //     'Feb' : '02',
-  //     'Mar' : '03',
-  //     'Apr' : '04',
-  //     'May' : '05',
-  //     'Jun' : '06',
-  //     'Jul' : '07',
-  //     'Aug' : '08',
-  //     'Sep' : '09',
-  //     'Oct' : '10',
-  //     'Nov' : '11',
-  //     'Dec' : '12'
-  // }
-  // // APR 21, 3333
-  //       let month = dateAndHours.propertyMap.date.slice(0, -8);;
-  //       let day = dateAndHours.propertyMap.date.substr()
-  //       let year = 0;
+  parseDateForValue(dateAndHours) {
+    // Will translate a date in format MM DD, YYYY to YYYY-MM-DD for purpose of prefilling input date value
+    let months = {
+      'Jan': '01',
+      'Feb': '02',
+      'Mar': '03',
+      'Apr': '04',
+      'May': '05',
+      'Jun': '06',
+      'Jul': '07',
+      'Aug': '08',
+      'Sep': '09',
+      'Oct': '10',
+      'Nov': '11',
+      'Dec': '12'
+    }
+    let dateArr = dateAndHours.propertyMap.date.split(" ");
+    let month = dateArr[0];
+    // Removes the comma from the day
+    let day = dateArr[1].slice(0, -1);
+    let year = dateArr[2];
 
-  //       months.forEach((hardcodedMonth) => {
-  //           if
-  //       })
+    if (parseInt(day) < 10) {
+      day = "0" + day;
+    }
+    month = months[month];
 
-  //   }
+    return `${year}-${month}-${day}`;
+  }
 }
