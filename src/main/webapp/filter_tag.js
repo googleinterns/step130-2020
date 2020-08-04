@@ -22,10 +22,11 @@ class FilterTag {
     this.parentFilterTagArea = filterTagArea;
     this.filterTagArea = document.createElement("div");
     this.filterTagArea.classList.add("filter-tag-area");
-    this.filterTagArea.classList.add("filter-tag");
+    this.filterTagArea.classList.add("filter-tag-text");
     this.filterTagArea.setAttribute("id", urlParamKey);
  
     this.filterTagText = document.createElement("div");
+    this.filterTagText.setAttribute("class", "filter-tag-label");
     this.filterTagText.textContent = `${tagLabel}: ${urlParamValue}`;
     this.filterTagArea.appendChild(this.filterTagText);
  
