@@ -56,11 +56,7 @@ public final class OrganizationUpdater {
     Set<String> requiresModerator = new HashSet<String>();
     Map<String, String> properties = new HashMap<String,String>();
     boolean isMaintainer = user.isMaintainer();
-    boolean isModerator = false;
-    if (!forRegistration) {
-      // Organization entity's ID will exist after it has been created.
-      isModerator = user.isModeratorOfOrgWithId(this.entity.getKey().getId());
-    }
+    boolean isModerator = user.isModeratorOfAnyOrg();
 
     requiresMaintainer.add("isApproved");
     requiresModerator.add("moderatorList");
