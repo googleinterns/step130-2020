@@ -102,7 +102,7 @@ class SearchArea {
     } else {	
       if (this.filterParams.get(urlParamKey)) {
         /* If there is an active param for this key, remove its tag so both aren't displayed */
-        this.filterTagArea.removeFilterTag(urlParamKey, this.filterParams.get(urlParamKey), document.getElementById(urlParamKey));
+        this.filterTagArea.removeFilterTag(urlParamKey, this.filterParams.get(urlParamKey), document.getElementById(urlParamKey), /* refreshObjects= */ false);
       }
       this.filterParams.set(urlParamKey, urlParamValue);
     }
