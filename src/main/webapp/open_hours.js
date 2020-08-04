@@ -33,9 +33,12 @@ class TimeOption {
   constructor(day, forRegistration, organizationDay, optionArea, showOpenClosedOptions) {
     this.day = day;
     this.forRegistration = forRegistration;
-    this.organizationDay = organizationDay.propertyMap;
     this.optionArea = optionArea;
-    this.showOpenClosedOptions = showOpenClosedOptions
+    this.showOpenClosedOptions = showOpenClosedOptions;
+    this.organizationDay = organizationDay;
+    if(!forRegistration) {
+      this.organizationDay = this.organizationDay.propertyMap;
+    }
 
     this.dayOptionArea = document.createElement("div");
     this.dayOptionArea.classList.add("day-option-area");
