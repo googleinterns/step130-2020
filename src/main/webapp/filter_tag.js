@@ -33,7 +33,7 @@ class FilterTag {
     this.filterTagClose = document.createElement("div");
     this.filterTagClose.textContent = 'X';
     this.filterTagClose.setAttribute("class", "filter-tag-close");
-    this.filterTagClose.addEventListener('click', () => this.parentFilterTagArea.removeFilterTag(urlParamKey, urlParamValue, this, true));
+    this.filterTagClose.addEventListener('click', () => this.parentFilterTagArea.removeFilterTag(urlParamKey, urlParamValue, this, /* refreshObjects= */ true));
     this.filterTagArea.appendChild(this.filterTagClose);
   }
 }
