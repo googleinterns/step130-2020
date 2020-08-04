@@ -20,13 +20,10 @@ class FilterTag {
  
   constructor(filterTagArea, tagLabel, urlParamKey, urlParamValue) {
     this.parentFilterTagArea = filterTagArea;
-  
     this.filterTagArea = document.createElement("div");
-    this.filterTagArea.setAttribute("class", "filter-tag-area");
-    /* ID is given to zipcode tag so it can be removed if new one is added */
-    if (urlParamKey === "zipcode") {
-      this.filterTagArea.setAttribute("id", "zipcodeTag");
-    }
+    this.filterTagArea.classList.add("filter-tag-area");
+    this.filterTagArea.classList.add("filter-tag");
+    this.filterTagArea.setAttribute("id", urlParamKey);
  
     this.filterTagText = document.createElement("div");
     this.filterTagText.textContent = `${tagLabel}: ${urlParamValue}`;
@@ -35,7 +32,7 @@ class FilterTag {
     this.filterTagClose = document.createElement("div");
     this.filterTagClose.textContent = 'X';
     this.filterTagClose.setAttribute("class", "filter-tag-close");
-    this.filterTagClose.addEventListener('click', () => this.parentFilterTagArea.removeFilterTag(urlParamKey, urlParamValue, this));
+    this.filterTagClose.addEventListener('click', () => this.parentFilterTagArea.removeFilterTag(urlParamKey, urlParamValue, this, /* refreshObjects= */ true));
     this.filterTagArea.appendChild(this.filterTagClose);
   }
 }
