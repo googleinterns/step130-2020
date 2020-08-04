@@ -52,7 +52,7 @@ class FilterEntry{
     this.filterDataList = document.createElement("datalist");
     this.filterDataList.setAttribute("id", "filter-datalist");
     this.optionMap = new Map([
-      ["Organization Name", "name"],
+      ["Name", "name"],
       ["City", "city"],
       ["State", "state"],
       ["Address", "streetAddress"],
