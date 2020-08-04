@@ -13,7 +13,7 @@
 // limitations under the License.
 
 class Event {
-  constructor(event, isMaintainer = true, isModerator = true) {
+  constructor(event, isMaintainer, isModerator) {
     this.event = event;
     this.isMaintainer = isMaintainer;
     this.isModerator = isModerator;

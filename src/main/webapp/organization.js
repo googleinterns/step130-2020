@@ -13,7 +13,7 @@
 // limitations under the License.
 
 class Organization {
-  constructor(organization, isMaintainer = true, forOrganizationsPage) {
+  constructor(organization, isMaintainer, forOrganizationsPage) {
     this.organization = organization;
     this.isMaintainer = isMaintainer;
     this.forOrganizationsPage = forOrganizationsPage;
