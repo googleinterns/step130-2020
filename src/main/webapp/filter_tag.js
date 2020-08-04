@@ -21,8 +21,8 @@ class FilterTag {
   constructor(filterTagArea, urlParamKey, urlParamValue) {
     this.parentFilterTagArea = filterTagArea;
     this.filterTagArea = document.createElement("div");
-    this.filterTagArea.setAttribute("class", "filter-tag-area");
-    /* ID is given to zipcode tag so it can be removed if new one is added */
+    this.filterTagArea.classList.add("filter-tag-area");
+    this.filterTagArea.classList.add("filter-tag");
     this.filterTagArea.setAttribute("id", urlParamKey);
  
     this.filterTagLabel = document.createElement("div");

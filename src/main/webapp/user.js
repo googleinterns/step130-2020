@@ -29,6 +29,7 @@ class User {
     if (this.loginData.isLoggedIn) {
       this.isMaintainer = this.loginData.isMaintainer;
       this.isModerator = this.loginData.moderatingOrgs.length >= 1;
+      this.moderatingOrgs = this.loginData.moderatingOrgs;
     } else {
       const loginLink = document.getElementById("login-url");
       loginLink.textContent = "Log In";
@@ -54,6 +55,7 @@ class User {
     emailForm.appendChild(popupCloseButton);
 
     const emailInputLabel = document.createElement("div");
+    emailInputLabel.setAttribute("id", "add-maintainer-label");
     emailInputLabel.textContent = "New Maintainer's Email:";
     emailForm.appendChild(emailInputLabel);
 
