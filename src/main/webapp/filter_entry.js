@@ -31,6 +31,7 @@ class FilterEntry{
        then asks the user to enter the keyword for that filter type */
     this.filterEntryArea = document.createElement("div");
     this.filterEntryArea.setAttribute("class", "filter-tag-area");
+    this.filterEntryArea.classList.add("filter-tag");
     this.filterEntryArea.setAttribute("id", "filter-entry");
 
     /* The user selects the type of property they want to filter by in filterFieldInput*/
