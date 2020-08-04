@@ -18,7 +18,7 @@
  */
 class FilterTag {
  
-  constructor(filterTagArea, urlParamKey, urlParamValue) {
+  constructor(filterTagArea, tagLabel, urlParamKey, urlParamValue) {
     this.parentFilterTagArea = filterTagArea;
   
     this.filterTagArea = document.createElement("div");
@@ -28,10 +28,9 @@ class FilterTag {
       this.filterTagArea.setAttribute("id", "zipcodeTag");
     }
  
-    this.filterTagLabel = document.createElement("div");
-    this.filterTagLabel.setAttribute("class", "filter-tag-label");
-    this.filterTagLabel.textContent = urlParamValue;
-    this.filterTagArea.appendChild(this.filterTagLabel);
+    this.filterTagText = document.createElement("div");
+    this.filterTagText.textContent = `${tagLabel}: ${urlParamValue}`;
+    this.filterTagArea.appendChild(this.filterTagText);
  
     this.filterTagClose = document.createElement("div");
     this.filterTagClose.textContent = 'X';

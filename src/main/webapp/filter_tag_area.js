@@ -51,8 +51,8 @@ class FilterTagArea {
     this.activeFilterArea.removeChild(this.filterEntry.filterEntryArea)
   }
 
-  async addFilterTag(urlParamKey, urlParamValue) {
-    let filterTag = new FilterTag(this, urlParamKey, urlParamValue);
+  async addFilterTag(tagLabel, urlParamKey, urlParamValue) {
+    let filterTag = new FilterTag(this, tagLabel, urlParamKey, urlParamValue);
     this.activeFilterArea.appendChild(filterTag.filterTagArea);
     this.parentSearchArea.refreshObjectsList();
   }
