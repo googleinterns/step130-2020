@@ -73,13 +73,13 @@ class SearchArea {
     this.searchAreaContainer.appendChild(this.popupArea);
   }
 
-  refreshObjectsList() {
+  async refreshObjectsList() {
     this.filterParams.set("cursor", "none");
     this.lastResultFound = false;
     this.loadMoreButton.classList.remove("hide-load-button");
     this.objectsList = [];
     this.listArea.innerHTML = "";
-    this.handleObjects();
+    await this.handleObjects();
   }
 
   async handleObjects() {
@@ -95,7 +95,7 @@ class SearchArea {
       (urlParamValue === null) || (urlParamValue.trim() === "")) {
       return;
     }
-
+    
     /* Only resource categories can have multiple active filters */
     if (urlParamKey === "resourceCategories") {	
       this.filterParams.append(urlParamKey, urlParamValue);
@@ -108,5 +108,6 @@ class SearchArea {
     }
     this.form.reset();
     this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);
+    this.refreshObjectsList();
   }
 }

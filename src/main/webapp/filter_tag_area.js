@@ -47,17 +47,16 @@ class FilterTagArea {
     this.parentSearchArea.searchArea.appendChild(this.activeFilterArea);
   }
 
-   onRemoveCallback() {
+  onRemoveCallback() {
     this.activeFilterArea.removeChild(this.filterEntry.filterEntryArea)
   }
 
   async addFilterTag(urlParamKey, urlParamValue) {
     let filterTag = new FilterTag(this, urlParamKey, urlParamValue);
     this.activeFilterArea.appendChild(filterTag.filterTagArea);
-    this.parentSearchArea.refreshObjectsList();
   }
 
-  async removeFilterTag(urlParamKey, urlParamValue, filterTag) {
+  async removeFilterTag(urlParamKey, urlParamValue, filterTag, refreshObjects) {
     if (urlParamKey === "resourceCategories") {
       if (this.parentSearchArea.filterParams.getAll(urlParamKey).length === 1) {
         /* If only 1 filter param, delete the array */
@@ -71,7 +70,9 @@ class FilterTagArea {
     } else {
       this.parentSearchArea.filterParams.delete(urlParamKey);
     }
-    this.activeFilterArea.removeChild(filterTag.filterTagArea);
-    this.parentSearchArea.refreshObjectsList();
+    this.activeFilterArea.removeChild(document.getElementById(urlParamKey));
+    if (refreshObjects) {
+      this.parentSearchArea.refreshObjectsList();
+    }
   }
 }

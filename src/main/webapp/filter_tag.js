@@ -20,7 +20,6 @@ class FilterTag {
  
   constructor(filterTagArea, urlParamKey, urlParamValue) {
     this.parentFilterTagArea = filterTagArea;
-  
     this.filterTagArea = document.createElement("div");
     this.filterTagArea.setAttribute("class", "filter-tag-area");
     /* ID is given to zipcode tag so it can be removed if new one is added */
@@ -34,7 +33,7 @@ class FilterTag {
     this.filterTagClose = document.createElement("div");
     this.filterTagClose.textContent = 'X';
     this.filterTagClose.setAttribute("class", "filter-tag-close");
-    this.filterTagClose.addEventListener('click', () => this.parentFilterTagArea.removeFilterTag(urlParamKey, urlParamValue, this));
+    this.filterTagClose.addEventListener('click', () => this.parentFilterTagArea.removeFilterTag(urlParamKey, urlParamValue, this, true));
     this.filterTagArea.appendChild(this.filterTagClose);
   }
 }
