@@ -46,7 +46,7 @@ class SearchArea {
     this.zipcodeSubmit = document.createElement("input");
     this.zipcodeSubmit.setAttribute("type", "submit");
     this.zipcodeSubmit.setAttribute("class", "enter-button");
-    this.zipcodeSubmit.addEventListener('click', () => this.setUrlParamValue("zipcode", this.form.zipcode.value));
+    this.zipcodeSubmit.addEventListener('click', () => this.setUrlParamValue("Zipcode", "zipcode", this.form.zipcode.value));
     this.form.appendChild(this.zipcodeSubmit);
 
     this.zipcodeFormArea.appendChild(this.form);
@@ -54,7 +54,7 @@ class SearchArea {
 
     this.filterTagArea = new FilterTagArea(this);
     this.filterTagArea.filterEntry.filterEntryArea.addEventListener('onParamEntry',
-      (e) => this.setUrlParamValue(e.detail.urlParamKey, e.detail.urlParamValue), true);
+      (e) => this.setUrlParamValue(e.detail.tagLabel, e.detail.urlParamKey, e.detail.urlParamValue), true);
 
     this.loadMoreButton = document.createElement("div");
     this.loadMoreButton.setAttribute("class", "load-more-button");
@@ -89,24 +89,25 @@ class SearchArea {
     }
   }
 
-  async setUrlParamValue(urlParamKey, urlParamValue) {
+  async setUrlParamValue(tagLabel, urlParamKey, urlParamValue) {
     /* New query value is not added if it is a duplicate or empty/null */
     if (this.filterParams.getAll(urlParamKey).includes(urlParamValue) ||
       (urlParamValue === null) || (urlParamValue.trim() === "")) {
       return;
     }
-
-    /* if the param is a zipcode, remove tag of any existing one & set new one*/
-    if (urlParamKey === "zipcode") {	
-      if (this.filterParams.get("zipcode")) {	
-        /* If there is a zipcode being displayed, remove its tag so both aren't displayed */	
-        this.removeFilterTag("zipcode", this.filterParams.get("zipcode"), document.getElementById("zipcodeTag"));	
-      }	
-      this.filterParams.set(urlParamKey, urlParamValue);	
+    
+    /* Only resource categories can have multiple active filters */
+    if (urlParamKey === "resourceCategories") {	
+      this.filterParams.append(urlParamKey, urlParamValue);
     } else {	
-      this.filterParams.append(urlParamKey, urlParamValue);	
+      if (this.filterParams.get(urlParamKey)) {
+        /* If there is an active param for this key, remove its tag so both aren't displayed */
+        this.filterTagArea.removeFilterTag(urlParamKey, this.filterParams.get(urlParamKey), document.getElementById(urlParamKey), /* refreshObjects= */ false);
+      }
+      this.filterParams.set(urlParamKey, urlParamValue);
     }
     this.form.reset();
-    this.filterTagArea.addFilterTag(urlParamKey, urlParamValue);
+    this.filterTagArea.addFilterTag(tagLabel, urlParamKey, urlParamValue);
+    this.refreshObjectsList();
   }
 }

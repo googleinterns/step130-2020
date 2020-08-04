@@ -42,6 +42,20 @@ indexes:
   - name: creationTimeStampMillis
     direction: desc
 
+- kind: Distributor
+  ancestor: no  
+  properties:
+  - name: city
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Distributor
+  ancestor: no  
+  properties:
+  - name: state
+  - name: creationTimeStampMillis
+    direction: desc
+
 - kind: Event
   ancestor: no  
   properties:
@@ -67,6 +81,20 @@ indexes:
   ancestor: no  
   properties:
   - name: zipcode
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Event
+  ancestor: no  
+  properties:
+  - name: city
+  - name: creationTimeStampMillis
+    direction: desc
+
+- kind: Event
+  ancestor: no  
+  properties:
+  - name: state
   - name: creationTimeStampMillis
     direction: desc
 

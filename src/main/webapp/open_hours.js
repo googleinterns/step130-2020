@@ -33,7 +33,7 @@ class TimeOption {
   constructor(day, forRegistration, organizationDay, optionArea, showOpenClosedOptions) {
     this.day = day;
     this.forRegistration = forRegistration;
-    this.organizationDay = organizationDay;
+    this.organizationDay = organizationDay.propertyMap;
     this.optionArea = optionArea;
     this.showOpenClosedOptions = showOpenClosedOptions
 
@@ -71,7 +71,7 @@ class TimeOption {
       if (this.forRegistration) {
         this.dayOpenInput.setAttribute("checked", "checked");
         this.timeInputArea.classList.add("show-time-area");
-      } else if (!this.organizationDay.propertyMap.isOpen) {
+      } else if (!this.organizationDay.isOpen) {
         this.dayClosedInput.setAttribute("checked", "checked");
         this.timeInputArea.classList.add("hide-time-area");
       } else {
@@ -100,12 +100,18 @@ class TimeOption {
 
     // for edit page get the number of pairs of time input options to preset the values
     let numPairs = 0;
-    if (!forRegistration && this.organizationDay.propertyMap.isOpen) {
-      numPairs = this.organizationDay.propertyMap.fromToPairs.value.length;
+    if (!forRegistration && !this.showOpenClosedOptions) {
+      numPairs = this.organizationDay.fromToPairs.value.length;
 
       // set initial from to pair, if organization is open there is at least one pair
-      this.dayFromInput.setAttribute("value", this.organizationDay.propertyMap.fromToPairs.value[0].propertyMap.from);
-      this.dayToInput.setAttribute("value", this.organizationDay.propertyMap.fromToPairs.value[0].propertyMap.to);
+      this.dayFromInput.setAttribute("value", this.organizationDay.fromToPairs.value[0].propertyMap.from);
+      this.dayToInput.setAttribute("value", this.organizationDay.fromToPairs.value[0].propertyMap.to);
+    } else if (!forRegistration && this.organizationDay.isOpen) {
+      numPairs = this.organizationDay.fromToPairs.value.length;
+
+      // set initial from to pair, if organization is open there is at least one pair
+      this.dayFromInput.setAttribute("value", this.organizationDay.fromToPairs.value[0].propertyMap.from);
+      this.dayToInput.setAttribute("value", this.organizationDay.fromToPairs.value[0].propertyMap.to);
     }
 
     this.addMoreInput = document.createElement("a");
@@ -121,8 +127,8 @@ class TimeOption {
 
     // if there are multiple pairs of previously inputted times then adds and sets those values
     for (let i = 1; i < numPairs; i++) {
-      this.addTimeInputOption(this.organizationDay.propertyMap.fromToPairs.value[i].propertyMap.from,
-        this.organizationDay.propertyMap.fromToPairs.value[i].propertyMap.to);
+      this.addTimeInputOption(this.organizationDay.fromToPairs.value[i].propertyMap.from,
+        this.organizationDay.fromToPairs.value[i].propertyMap.to);
     }
 
     this.dayOptionArea.appendChild(this.timeInputArea);

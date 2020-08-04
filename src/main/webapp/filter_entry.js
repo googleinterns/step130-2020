@@ -45,16 +45,20 @@ class FilterEntry{
       this.filterParamLabel.textContent = `${this.filterFieldInput.value}:`;
       this.filterFieldInput.removeChild(this.filterDataList);
       this.filterEntryArea.removeChild(this.filterFieldInput);
+      this.filterEntryArea.removeChild(this.filterEntryClose);
       this.filterEntryArea.appendChild(this.filterParamInput);
       this.filterEntryArea.appendChild(this.filterParamLabel);
+      this.filterEntryArea.appendChild(this.filterEntryClose);
     });
 
     this.filterDataList = document.createElement("datalist");
     this.filterDataList.setAttribute("id", "filter-datalist");
     this.optionMap = new Map([
-      ["Organization Name", "name"],
+      ["Name", "name"],
+      ["City", "city"],
+      ["State", "state"],
       ["Address", "streetAddress"],
-      ["Available Resources", "resourceCategories"]]);
+      ["Help Category", "resourceCategories"]]);
     for (const optionKey of this.optionMap.keys()) {
       const option = document.createElement("option");
       option.value = optionKey;
@@ -74,6 +78,7 @@ class FilterEntry{
       this.filterEntryArea.dispatchEvent(new CustomEvent('onParamEntry', {
         bubbles: true,
         detail : {
+          tagLabel: this.filterFieldInput.value,
           urlParamKey: this.optionMap.get(this.filterFieldInput.value),
           urlParamValue: this.filterParamInput.value
         }
@@ -100,8 +105,8 @@ class FilterEntry{
 
   setupFilterEntry () {
     this.filterFieldInput.appendChild(this.filterDataList);
-    this.filterEntryArea.appendChild(this.filterEntryClose);
     this.filterEntryArea.appendChild(this.filterFieldInput);
     this.activeFilterArea.appendChild(this.filterEntryArea);
+    this.filterEntryArea.appendChild(this.filterEntryClose);
   }
 }
