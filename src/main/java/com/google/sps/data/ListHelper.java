@@ -66,7 +66,7 @@ public abstract class ListHelper {
     /* Stores datastore property name as key, and received filter keywords for said property in arraylist */
     HashMap<String, ArrayList<String>> filterParamMap = new HashMap<String, ArrayList<String>>();
 
-    for (String paramString : new String[]{"name", "streetAddress", "resourceCategories", "zipcode"}) {
+    for (String paramString : new String[]{"name", "city", "state", "streetAddress", "resourceCategories", "zipcode"}) {
       ArrayList<String> paramList = new ArrayList<String>();
       if (this.request.getParameterValues(paramString) != null) {
         Collections.addAll(paramList, request.getParameterValues(paramString));

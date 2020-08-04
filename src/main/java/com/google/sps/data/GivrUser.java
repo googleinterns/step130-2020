@@ -48,6 +48,7 @@ public class GivrUser {
   private String url;
   private String email;
   // In method setModeratingOrgs(), ArrayList will be set with all Organizations that this GivrUser moderates.
+  // Should be accessed with getModeratingOrgs() to retrieve the most up to date moderatingOrgs
   private ArrayList<Entity> moderatingOrgs = new ArrayList<Entity>();
 
   public GivrUser(String id, boolean isMaintainer, boolean isLoggedIn, String url, String email) {
@@ -72,6 +73,16 @@ public class GivrUser {
 
   public boolean isLoggedIn() {
     return this.isLoggedIn;
+  }
+
+  public boolean isModeratorOfOrganization(long organizationId) {
+    for(Entity entity : getModeratingOrgs()) {
+      long entityId = (long) entity.getKey().getId();
+      if(organizationId == entityId) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public ArrayList<Entity> getModeratingOrgs() {

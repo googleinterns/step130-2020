@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", async function() {
   if (document.getElementById('search-area')) {
     const mainSearchArea = new OrganizationSearchArea(document.getElementById('search-area'), isMaintainer, forOrganizationsPage);
   }
-  isMaintainer = true;
   if (document.getElementById('all-organizations')) {
     forOrganizationsPage = true;
     const organizationSearchArea = new OrganizationSearchArea(document.getElementById('all-organizations'), isMaintainer, forOrganizationsPage);

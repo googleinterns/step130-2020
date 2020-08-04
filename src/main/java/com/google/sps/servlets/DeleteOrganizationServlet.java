@@ -14,14 +14,51 @@
 
 package com.google.sps.servlets;
 
+
+import com.google.appengine.api.datastore.Entity;
+import java.util.ArrayList;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import java.io.IOException;
+import com.google.sps.data.GivrUser;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.sps.data.GivrUser;
-import java.io.IOException;
 
+/** Servlet responsible for deleting tasks. */
 @WebServlet("/delete-organization")
 public class DeleteOrganizationServlet extends HttpServlet {
 
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    long organizationId = Long.parseLong(request.getParameter("id"));
+    
+    GivrUser user = GivrUser.getCurrentLoggedInUser();
+
+    if(!user.isModeratorOfOrganization(organizationId) && !user.isMaintainer()) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
+    Key DistributorEntityKey = KeyFactory.createKey("Distributor", organizationId);
+    Entity organizationEntity = null;
+
+    // try catch for compilation purposes, servlet will not be called without a valid id param
+    try {
+      organizationEntity = datastore.get(DistributorEntityKey);
+    } catch(com.google.appengine.api.datastore.EntityNotFoundException err) {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        return;
+    }
+
+    
+    datastore.delete(DistributorEntityKey);
+
+    // Redirect back to the HTML page.
+    response.sendRedirect("/organizations.html");
+  }
 }

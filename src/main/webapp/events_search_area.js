@@ -13,15 +13,17 @@
 // limitations under the License.
 
 document.addEventListener("DOMContentLoaded", async function() {
-  // This checks that requester User has valid credentials to edit/delete/view ALL events. (by checking userID)
-  let isMaintainer = true;
-  const eventSearchArea = new EventSearchArea(document.getElementById('events-search-area'), isMaintainer);
+  // This checks that requester User has valid credentials to edit/delete/view ALL events. (by checking userID
+  const currentUser = new User();
+  // Called to set log in/out URL when site loads.
+  await currentUser.renderLoginStatus();
+  const eventSearchArea = new EventSearchArea(document.getElementById('events-search-area'), currentUser);
 });
 
 class EventSearchArea {
-  constructor(searchAreaElement, isMaintainer) {
+  constructor(searchAreaElement, currentUser) {
     this.searchArea = searchAreaElement;
-    this.isMaintainer = isMaintainer;
+    this.currentUser = currentUser;
     this.showMyEvents = false;
 
     this.myEventsAndAddButtons = document.getElementById("my-events-and-add-buttons");
@@ -37,18 +39,26 @@ class EventSearchArea {
     this.myEventsAndAddButtons.appendChild(this.addEventButton);
 
     this.searchAreaObject = new SearchArea(this.searchArea,
-      (objectsList, listArea) => { 
-          return this.renderListOfEvents(objectsList, listArea) },
-      (filterParams, objectsList, lastResultFound, loadMoreButton) => { 
-          return this.getListOfEvents(filterParams, objectsList, lastResultFound, loadMoreButton) });
+      (objectsList, listArea) => {
+        return this.renderListOfEvents(objectsList, listArea)
+      },
+      (filterParams, objectsList, lastResultFound, loadMoreButton) => {
+        return this.getListOfEvents(filterParams, objectsList, lastResultFound, loadMoreButton)
+      });
     this.searchAreaObject.handleObjects();
   }
 
   renderListOfEvents(objectsList, listArea) {
-    // TODO(): for each event send in the event object and the if the user that did the request is a moderator for that event or not
+    // Check to see if current user is a moderator of event or maintainer to determine edit functionality
     objectsList.forEach((event) => {
-      // TODO(): set up official event object
-      const newEvent = new Event(event, this.isMaintainer);
+      let moderatingStatus = false;
+      this.currentUser.moderatingOrgs.forEach((org) => {
+        if (event.ownerOrgId === org.key.id) {
+          moderatingStatus = true;
+        }
+      });
+
+      const newEvent = new Event(event, this.currentUser.isMaintainer, moderatingStatus);
 
       newEvent.eventElement.addEventListener('event-selected', () => {
         const eventPopupArea = document.getElementById("search-result-popup-area");
@@ -84,7 +94,7 @@ class EventSearchArea {
     if (lastResultFound) {
       loadMoreButton.classList.add("hide-load-button");
     }
-    
+
     return objectsList;
   }
 

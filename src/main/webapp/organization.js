@@ -13,7 +13,7 @@
 // limitations under the License.
 
 class Organization {
-  constructor(organization, isMaintainer = true, forOrganizationsPage) {
+  constructor(organization, isMaintainer, forOrganizationsPage) {
     this.organization = organization;
     this.isMaintainer = isMaintainer;
     this.forOrganizationsPage = forOrganizationsPage;
@@ -44,7 +44,27 @@ class Organization {
     organizationNameElement.classList.add("organization-name");
     organizationNameElement.textContent = this.organization.name;
 
+    const organizationAddressElement = document.createElement('div');
+    organizationAddressElement.classList.add("organization-address");
+    organizationAddressElement.textContent = this.organization.address + ", " + 
+    this.organization.city + ", " + this.organization.state + " " + this.organization.zipcode;
+
+    const organizationPhoneElement = document.createElement('div');
+    organizationPhoneElement.classList.add("organization-phone");
+    organizationPhoneElement.textContent = this.organization.phoneNum;
+
+    const organizationCategoriesElement = document.createElement("div");
+    this.organization.resourceCategories.forEach((category) => {
+        const categoryChip = document.createElement("div");
+        categoryChip.classList.add("category-chip");
+        categoryChip.textContent = category;
+        organizationCategoriesElement.appendChild(categoryChip);
+    })
+
     this.organizationElement.appendChild(organizationNameElement);
+    this.organizationElement.appendChild(organizationAddressElement);
+    this.organizationElement.appendChild(organizationPhoneElement);
+    this.organizationElement.appendChild(organizationCategoriesElement);
   }
 
   createCloseButton() {
@@ -93,7 +113,8 @@ class Organization {
     popupDescriptionElement.textContent = "Additional Information: " + this.organization.description;
 
     const popupEditElement = document.createElement('button');
-    if (this.forOrganizationsPage) {
+    const popupDeleteElement = document.createElement("button");
+    if(this.forOrganizationsPage) {
       popupEditElement.classList.add("enter-button");
       popupEditElement.textContent = "Edit";
       popupEditElement.addEventListener('click', () => {
@@ -101,6 +122,14 @@ class Organization {
         editFormArea.appendChild(this.editOrganization(this.organization));
         editFormArea.classList.remove("hide-edit-modal");
         editFormArea.classList.add("show-edit-modal")
+      });
+      popupDeleteElement.classList.add("enter-button");
+      popupDeleteElement.textContent = "Delete";
+      popupDeleteElement.addEventListener('click', () => {
+        const deleteFormArea = document.getElementById("delete-form-area");
+        deleteFormArea.appendChild(this.deleteOrganization(this.organization));
+        deleteFormArea.classList.remove("hide-delete-modal");
+        deleteFormArea.classList.add("show-delete-modal")
       });
     }
 
@@ -116,6 +145,7 @@ class Organization {
     this.popupElement.appendChild(popupDescriptionElement);
     if (this.forOrganizationsPage) {
       this.popupElement.appendChild(popupEditElement);
+      this.popupElement.appendChild(popupDeleteElement);
     }
     return this.popupElement;
   }
@@ -455,4 +485,50 @@ class Organization {
     }
     return `${hoursString}:${minutesString} ${AMOrPM}`;
   }
+
+  deleteOrganization(organization) {
+    
+    //use param list to pass in id to servlet
+    const params = new URLSearchParams();
+    params.append("id", organization.id);
+
+    const deleteFormAreaContent = document.createElement("div");
+    deleteFormAreaContent.setAttribute("id", "delete-form-area-content");
+
+    const warningText = document.createElement("div");
+    warningText.setAttribute("id", "delete-warning-text");
+    warningText.textContent = "Are you sure you want to delete this organization?";
+    deleteFormAreaContent.appendChild(warningText);
+
+    const buttonOptionsArea = document.createElement("div");
+    buttonOptionsArea.setAttribute("id", "cancel-delete-buttons-area");
+
+    const cancelButtonElement = document.createElement('button');
+    cancelButtonElement.classList.add("enter-button");
+    cancelButtonElement.textContent = 'Cancel';
+    cancelButtonElement.addEventListener('click', () => {
+      // Remove the popup from the DOM.
+      const deleteFormArea = document.getElementById("delete-form-area");
+      deleteFormArea.classList.remove("show-delete-modal");
+      deleteFormArea.classList.add("hide-delete-modal")
+      deleteFormAreaContent.remove();
+    });
+    buttonOptionsArea.appendChild(cancelButtonElement);
+
+    const deleteButtonElement = document.createElement('button');
+    deleteButtonElement.classList.add("enter-button");
+    deleteButtonElement.textContent = 'Delete';
+    deleteButtonElement.addEventListener('click', () => {
+      fetch('/delete-organization', {method: 'POST', body: params});
+      // Remove the popup from the DOM.
+      const deleteFormArea = document.getElementById("delete-form-area");
+      deleteFormArea.classList.remove("show-delete-modal");
+      deleteFormArea.classList.add("hide-delete-modal")
+      deleteFormAreaContent.remove();
+    });
+    buttonOptionsArea.appendChild(deleteButtonElement);
+    deleteFormAreaContent.appendChild(buttonOptionsArea);
+    return deleteFormAreaContent;
+  }
+
 }
