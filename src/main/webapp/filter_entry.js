@@ -54,9 +54,11 @@ class FilterEntry{
     this.filterDataList = document.createElement("datalist");
     this.filterDataList.setAttribute("id", "filter-datalist");
     this.optionMap = new Map([
-      ["Organization Name", "name"],
+      ["Name", "name"],
+      ["City", "city"],
+      ["State", "state"],
       ["Address", "streetAddress"],
-      ["Available Resources", "resourceCategories"]]);
+      ["Help Category", "resourceCategories"]]);
     for (const optionKey of this.optionMap.keys()) {
       const option = document.createElement("option");
       option.value = optionKey;
@@ -76,6 +78,7 @@ class FilterEntry{
       this.filterEntryArea.dispatchEvent(new CustomEvent('onParamEntry', {
         bubbles: true,
         detail : {
+          tagLabel: this.filterFieldInput.value,
           urlParamKey: this.optionMap.get(this.filterFieldInput.value),
           urlParamValue: this.filterParamInput.value
         }
