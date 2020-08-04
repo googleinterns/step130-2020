@@ -73,13 +73,13 @@ class SearchArea {
     this.searchAreaContainer.appendChild(this.popupArea);
   }
 
-  async refreshObjectsList() {
+  refreshObjectsList() {
     this.filterParams.set("cursor", "none");
     this.lastResultFound = false;
     this.loadMoreButton.classList.remove("hide-load-button");
     this.objectsList = [];
     this.listArea.innerHTML = "";
-    await this.handleObjects();
+    this.handleObjects();
   }
 
   async handleObjects() {
