@@ -64,7 +64,7 @@ public final class EventUpdater {
       logger.log(Level.SEVERE, "The primary organization ID is not valid.");
       throw new IllegalArgumentException();
     }
-    if (!user.isModeratorOfOrgWithId(ownerOrgId)) {
+    if (!user.isMaintainer() && !user.isModeratorOfOrgWithId(ownerOrgId)) {
       throw new IllegalArgumentException("Requesting user does not have the right credentials to create or update this Event.");
     }
 
