@@ -55,6 +55,7 @@ class User {
     emailForm.appendChild(popupCloseButton);
 
     const emailInputLabel = document.createElement("div");
+    emailInputLabel.setAttribute("id", "add-maintainer-label");
     emailInputLabel.textContent = "New Maintainer's Email:";
     emailForm.appendChild(emailInputLabel);
 
