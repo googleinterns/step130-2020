@@ -44,7 +44,27 @@ class Organization {
     organizationNameElement.classList.add("organization-name");
     organizationNameElement.textContent = this.organization.name;
 
+    const organizationAddressElement = document.createElement('div');
+    organizationAddressElement.classList.add("organization-address");
+    organizationAddressElement.textContent = this.organization.address + ", " + 
+    this.organization.city + ", " + this.organization.state + " " + this.organization.zipcode;
+
+    const organizationPhoneElement = document.createElement('div');
+    organizationPhoneElement.classList.add("organization-phone");
+    organizationPhoneElement.textContent = this.organization.phoneNum;
+
+    const organizationCategoriesElement = document.createElement("div");
+    this.organization.resourceCategories.forEach((category) => {
+        const categoryChip = document.createElement("div");
+        categoryChip.classList.add("category-chip");
+        categoryChip.textContent = category;
+        organizationCategoriesElement.appendChild(categoryChip);
+    })
+
     this.organizationElement.appendChild(organizationNameElement);
+    this.organizationElement.appendChild(organizationAddressElement);
+    this.organizationElement.appendChild(organizationPhoneElement);
+    this.organizationElement.appendChild(organizationCategoriesElement);
   }
 
   createCloseButton() {
@@ -131,9 +151,6 @@ class Organization {
   }
 
   editOrganization(organization) {
-    // all entry fields will be prepopulated with the current values for user experience
-
-    // TODO(): Convert user ids to emails
     const moderatorListString = this.convertIdsToEmails(organization.moderators);
 
     //use param list to pass in id to servlet
@@ -293,7 +310,7 @@ class Organization {
     //creates time input options for each day
     for(let i = 0; i < 7; i++) {
         const day = organization.hoursOpen[i].propertyMap.day;
-        const timeOption = new TimeOption(day, false, organization.hoursOpen[i], orgOpenHoursArea);
+        const timeOption = new TimeOption(day, /*forRegistration*/ false, organization.hoursOpen[i], orgOpenHoursArea, /*showOpenClosedOption*/ true);
     }
     editForm.appendChild(orgOpenHoursArea);
 
@@ -393,8 +410,14 @@ class Organization {
     return editFormAreaContent;
   }
 
+  // Takes in array of monderator information and returns a string of moderator emails
+  // joined with commas
   convertIdsToEmails(moderators) {
-    return "placeholder";
+    let moderatorEmails = [];
+    moderators.forEach((moderatorInfo) => {
+        moderatorEmails.push(moderatorInfo.email);
+    });
+    return moderatorEmails.join(", ");
   }
 
   createOpenHoursText(organizationDay) {

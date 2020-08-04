@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+ 
 package com.google.sps;
  
 import static org.mockito.Mockito.*;
@@ -29,6 +29,7 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.sps.data.GivrUser;
 import com.google.sps.servlets.ListOrganizationsServlet;
+import com.google.sps.data.ListOrganizationsHelper;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,53 +70,53 @@ public final class ListOrgServletTest {
     // |     5 |                       5 | false      |   02763 |
     // |     6 |                       6 | false      |   94566 |
     // +-------+-------------------------+------------+---------+
-
+ 
     Entity entity0 = new Entity("Distributor");
     entity0.setProperty("creationTimeStampMillis", 0);
     entity0.setProperty("isApproved", false);
-    entity0.setProperty("orgZipCode", "12345");
+    entity0.setProperty("zipcode", "12345");
     masterEntityList.add(entity0);
     datastore.put(entity0);
  
     Entity entity1 = new Entity("Distributor");
     entity1.setProperty("creationTimeStampMillis", 1);
     entity1.setProperty("isApproved", true);
-    entity1.setProperty("orgZipCode", "02763");
+    entity1.setProperty("zipcode", "02763");
     masterEntityList.add(entity1);
     datastore.put(entity1);
  
     Entity entity2 = new Entity("Distributor");
     entity2.setProperty("creationTimeStampMillis", 2);
     entity2.setProperty("isApproved", true);
-    entity2.setProperty("orgZipCode", "47906");
+    entity2.setProperty("zipcode", "47906");
     masterEntityList.add(entity2);
     datastore.put(entity2);
  
     Entity entity3 = new Entity("Distributor");
     entity3.setProperty("creationTimeStampMillis", 3);
     entity3.setProperty("isApproved", false);
-    entity3.setProperty("orgZipCode", "47906");
+    entity3.setProperty("zipcode", "47906");
     masterEntityList.add(entity3);
     datastore.put(entity3);
  
     Entity entity4 = new Entity("Distributor");
     entity4.setProperty("creationTimeStampMillis", 4);
     entity4.setProperty("isApproved", true);
-    entity4.setProperty("orgZipCode", "02763");
+    entity4.setProperty("zipcode", "02763");
     masterEntityList.add(entity4);
     datastore.put(entity4);
  
     Entity entity5 = new Entity("Distributor");
     entity5.setProperty("creationTimeStampMillis", 5);
     entity5.setProperty("isApproved", false);
-    entity5.setProperty("orgZipCode", "02763");
+    entity5.setProperty("zipcode", "02763");
     masterEntityList.add(entity5);
     datastore.put(entity5);
  
     Entity entity6 = new Entity("Distributor");
     entity6.setProperty("creationTimeStampMillis", 6);
     entity6.setProperty("isApproved", false);
-    entity6.setProperty("orgZipCode", "94566");
+    entity6.setProperty("zipcode", "94566");
     masterEntityList.add(entity6);
     datastore.put(entity6);
   }
@@ -124,7 +125,7 @@ public final class ListOrgServletTest {
   public void tearDown() {
     helper.tearDown();
   }
-
+ 
   @Test
   public void testQueryWithNoFilter() {
     /* Because there are no filters, all entities are returned in reverse time order. */
@@ -141,15 +142,16 @@ public final class ListOrgServletTest {
     GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "testemail@gmail.com");
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
-    when(mockRequest.getParameter("zipcode")).thenReturn(null);
-    when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
+    when(mockRequest.getParameterValues("zipcode")).thenReturn(null);
+    when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListOrganizationsServlet.getQueryFromParams(mockRequest, mockUser);
+    ListOrganizationsHelper listOrganizationsHelper = new ListOrganizationsHelper("Distributor", mockRequest, mockUser);
+    Query receivedQuery = listOrganizationsHelper.getQuery();
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
-
+ 
   @Test
   public void testQueryAsNormalUser() {
  
@@ -164,10 +166,11 @@ public final class ListOrgServletTest {
     GivrUser mockUser = new GivrUser("testId", false, true, "google.com", "testemail@gmail.com");
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
-    when(mockRequest.getParameter("zipcode")).thenReturn(null);
-    when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
+    when(mockRequest.getParameterValues("zipcode")).thenReturn(null);
+    when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListOrganizationsServlet.getQueryFromParams(mockRequest, mockUser);
+    ListOrganizationsHelper listOrganizationsHelper = new ListOrganizationsHelper("Distributor", mockRequest, mockUser);
+    Query receivedQuery = listOrganizationsHelper.getQuery();
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
@@ -184,10 +187,11 @@ public final class ListOrgServletTest {
     GivrUser mockUser = new GivrUser("testId", true, true, "google.com", "testemail@gmail.com");
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
   
-    when(mockRequest.getParameter("zipcode")).thenReturn("02763");
-    when(mockRequest.getParameter("displayUserOrgs")).thenReturn("false");
+    when(mockRequest.getParameterValues("zipcode")).thenReturn(new String[]{"02763"});
+    when(mockRequest.getParameter("displayForUser")).thenReturn("false");
  
-    Query receivedQuery = ListOrganizationsServlet.getQueryFromParams(mockRequest, mockUser);
+    ListOrganizationsHelper listOrganizationsHelper = new ListOrganizationsHelper("Distributor", mockRequest, mockUser);
+    Query receivedQuery = listOrganizationsHelper.getQuery();
  
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
  

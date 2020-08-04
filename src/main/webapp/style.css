@@ -1,6 +1,11 @@
+body {
+  margin: 0;
+}
+
 #get-help-content,
 #registration-content,
-#organizations-content {
+#organizations-content,
+#events-content {
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
   display: flex;
@@ -11,12 +16,7 @@
   color: #666666;
   text-decoration: none;
   border-bottom: 3px solid transparent;
-  margin: 0 20px;
-}
-
-#help-near-me-content a:hover,
-#organizations-content a:hover {
-  border-bottom: 3px solid #666666;
+  margin: 0 30px;
 }
 
 #login-url {
@@ -31,7 +31,7 @@
 }
 
 #nav-links {
-  margin: auto 10%;
+  margin: auto 2%;
 }
 
 #nav-bar {
@@ -39,7 +39,7 @@
   justify-content: space-between;
   font-size: 22px;
   height: 70px;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
   border-bottom: 3px solid #a6a6a6;
 }
 
@@ -63,9 +63,15 @@
   box-sizing: border-box;
 }
 
+#maintainer-email-entry {
+  height: 50%;
+  margin: auto 0px auto 10px;
+  width: auto;
+}
+
 #zipcode-label {
   margin: auto 2px auto 0;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .enter-button {
@@ -85,30 +91,34 @@
   float: right;
 }
 
-#organization-list {
+#search-result-list {
   margin: 0 auto;
   width: 700px;
-  height: 495px;
+  height: 550px;
   overflow-y: scroll;
 
 }
-
+.category-chip {
+  float: right;
+  border: 1px solid #A0A0A0;
+  border-radius: 15px;
+  font-size: 13px;
+  padding: 2px 5px;
+  margin-left: 8px;
+}
 .organization {
-  display: flex;
-  justify-content: center;
   margin: 0px 10px 20px 10px;
   border: 2px solid #666666;
-  padding: 20px;
+  padding: 20px 20px 30px 20px;
   cursor: pointer;
 }
 
 .organization-name,
-.organization-popup-name {
+.organization-popup-name{
   font-size: 30px;
 }
 
 .organization-popup-name {
-  margin-top: 5px;
   display: flex;
   justify-content: center;
 }
@@ -128,21 +138,19 @@
 }
 
 #search-area,
-#all-organizations {
+#all-organizations,
+#events-search-area {
   display: flex;
   justify-content: space-around;
+  height: 650px;
 }
 
-#organization-popup-area {
+#search-result-popup-area {
   width: 50%;
-  font-size: 20px;
+  font-size: 18px;
   background-color: #ffffff;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   padding: 40px 20px 10px 20px;
-}
-
-.organization-popup-name {
-  margin: 2% auto;
 }
 
 .organization-popup-phone,
@@ -151,7 +159,13 @@
 .organization-popup-hours,
 .organization-popup-email,
 .organization-popup-url-link,
-.organization-popup-description {
+.organization-popup-description,
+.event-popup-name,
+.event-popup-contact-name,
+.event-popup-phone,
+.event-popup-email,
+.event-popup-date-time,
+.event-popup-details {
   margin: 2% 0;
 }
 
@@ -171,7 +185,12 @@
 
 .add-maintainer-popup-close-button {
   cursor: pointer;
-  margin-right: 20px;
+  width: 10px;
+  margin: auto 30px auto 0px;
+}
+
+#add-maintainer-label {
+  margin: auto 0;
 }
 
 .popup-close-button {
@@ -189,7 +208,8 @@
   font-size: 30px;
 }
 
-#registration-form-area {
+#registration-form-area,
+#event-registration-form-area {
   width: 60%;
   margin: 0 auto;
 }
@@ -202,6 +222,11 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+}
+
+#organization-in-charge-area {
+  width: 100%;
+  margin: 8px 0;
 }
 
 .edit-entry {
@@ -285,14 +310,17 @@
 .filter-tag-area {
   display: flex;
   justify-content: space-around;
-  border: 3px solid rgb(121, 121, 121);
-  background-color: rgba(216, 216, 216, 0.8);
-  border-radius: 10px;
+  border: 1px solid #666666;
   resize: horizontal;
   float:left;
   white-space: nowrap;
   margin-left: 10px;
-  padding: 5px 20px;
+  padding: 5px 15px;
+}
+
+.filter-tag {
+  border-radius: 15px;
+  font-size: 13px;
 }
 
 #add-filter-button {
@@ -306,14 +334,14 @@
   flex-direction: row-reverse;
 }
 
+.filter-tag-label {
+  margin: auto 5px auto 0px;
+}
+
 .filter-tag-close {
   cursor:pointer;
-  font-size: 10px;
-  color: rgb(18, 16, 13);
-  padding: 2px;
-  border: 2px solid #ccc;
-  margin-right: 0px;
-  border-radius: 50%
+  font-size: 12px;
+  margin: auto 10px auto 0px;
 }
 
 #no-results-found {
@@ -343,12 +371,11 @@
   margin: auto;
   padding: 10px;
   background-color: white;
-  background-clip: content-box;
   box-shadow: inset 0 0 0 10px white;
   align-items: center;
   justify-content: center;
   display: flex;
-  width: 30%;
+  width: 50%;
   height: 5%;
   font-family: 'Courier New', Courier, monospace;
   color: #666666;
@@ -372,4 +399,79 @@
 
 .hide-load-button {
   display: none;
+}
+
+#my-events-and-add-buttons {
+  margin: 15px auto 15px auto;
+  font-size: 18px;
+}
+
+#events-button {
+  margin-right: 40px;	
+  cursor: pointer;
+  border: 1px solid #666666;
+  border-radius: 10px;
+  padding: 5px 20px;
+}
+
+#my-events-and-add-buttons a {
+  text-decoration: none;
+  color: #666666;
+}
+
+.event-date-time,
+.event-popup-date-time {
+  display: flex;
+}
+
+.event-date {
+  margin-right: 10px;
+}
+
+.event-time {
+  margin-left: 10px;
+}
+
+.event {
+  margin: 0px 10px 20px 10px;
+  border: 2px solid #666666;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.event-address {
+  display: flex;
+  justify-content: center;
+}
+
+.event-name,
+.event-popup-name {
+  font-size: 25px;
+}
+
+.event-popup-name {
+  display: flex;
+  justify-content: center;
+}
+
+#footer {
+  position:absolute;
+  bottom:0;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  background-color: #24292e;
+  margin-top: 20px;
+}
+
+.teammate-name {
+  margin: auto 0;
+  color: #ffffff;
+}
+
+#github-img {
+  color: #ffffff;
+  margin: auto 0;
+  width: 40px;
+  height: 40px;
 }

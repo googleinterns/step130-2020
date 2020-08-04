@@ -30,7 +30,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultList;
-import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -39,62 +38,43 @@ import com.google.appengine.api.datastore.Query.CompositeFilter;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.sps.data.Organization;
-import com.google.sps.data.ListOrganizationsHelper;
+import com.google.sps.data.Event;
+import com.google.sps.data.ListEventsHelper;
 import com.google.sps.data.ListHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.sps.data.GivrUser;
 import java.io.IOException;
 
-@WebServlet("/list-organizations")
-public class ListOrganizationsServlet extends HttpServlet {
+@WebServlet("/list-events")
+public class ListEventsServlet extends HttpServlet {
 
   /*
-   * This get request returns a list of organizations depending on its query parameters. 
-   * If no parameters are included, it will return a default list of organizations
+   * This get request returns a list of events depending on its query parameters. 
+   * If no parameters are included, it will return a default list of events
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     GivrUser currentUser = GivrUser.getCurrentLoggedInUser();
 
-    /* All get requests will return a maximum of 5 organization entities */
+    /* All get requests will return a maximum of 5 events entities */
     FetchOptions fetchOptions = FetchOptions.Builder.withLimit(5);
 
-    String startCursor = request.getParameter("cursor");
-    if ((startCursor != null) && (!startCursor.equals("none"))) { //if the given cursor is 'none' no cursor is necessary
-      fetchOptions.startCursor(Cursor.fromWebSafeString(startCursor));
-    } else {
-      startCursor = ""; //ensures startCursor is not null
-    }
-
-    ListOrganizationsHelper listOrganizationsHelper = new ListOrganizationsHelper("Distributor", request, currentUser);
-    Query query = listOrganizationsHelper.getQuery();
+    ListEventsHelper listEventsHelper = new ListEventsHelper("Event", request, currentUser);
+    Query query = listEventsHelper.getQuery();
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery prepQuery = datastore.prepare(query);
     
-    QueryResultList<Entity> results;
+    QueryResultList<Entity> results = prepQuery.asQueryResultList(fetchOptions);
 
-    if (startCursor.equals("all")) {
-      /* No fetch options limits are applied if cursor = 'all' */
-      FetchOptions noLimitFetchOptions = FetchOptions.Builder.withLimit(Integer.MAX_VALUE);
-      results = prepQuery.asQueryResultList(noLimitFetchOptions);
-    } else {
-      results = prepQuery.asQueryResultList(fetchOptions);
-    }
+    ArrayList<Event> requestedEvents = new ArrayList<Event>();
 
-    Cursor endCursor = results.getCursor();
-    String encodedEndCursor = endCursor.toWebSafeString();
-
-    ArrayList<Organization> requestedOrganizations = new ArrayList<Organization>();
-
-    /* Fills requestedOrganizations array*/
+    /* Fills requestedEvents array*/
     for (Entity entity : results) {
-      Organization newOrg = new Organization(entity);
-      requestedOrganizations.add(newOrg);
+      Event newEvent = new Event(entity);
+      requestedEvents.add(newEvent);
     }
     Gson gson = new Gson();
     response.setContentType("application/json;");
-    response.getWriter().println(gson.toJson(requestedOrganizations));
-    response.addHeader("Cursor", encodedEndCursor);
+    response.getWriter().println(gson.toJson(requestedEvents));
   }
 }

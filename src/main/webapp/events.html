@@ -1,6 +1,6 @@
-<!-- Page displays 'my organizations' or 'organizations' based on if user are maintainer or moderator -->
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="UTF-8">
 	<title>Givr</title>
@@ -8,8 +8,9 @@
 	<script src="user.js"></script>
 	<script src="navbar.js"></script>
 	<script src="open_hours.js"></script>
+	<script src="event.js"></script>
+	<script src="events_search_area.js"></script>
 	<script src="organization.js"></script>
-	<script src="organization_search_area.js"></script>
 	<script src="search_area.js"></script>
 	<script src="filter_tag_area.js"></script>
 	<script src="filter_tag.js"></script>
@@ -18,7 +19,7 @@
 </head>
 
 <body>
-	<div id="organizations-content">
+	<div id="events-content">
 		<div id="nav-bar">
 			<div id="site-title">Givr</div>
 			<div id="nav-links">
@@ -27,10 +28,11 @@
 				<a id="login-url">Login</a>
 			</div>
 		</div>
-		<div id="all-organizations"></div>
+		<div id="my-events-and-add-buttons"></div>
+		<div id="events-search-area"></div>
 		<div id="edit-form-area" class="hide-edit-modal"></div>
-    <div id="delete-form-area" class="hide-delete-modal"></div>
 		<div id="footer"></div>
+	</div>
 	</div>
 </body>
 

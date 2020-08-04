@@ -45,15 +45,17 @@ class FilterEntry{
       this.filterParamLabel.textContent = `${this.filterFieldInput.value}:`;
       this.filterFieldInput.removeChild(this.filterDataList);
       this.filterEntryArea.removeChild(this.filterFieldInput);
+      this.filterEntryArea.removeChild(this.filterEntryClose);
       this.filterEntryArea.appendChild(this.filterParamInput);
       this.filterEntryArea.appendChild(this.filterParamLabel);
+      this.filterEntryArea.appendChild(this.filterEntryClose);
     });
 
     this.filterDataList = document.createElement("datalist");
     this.filterDataList.setAttribute("id", "filter-datalist");
     this.optionMap = new Map([
-      ["Organization Name", "orgNames"],
-      ["Address", "orgStreetAddresses"],
+      ["Organization Name", "name"],
+      ["Address", "streetAddress"],
       ["Available Resources", "resourceCategories"]]);
     for (const optionKey of this.optionMap.keys()) {
       const option = document.createElement("option");
@@ -82,7 +84,7 @@ class FilterEntry{
       this.filterFieldInput.value = "";
       this.filterEntryArea.removeChild(this.filterParamInput);
       this.filterEntryArea.removeChild(this.filterParamLabel);
-      this.filterEntryArea.dispatchEvent(new Event('onRemove'));
+      this.filterEntryArea.dispatchEvent(new CustomEvent('onRemove'));
     });
 
     this.filterEntryClose = document.createElement("div");
@@ -90,9 +92,8 @@ class FilterEntry{
     this.filterEntryClose.setAttribute("class", "filter-tag-close");
     this.filterEntryClose.addEventListener('click', () => {
       this.filterEntryArea.textContent = "";
-      this.filterEntryArea.dispatchEvent(new Event('onRemove'));
+      this.filterEntryArea.dispatchEvent(new CustomEvent('onRemove'));
     });
-
   }
 
   hasFilterField() {
@@ -101,8 +102,8 @@ class FilterEntry{
 
   setupFilterEntry () {
     this.filterFieldInput.appendChild(this.filterDataList);
-    this.filterEntryArea.appendChild(this.filterEntryClose);
     this.filterEntryArea.appendChild(this.filterFieldInput);
     this.activeFilterArea.appendChild(this.filterEntryArea);
+    this.filterEntryArea.appendChild(this.filterEntryClose);
   }
 }

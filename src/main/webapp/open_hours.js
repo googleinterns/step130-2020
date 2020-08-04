@@ -17,24 +17,25 @@ document.addEventListener("DOMContentLoaded", async function() {
   // for when the organization is open on every day of the week
   if (document.getElementById("registration-form-area")) {
     const optionArea = document.getElementById("hours-option-area");
-    const mondayTimeOption = new TimeOption("Monday", true, null, optionArea);
-    const tuesdayTimeOption = new TimeOption("Tuesday", true, null, optionArea);
-    const wednesdayTimeOption = new TimeOption("Wednesday", true, null, optionArea);
-    const thursdayTimeOption = new TimeOption("Thursday", true, null, optionArea);
-    const fridayTimeOption = new TimeOption("Friday", true, null, optionArea);
-    const saturdayTimeOption = new TimeOption("Saturday", true, null, optionArea);
-    const sundayTimeOption = new TimeOption("Sunday", true, null, optionArea);
+    const mondayTimeOption = new TimeOption("Monday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const tuesdayTimeOption = new TimeOption("Tuesday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const wednesdayTimeOption = new TimeOption("Wednesday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const thursdayTimeOption = new TimeOption("Thursday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const fridayTimeOption = new TimeOption("Friday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const saturdayTimeOption = new TimeOption("Saturday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
+    const sundayTimeOption = new TimeOption("Sunday", /*forRegistration*/ true, /*organizationDay*/ null, optionArea, /*showOpenClosedOptions*/ true);
   }
 });
 
 class TimeOption {
   // organization.hoursOpen[index(1-7 for day of week)].propertyMap.
   // fromToPairs.value[index(how many set of hours for that day )].propertyMap.from/to
-  constructor(day, forRegistration, organizationDay, optionArea) {
+  constructor(day, forRegistration, organizationDay, optionArea, showOpenClosedOptions) {
     this.day = day;
     this.forRegistration = forRegistration;
-    this.organizationDay = organizationDay;
+    this.organizationDay = organizationDay.propertyMap;
     this.optionArea = optionArea;
+    this.showOpenClosedOptions = showOpenClosedOptions
 
     this.dayOptionArea = document.createElement("div");
     this.dayOptionArea.classList.add("day-option-area");
@@ -45,36 +46,49 @@ class TimeOption {
     this.dayLabel.classList.add("day-label");
     this.dayOptionArea.appendChild(this.dayLabel);
 
-    this.dayOpenLabel = document.createElement("label");
-    this.dayOpenLabel.textContent = "Open";
-    this.dayOpenLabel.classList.add("day-open-label");
-    this.dayOptionArea.appendChild(this.dayOpenLabel);
-    this.dayOpenInput = document.createElement("input");
-    this.dayOpenInput.setAttribute("type", "radio");
-    this.dayOpenInput.setAttribute("name", `${this.day}-isOpen`);
-    this.dayOpenInput.setAttribute("value", "open");
-    this.dayOptionArea.appendChild(this.dayOpenInput);
+    if (this.showOpenClosedOptions) {
+      this.dayOpenLabel = document.createElement("label");
+      this.dayOpenLabel.textContent = "Open";
+      this.dayOpenLabel.classList.add("day-open-label");
+      this.dayOptionArea.appendChild(this.dayOpenLabel);
+      this.dayOpenInput = document.createElement("input");
+      this.dayOpenInput.setAttribute("type", "radio");
+      this.dayOpenInput.setAttribute("name", `${this.day}-isOpen`);
+      this.dayOpenInput.setAttribute("value", "open");
+      this.dayOptionArea.appendChild(this.dayOpenInput);
 
-    this.dayClosedLabel = document.createElement("label");
-    this.dayClosedLabel.textContent = "Closed";
-    this.dayClosedLabel.classList.add("day-closed-label");
-    this.dayOptionArea.appendChild(this.dayClosedLabel);
-    this.dayClosedInput = document.createElement("input");
-    this.dayClosedInput.setAttribute("type", "radio");
-    this.dayClosedInput.setAttribute("name", `${this.day}-isOpen`);
-    this.dayClosedInput.setAttribute("value", "closed");
-    this.dayOptionArea.appendChild(this.dayClosedInput);
+      this.dayClosedLabel = document.createElement("label");
+      this.dayClosedLabel.textContent = "Closed";
+      this.dayClosedLabel.classList.add("day-closed-label");
+      this.dayOptionArea.appendChild(this.dayClosedLabel);
+      this.dayClosedInput = document.createElement("input");
+      this.dayClosedInput.setAttribute("type", "radio");
+      this.dayClosedInput.setAttribute("name", `${this.day}-isOpen`);
+      this.dayClosedInput.setAttribute("value", "closed");
+      this.dayOptionArea.appendChild(this.dayClosedInput);
 
-    this.radioElements = [this.dayOpenInput, this.dayClosedInput];
-    if (this.forRegistration) {
-      this.dayOpenInput.setAttribute("checked", "checked");
-      this.timeInputArea.classList.add("show-time-area");
-    } else if (!this.organizationDay.propertyMap.isOpen) {
-      this.dayClosedInput.setAttribute("checked", "checked");
-      this.timeInputArea.classList.add("hide-time-area");
-    } else {
-      this.dayOpenInput.setAttribute("checked", "checked");
-      this.timeInputArea.classList.add("show-time-area");
+      this.radioElements = [this.dayOpenInput, this.dayClosedInput];
+      if (this.forRegistration) {
+        this.dayOpenInput.setAttribute("checked", "checked");
+        this.timeInputArea.classList.add("show-time-area");
+      } else if (!this.organizationDay.isOpen) {
+        this.dayClosedInput.setAttribute("checked", "checked");
+        this.timeInputArea.classList.add("hide-time-area");
+      } else {
+        this.dayOpenInput.setAttribute("checked", "checked");
+        this.timeInputArea.classList.add("show-time-area");
+      }
+      this.radioElements.forEach((elem) => {
+        elem.addEventListener("change", () => {
+          if (this.dayOpenInput.checked) {
+            this.timeInputArea.classList.add("show-time-area");
+            this.timeInputArea.classList.remove("hide-time-area");
+          } else {
+            this.timeInputArea.classList.add("hide-time-area");
+            this.timeInputArea.classList.remove("show-time-area");
+          }
+        });
+      });
     }
 
     this.dayFromInput = document.createElement("input");
@@ -86,12 +100,18 @@ class TimeOption {
 
     // for edit page get the number of pairs of time input options to preset the values
     let numPairs = 0;
-    if (!forRegistration && this.organizationDay.propertyMap.isOpen) {
-      numPairs = this.organizationDay.propertyMap.fromToPairs.value.length;
+    if (!forRegistration && !this.showOpenClosedOptions) {
+      numPairs = this.organizationDay.fromToPairs.value.length;
 
       // set initial from to pair, if organization is open there is at least one pair
-      this.dayFromInput.setAttribute("value", this.organizationDay.propertyMap.fromToPairs.value[0].propertyMap.from);
-      this.dayToInput.setAttribute("value", this.organizationDay.propertyMap.fromToPairs.value[0].propertyMap.to);
+      this.dayFromInput.setAttribute("value", this.organizationDay.fromToPairs.value[0].propertyMap.from);
+      this.dayToInput.setAttribute("value", this.organizationDay.fromToPairs.value[0].propertyMap.to);
+    } else if (!forRegistration && this.organizationDay.isOpen) {
+      numPairs = this.organizationDay.fromToPairs.value.length;
+
+      // set initial from to pair, if organization is open there is at least one pair
+      this.dayFromInput.setAttribute("value", this.organizationDay.fromToPairs.value[0].propertyMap.from);
+      this.dayToInput.setAttribute("value", this.organizationDay.fromToPairs.value[0].propertyMap.to);
     }
 
     this.addMoreInput = document.createElement("a");
@@ -107,23 +127,11 @@ class TimeOption {
 
     // if there are multiple pairs of previously inputted times then adds and sets those values
     for (let i = 1; i < numPairs; i++) {
-      this.addTimeInputOption(this.organizationDay.propertyMap.fromToPairs.value[i].propertyMap.from,
-        this.organizationDay.propertyMap.fromToPairs.value[i].propertyMap.to);
+      this.addTimeInputOption(this.organizationDay.fromToPairs.value[i].propertyMap.from,
+        this.organizationDay.fromToPairs.value[i].propertyMap.to);
     }
 
     this.dayOptionArea.appendChild(this.timeInputArea);
-
-    this.radioElements.forEach((elem) => {
-      elem.addEventListener("change", () => {
-        if (this.dayOpenInput.checked) {
-          this.timeInputArea.classList.add("show-time-area");
-          this.timeInputArea.classList.remove("hide-time-area");
-        } else {
-          this.timeInputArea.classList.add("hide-time-area");
-          this.timeInputArea.classList.remove("show-time-area");
-        }
-      });
-    });
     this.optionArea.appendChild(this.dayOptionArea);
   }
 

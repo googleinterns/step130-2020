@@ -15,8 +15,14 @@
 package com.google.sps.data;
 
 import java.util.ArrayList;
+import com.google.sps.data.GivrUser;
+import com.google.sps.data.ModeratorInformation;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Key;
 
 public final class Organization {
 
@@ -35,27 +41,52 @@ public final class Organization {
   private boolean isApproved;
   private String urlLink;
   private ArrayList<String> resourceCategories;
-  private ArrayList<String> moderators;
+  private ArrayList<ModeratorInformation> moderators;
 
   /* An Organization Object takes in an entity and assigns all of its fields based on the entity's
    * properties */
 
   public Organization(Entity entity) {
     this.id = (long) entity.getKey().getId();
-    this.name = (String) entity.getProperty("orgName");
-    this.email = (String) entity.getProperty("orgEmail");
-    this.address = (String) entity.getProperty("orgStreetAddress");
-    this.city = (String) entity.getProperty("orgCity");
-    this.state = (String) entity.getProperty("orgState");
-    this.zipcode = (String) entity.getProperty("orgZipCode");
-    this.hoursOpen = (ArrayList) entity.getProperty("orgHoursOpen");
-    this.description = (String) entity.getProperty("orgDescription");
-    this.phoneNum = (String) entity.getProperty("orgPhoneNum");
+    this.name = (String) entity.getProperty("name");
+    this.email = (String) entity.getProperty("email");
+    this.address = (String) entity.getProperty("streetAddress");
+    this.city = (String) entity.getProperty("city");
+    this.state = (String) entity.getProperty("state");
+    this.zipcode = (String) entity.getProperty("zipcode");
+    this.hoursOpen = (ArrayList) entity.getProperty("dateAndHours");
+    this.description = (String) entity.getProperty("description");
+    this.phoneNum = (String) entity.getProperty("phone");
     this.creationTimeStampMillis = (long) entity.getProperty("creationTimeStampMillis");
     this.lastEditedTimeStampMillis = (long) entity.getProperty("lastEditTimeStampMillis");
     this.isApproved = (boolean) entity.getProperty("isApproved");
-    this.urlLink = (String) entity.getProperty("orgUrl");
+    this.urlLink = (String) entity.getProperty("url");
     this.resourceCategories = (ArrayList) entity.getProperty("resourceCategories");
-    this.moderators = (ArrayList) entity.getProperty("moderatorList");
+
+    ArrayList<String> moderatorIds = (ArrayList) entity.getProperty("moderatorList");
+    this.moderators = new ArrayList<ModeratorInformation>();
+    for(String userId : moderatorIds) {
+      GivrUser currUser = GivrUser.getUserById(userId);
+      ModeratorInformation moderatorInfo = new ModeratorInformation(userId, currUser.getUserEmail());
+      this.moderators.add(moderatorInfo);
+    }
+  }
+
+  public static Entity getOrgEntityWithId(long orgId) throws IllegalArgumentException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Key organizationKey = KeyFactory.createKey("Distributor", orgId);
+
+    Entity organizationEntity = null;
+    try {
+      organizationEntity = datastore.get(organizationKey);
+    } catch (com.google.appengine.api.datastore.EntityNotFoundException err) {
+      throw new IllegalArgumentException("Organization entity with orgID " + orgId + " was not found.");
+    }
+
+    if (organizationEntity == null) {
+      throw new IllegalArgumentException("There is no Organization with ID: " + orgId);
+    }
+
+    return organizationEntity;
   }
 }
