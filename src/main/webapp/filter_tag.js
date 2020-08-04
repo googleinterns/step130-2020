@@ -20,24 +20,20 @@ class FilterTag {
  
   constructor(filterTagArea, urlParamKey, urlParamValue) {
     this.parentFilterTagArea = filterTagArea;
-  
     this.filterTagArea = document.createElement("div");
     this.filterTagArea.classList.add("filter-tag-area");
     this.filterTagArea.classList.add("filter-tag");
-    /* ID is given to zipcode tag so it can be removed if new one is added */
-    if (urlParamKey === "zipcode") {
-      this.filterTagArea.setAttribute("id", "zipcodeTag");
-    }
-
-    this.filterTagClose = document.createElement("div");
-    this.filterTagClose.textContent = 'X';
-    this.filterTagClose.setAttribute("class", "filter-tag-close");
-    this.filterTagClose.addEventListener('click', () => this.parentFilterTagArea.removeFilterTag(urlParamKey, urlParamValue, this));
-    this.filterTagArea.appendChild(this.filterTagClose);
+    this.filterTagArea.setAttribute("id", urlParamKey);
  
     this.filterTagLabel = document.createElement("div");
     this.filterTagLabel.setAttribute("class", "filter-tag-label");
     this.filterTagLabel.textContent = urlParamValue;
     this.filterTagArea.appendChild(this.filterTagLabel);
+ 
+    this.filterTagClose = document.createElement("div");
+    this.filterTagClose.textContent = 'X';
+    this.filterTagClose.setAttribute("class", "filter-tag-close");
+    this.filterTagClose.addEventListener('click', () => this.parentFilterTagArea.removeFilterTag(urlParamKey, urlParamValue, this, /* refreshObjects= */ true));
+    this.filterTagArea.appendChild(this.filterTagClose);
   }
 }
