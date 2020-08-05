@@ -49,13 +49,6 @@ public class AuthenticateServlet extends HttpServlet {
 
     Entity userWithEmail = GivrUser.getUserFromDatastoreWithProperty("userEmail", user.getUserEmail());
       if (userWithEmail != null) {
-        // User is either a Moderator or Maintainer, that has not logged in.
-        boolean isMaintainer = user.isMaintainer();
-        if (!isMaintainer) { // User is a Moderator.
-
-          // TODO: Update organization.
-        }
-
         // Update entity with current user's userId.
         propertyNamesAndValuesToUpdate.put("userId", user.getUserId());
         GivrUser.updateUserInDatastore("userEmail", user.getUserEmail(), propertyNamesAndValuesToUpdate);
