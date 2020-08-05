@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import com.google.sps.data.RequestHandler;
 import com.google.sps.data.ParserHelper;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
 
 public final class OrganizationUpdater {
 
@@ -193,6 +195,14 @@ public final class OrganizationUpdater {
       // and this servlet will handle the rest of the instantiation
       ArrayList<String> moderatorList = new ArrayList<String>();
       moderatorList.add(user.getUserId());
+
+      // We must also add the moderator of this non-approved Organization in order to retrieve the moderator user correctly.
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      Entity userEntity = new Entity("User");
+      userEntity.setProperty("userId", user.getUserId());
+      userEntity.setProperty("userEmail", user.getUserEmail());
+      userEntity.setProperty("isMaintainer", false);
+      datastore.put(userEntity);
 
       /* This implementation stores history entries as embedded entities instead of custom objects
       * because it is much simpler that way */
