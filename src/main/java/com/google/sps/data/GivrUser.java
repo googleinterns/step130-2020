@@ -130,7 +130,6 @@ public class GivrUser {
 
     for (Map.Entry<String, Object> entry: updatePropertyNamesAndValues.entrySet()) {
       entity.setProperty(entry.getKey(), entry.getValue());
-      System.out.println("key: " + entry.getKey() + " value: " + entry.getValue());
     }
     datastore.put(entity);
   }

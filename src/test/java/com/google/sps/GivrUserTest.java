@@ -201,6 +201,7 @@ public final class GivrUserTest {
       throw new Error("GivrUserTest - authenticateUpdateUsersIdwithEmailWhenUserLogsInTest has failed.");
     }
 
+    // Now our Datastore has the updated User2 ID, so the actualUser result should not be null.
     GivrUser actualUser = GivrUser.getUserById("User2");
     GivrUser expectedUser = new GivrUser("User2", false, true, "", "jennb206+test2@gmail.com");
     Assert.assertEquals(expectedUser, actualUser);
