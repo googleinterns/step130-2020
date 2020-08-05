@@ -30,6 +30,7 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.sps.data.GivrUser;
 import com.google.sps.servlets.AddMaintainerServlet;
+import com.google.sps.servlets.AuthenticateServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -48,6 +49,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.users.User;
 import com.google.gson.Gson;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /** */
 @RunWith(JUnit4.class)
@@ -72,6 +75,13 @@ public final class GivrUserTest {
     user1.setProperty("userEmail", "jennb206+test1@gmail.com");
     datastore.put(user1);
     listOfEntities.add(user1);
+
+    Entity user2 = new Entity("User");
+    user2.setProperty("userId", "");
+    user2.setProperty("isMaintainer", false);
+    user2.setProperty("userEmail", "jennb206+test2@gmail.com");
+    datastore.put(user2);
+    listOfEntities.add(user2);
 
     return datastore;
   }
@@ -149,6 +159,50 @@ public final class GivrUserTest {
     GivrUser expectedUser = new GivrUser(expectedUserId, expectedUserIsMaintainer, expectedUserIsLoggedIn, expectedUserLoginURL, expectedUserEmail);
     GivrUser actualUser = GivrUser.getCurrentLoggedInUser();
 
+    Assert.assertEquals(expectedUser, actualUser);
+  }
+
+  /**
+   * Tests updating logged in user's empty ID with correct ID when user logs in for the first time. Use case: When an email is added to the invited moderators list, an User entity with email gets added to the Datastore. Upon the user's first login, that entity is updated with the correct user ID. 
+   */
+  @Test
+  public void authenticateUpdateUsersIdwithEmailWhenUserLogsInTest() throws IOException {
+    LocalUserServiceTestConfig userServiceConfig = new LocalUserServiceTestConfig();
+    userServiceConfig.setOAuthEmail("jennb206+test2@gmail.com");
+    userServiceConfig.setOAuthUserId("User2");
+    userServiceConfig.setOAuthAuthDomain("gmail.com");
+
+    LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
+
+    helper = new LocalServiceTestHelper(userServiceConfig, datastoreConfig);
+    helper.setEnvIsLoggedIn(true);
+    helper.setEnvEmail("jennb206+test2@gmail.com");
+    helper.setEnvAuthDomain("gmail.com");
+
+    Map<String,Object> envAttributeMap = new HashMap<String,Object>();
+    envAttributeMap.put("com.google.appengine.api.users.UserService.user_id_key", "User2");
+    helper.setEnvAttributes(envAttributeMap);
+    helper.setUp();
+
+    UserService userService = UserServiceFactory.getUserService();
+    DatastoreService datastore = addEntitiesAndGetDatastore();
+
+    // User2 represents a Moderator who has been invited, but has not logged into Givr. Authenticate is called to "login".
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    when(response.getWriter()).thenReturn(pw);
+    AuthenticateServlet servlet = new AuthenticateServlet();
+
+    try {
+      servlet.doGet(request, response);
+    } catch (IOException err) {
+      throw new Error("GivrUserTest - authenticateUpdateUsersIdwithEmailWhenUserLogsInTest has failed.");
+    }
+
+    GivrUser actualUser = GivrUser.getUserById("User2");
+    GivrUser expectedUser = new GivrUser("User2", false, true, "", "jennb206+test2@gmail.com");
     Assert.assertEquals(expectedUser, actualUser);
   }
 }
