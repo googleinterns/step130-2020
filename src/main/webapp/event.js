@@ -202,7 +202,7 @@ class Event {
     const eventTimeArea = document.createElement("div");
     eventTimeArea.setAttribute("id", "hours-option-area");
 
-    const timeOption = new TimeOption("Event Hours", /*forRegistration*/ false, event.dateAndHours[0], eventTimeArea, /*showOpenClosedOption*/ false);
+    const timeOption = new TimeOption("Event hours", /*forRegistration*/ false, event.dateAndHours[0], eventTimeArea, /*showOpenClosedOption*/ false);
     editForm.appendChild(eventTimeArea);
 
     // label and entry area for event address
