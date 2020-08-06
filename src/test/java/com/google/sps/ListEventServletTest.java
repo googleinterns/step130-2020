@@ -188,9 +188,6 @@ public final class ListEventServletTest {
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
 
-  // TODO: add a test for when the user is a Maintainer, when the user is a moderator of an org with
-  // no events, and when the user is not a moderator
-
   @Test
   public void testEventQueryForMaintainer() {
   /* Tests makes sure that a maintainer will see all events in the "Show My Events" tab*/
@@ -200,7 +197,7 @@ public final class ListEventServletTest {
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
     when(mockRequest.getParameter("displayForUser")).thenReturn("true");
 
-    /* Expected list only contains the events hosted by orgs 4, 5, or 6 in zipcode 02763 w/ address 10 Main st. */
+    /* Expected list contains all events since this user is a maintainer */
     ArrayList<Entity> expectedList = new ArrayList<Entity>();
     expectedList.add(masterEntityList.get(6));
     expectedList.add(masterEntityList.get(5));
@@ -223,7 +220,7 @@ public final class ListEventServletTest {
     GivrUser mockUser = mock(GivrUser.class);
     
     ArrayList<Entity> moderatingOrgs = new ArrayList<Entity>();
-    /* This user moderates the orgs w/ ID 20, which does not have any events */
+    /* This user moderates the org w/ ID 20, which does not have any events */
     moderatingOrgs.add(new Entity("Distributor", 20));
     when(mockUser.getModeratingOrgs()).thenReturn(moderatingOrgs);
 
