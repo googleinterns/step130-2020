@@ -53,12 +53,15 @@ public class ListEventsHelper extends ListHelper {
    * see organizations or events they belong to */
   public ArrayList<Filter> handleUserFiltering(boolean displayForUser) {
     ArrayList<Filter> filterCollection = new ArrayList<Filter>();
-    if (displayForUser) {
+    if (displayForUser && (!this.currentUser.isMaintainer())) {
       ArrayList<Entity> moderatingOrgs = this.currentUser.getModeratingOrgs();
 
       ArrayList<Long> moderatingOrgIds = new ArrayList<Long>();
       for (Entity entity : moderatingOrgs) {
         moderatingOrgIds.add(entity.getKey().getId());
+      }
+      if (moderatingOrgIds.size() == 0) {
+        moderatingOrgIds.add(new Long(-1)); // arraylist needs a value to work, -1 ensures nothing is returned
       }
       filterCollection.add(new FilterPredicate("ownerOrgId", FilterOperator.IN, moderatingOrgIds));
     }
