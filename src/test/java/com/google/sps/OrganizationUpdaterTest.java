@@ -42,7 +42,7 @@ import java.util.logging.Level;
 public final class OrganizationUpdaterTest {
 
   private LocalServiceTestHelper helper;
-  private DataHelper dataHelper;
+  private DataHelper dataHelper = new DataHelper();
   private static Logger logger = Logger.getLogger("OrganizationUpdaterTest Logger");
 
   private HashMap<String, String> setUpAndReturnRequestParameterMap() {
@@ -126,7 +126,6 @@ public final class OrganizationUpdaterTest {
    */
   @Test
   public void updateOrganizationForRegistrationTest() {
-    dataHelper = new DataHelper();
     // User who is requesting to register "Org3" has Id of "User14" and is NOT a Maintainer. User should not exist in the Datastore.
     helper = dataHelper.setUpAndReturnLocalServiceTestHelper(false /* userIsMaintainer */, "User14" /* userId */);
 
@@ -134,7 +133,7 @@ public final class OrganizationUpdaterTest {
     parameterToValue.put("org-name", "Org3");
     // User should also be added to the Datastore, TODO: so we can check for that.
     parameterToValue.put("moderator-list", "baikj+test14@google.com");
-    parameterToValue.put("org-email", "org3+test14@google.com");
+    parameterToValue.put("org-email", "org3+test@google.com");
     parameterToValue.put("org-resource-categories", "Food");
     HttpServletRequest request = setMockReturnValuesAndGetRequest(parameterToValue);
 
@@ -148,7 +147,7 @@ public final class OrganizationUpdaterTest {
     try {
       orgUpdater.updateOrganization(request, user, forRegistration, historyUpdate);
     } catch (IllegalArgumentException err) {
-      logger.log(Level.SEVERE, "ERROR: OrganizationUpdater's updateOrganization had an error.");
+      logger.log(Level.SEVERE, "ERROR: OrganizationUpdaterTest updateOrganizationForRegistrationTest() had an error.");
       throw new IllegalArgumentException();
     }
 
@@ -158,7 +157,7 @@ public final class OrganizationUpdaterTest {
     expectedResourceCategories.add("Food");
     Entity expectedOrgEntity = new Entity("Distributor");
     expectedOrgEntity.setProperty("name", "Org3");
-    expectedOrgEntity.setProperty("email", "org3+test14@google.com");
+    expectedOrgEntity.setProperty("email", "org3+test@google.com");
     expectedOrgEntity.setProperty("streetAddress", "tempAddress");
     expectedOrgEntity.setProperty("city", "tempCity");
     expectedOrgEntity.setProperty("state", "tempState");
@@ -179,13 +178,14 @@ public final class OrganizationUpdaterTest {
   @Test(expected = IllegalArgumentException.class)
   public void updateOrganizationForEditWithoutRightCredentialsTest() {
     // User5 is NOT a moderator. Updating an Organization without the right credentials will fail.
-    dataHelper = new DataHelper();
     helper = dataHelper.setUpAndReturnLocalServiceTestHelper(false /* userIsMaintainer */, "User5" /* userId */);
 
     boolean forRegistration = false;
     HistoryManager historyManager = new HistoryManager();
+    // Update will not be successful, so this message will not be stored.
     EmbeddedEntity historyUpdate = historyManager.recordHistory("Organization is updated.", 1 /* millisecondsSinceEpoch */);
 
+    // No need to set mock request return values, as we expect an error.
     HttpServletRequest request = mock(HttpServletRequest.class);
     Entity actualOrgEntity = new Entity("Distributor");
     OrganizationUpdater orgUpdater = new OrganizationUpdater(actualOrgEntity);
@@ -193,13 +193,8 @@ public final class OrganizationUpdaterTest {
     try {
       orgUpdater.updateOrganization(request, user, forRegistration, historyUpdate);
     } catch (IllegalArgumentException err) {
-      logger.log(Level.SEVERE, "ERROR: OrganizationUpdater's updateOrganization had an error.");
+      logger.log(Level.SEVERE, "ERROR: OrganizationUpdaterTest updateOrganizationForEditWithoutRightCredentialsTest() had an error.");
       throw new IllegalArgumentException();
     }
-  }
-
-  @Test
-  public void updateOrganizationForEditWithRightCredentialsTest() {
-
   }
 }

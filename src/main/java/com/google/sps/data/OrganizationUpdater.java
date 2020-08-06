@@ -119,10 +119,8 @@ public final class OrganizationUpdater {
     }
     // updates open hours property separate since it is more complex
     updateOpenHoursProperty(request);
-
     // Updates non form properties such as change history, lastEditTimeStamp, etc
     updateNonFormProperties(user, forRegistration, historyUpdate);
-
   }
 
   private void setOrganizationProperty(String propertyKey, String formValue) {
@@ -186,7 +184,6 @@ public final class OrganizationUpdater {
      * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
      * of time that is independent of their time zone */
     long millisecondSinceEpoch = (long) historyUpdate.getProperty("changeTimeStampMillis");
-
     if(forRegistration) {
       // Setting moderatorList here instead of organizationUpdater because that will handle the form submission
       // and this servlet will handle the rest of the instantiation
@@ -218,7 +215,6 @@ public final class OrganizationUpdater {
       changeHistory.add(historyUpdate);
       this.entity.setProperty("changeHistory", changeHistory);
     }
-    
     this.entity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
   }
 
