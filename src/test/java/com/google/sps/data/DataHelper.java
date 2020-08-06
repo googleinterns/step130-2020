@@ -38,7 +38,6 @@ public class DataHelper {
   LocalUserServiceTestConfig userServiceConfig;
 
   private void addUsersToDatastore() {
-
     /*                    User Table
        TYPES:
          String      boolean               String
@@ -99,12 +98,12 @@ public class DataHelper {
      +------+-----------+-------------------+---------------------------+
      |  ID  |  orgName  |   moderatorList   |     invitedModerators     |
      +------+-----------+-------------------+---------------------------+
-     |  0   |   Org0    |   User0, User1    |   baikj+test9@google.com  |
+     |  0   |   Org0    |   User0, User1    |   baikj+test10@google.com |
      +------+-----------+-------------------+---------------------------+
-     |  1   |   Org1    |   User2, User3    |   baikj+test8@google.com  |
+     |  1   |   Org1    |   User2, User3    |   baikj+test11@google.com |
      +------+-----------+-------------------+---------------------------+
-     |  2   |   Org2    |       User4       |   baikj+test7@google.com  |
-     |      |           |                   |   baikj+test6@google.com  |
+     |  2   |   Org2    |       User4       |   baikj+test12@google.com |
+     |      |           |                   |   baikj+test13@google.com |
      +------+-----------+-------------------+---------------------------+
 
      */
@@ -165,7 +164,7 @@ public class DataHelper {
   // Sets up local UserService test config with Moderator (User 0-4, 6-9) info from User table.
   private void setUserAs(String userId) {
     userServiceConfig = new LocalUserServiceTestConfig();
-    userServiceConfig.setOAuthEmail("baikj+test" + userId.charAt(4) + "@google.com");
+    userServiceConfig.setOAuthEmail("baikj+test" + userId.substring(4) + "@google.com");
     userServiceConfig.setOAuthUserId(userId);
     userServiceConfig.setOAuthAuthDomain("google.com");
   }
@@ -185,14 +184,9 @@ public class DataHelper {
   // Sets up Datastore and UserService local test configs and sets up environment variable based on what kind of User is being tested.
   public LocalServiceTestHelper setUpAndReturnLocalServiceTestHelper(boolean userIsMaintainer, String userId) {
     LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
-
-    addUsersToDatastore();
-    addDistributorsToDatastore();
-
     setUserServiceConfig(userIsMaintainer, userId);
 
     LocalUserServiceTestConfig userServiceConfig = getUserServiceConfig();
-
     helper = new LocalServiceTestHelper(datastoreConfig, userServiceConfig);
     helper.setEnvIsLoggedIn(true);
     helper.setEnvAuthDomain("google.com");
@@ -202,12 +196,14 @@ public class DataHelper {
       helper.setEnvEmail("baikj+test0@google.com");
       envAttributeMap.put("com.google.appengine.api.users.UserService.user_id_key", "User0");
     } else {
-      helper.setEnvEmail("baikj+test" + userId.charAt(4) + "@google.com");
+      helper.setEnvEmail("baikj+test" + userId.substring(4) + "@google.com");
       envAttributeMap.put("com.google.appengine.api.users.UserService.user_id_key", userId);
     }
 
     helper.setEnvAttributes(envAttributeMap);
     helper.setUp();
+    addUsersToDatastore();
+    addDistributorsToDatastore();
 
     return helper;
   }

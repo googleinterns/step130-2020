@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import com.google.sps.data.RequestHandler;
 import com.google.sps.data.ParserHelper;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
 
 public final class OrganizationUpdater {
 
@@ -61,7 +63,6 @@ public final class OrganizationUpdater {
       // Organization entity's ID will exist after it has been created.
       isModerator = user.isModeratorOfOrgWithId(this.entity.getKey().getId());
     }
-
     requiresMaintainer.add("isApproved");
     requiresModerator.add("moderatorList");
 
@@ -114,16 +115,12 @@ public final class OrganizationUpdater {
       } else {
           formValue = "";
       }
-
       setOrganizationProperty(propertyKey, formValue);
     }
-
     // updates open hours property separate since it is more complex
     updateOpenHoursProperty(request);
-
     // Updates non form properties such as change history, lastEditTimeStamp, etc
     updateNonFormProperties(user, forRegistration, historyUpdate);
-
   }
 
   private void setOrganizationProperty(String propertyKey, String formValue) {
@@ -187,12 +184,18 @@ public final class OrganizationUpdater {
      * 00:00:00 UTC on January 1, 1970. It ensures that all users are entering a representation
      * of time that is independent of their time zone */
     long millisecondSinceEpoch = (long) historyUpdate.getProperty("changeTimeStampMillis");
-
     if(forRegistration) {
       // Setting moderatorList here instead of organizationUpdater because that will handle the form submission
       // and this servlet will handle the rest of the instantiation
       ArrayList<String> moderatorList = new ArrayList<String>();
       moderatorList.add(user.getUserId());
+
+      // We must also add the moderator of this non-approved Organization in order to retrieve the moderator user correctly.
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      Entity userEntity = new Entity("User");
+      userEntity.setProperty("userId", user.getUserId());
+      userEntity.setProperty("userEmail", user.getUserEmail());
+      datastore.put(userEntity);
 
       /* This implementation stores history entries as embedded entities instead of custom objects
       * because it is much simpler that way */
@@ -212,7 +215,6 @@ public final class OrganizationUpdater {
       changeHistory.add(historyUpdate);
       this.entity.setProperty("changeHistory", changeHistory);
     }
-    
     this.entity.setProperty("lastEditTimeStampMillis", millisecondSinceEpoch);
   }
 
