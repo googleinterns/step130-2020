@@ -60,7 +60,7 @@ public final class ListEventServletTest {
     helper.setUp();
     //                                Existing entity table
     // +-------+-------------------------+------------------+---------+---------------+
-    // | Index | creationTimeStampMillis | ownerOrgId  | zipCode | streetAddress |
+    // | Index | creationTimeStampMillis | ownerOrgId       | zipCode | streetAddress |
     // +-------+-------------------------+------------------+---------+---------------+
     // |     0 |                       0 | 1                |   12345 | 12 Oak st.    |
     // |     1 |                       1 | 3                |   02763 | 12 Oak st.    |
@@ -188,6 +188,75 @@ public final class ListEventServletTest {
     Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
   }
 
-  // TODO: add a test for when the user is a Maintainer, when the user is a moderator of an org with
-  // no events, and when the user is not a moderator
+  @Test
+  public void testEventQueryForMaintainer() {
+  /* Tests makes sure that a maintainer will see all events in the "Show My Events" tab*/
+    GivrUser mockUser = mock(GivrUser.class);
+    when(mockUser.isMaintainer()).thenReturn(true);
+
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    when(mockRequest.getParameter("displayForUser")).thenReturn("true");
+
+    /* Expected list contains all events since this user is a maintainer */
+    ArrayList<Entity> expectedList = new ArrayList<Entity>();
+    expectedList.add(masterEntityList.get(6));
+    expectedList.add(masterEntityList.get(5));
+    expectedList.add(masterEntityList.get(4));
+    expectedList.add(masterEntityList.get(3));
+    expectedList.add(masterEntityList.get(2));
+    expectedList.add(masterEntityList.get(1));
+    expectedList.add(masterEntityList.get(0));
+ 
+    ListEventsHelper listEventsHelper = new ListEventsHelper("Event", mockRequest, mockUser);
+    Query receivedQuery = listEventsHelper.getQuery();
+
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
+    Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
+  }
+
+  @Test
+  public void testEventQueryForOrgWithoutEvents() {
+    /* Tests to make sure correct query is returned when user is a moderator of an org with no events*/
+    GivrUser mockUser = mock(GivrUser.class);
+    
+    ArrayList<Entity> moderatingOrgs = new ArrayList<Entity>();
+    /* This user moderates the org w/ ID 20, which does not have any events */
+    moderatingOrgs.add(new Entity("Distributor", 20));
+    when(mockUser.getModeratingOrgs()).thenReturn(moderatingOrgs);
+
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    when(mockRequest.getParameter("displayForUser")).thenReturn("true");
+
+    /* Expected list is empty because this user's moderating org has no events*/
+    ArrayList<Entity> expectedList = new ArrayList<Entity>();
+ 
+    ListEventsHelper listEventsHelper = new ListEventsHelper("Event", mockRequest, mockUser);
+    Query receivedQuery = listEventsHelper.getQuery();
+
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
+    Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
+  }
+
+  @Test
+  public void testEventQueryForNonModerator() {
+    /* Tests to make sure no results are returned when displayForUser = true, but user is not moderator */
+    GivrUser mockUser = mock(GivrUser.class);
+    when(mockUser.isMaintainer()).thenReturn(false);
+
+    ArrayList<Entity> moderatingOrgs = new ArrayList<Entity>();
+    /* This user does not moderate any organizations */
+    when(mockUser.getModeratingOrgs()).thenReturn(moderatingOrgs);
+
+    HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    when(mockRequest.getParameter("displayForUser")).thenReturn("true");
+
+    /* Expected list is empty */
+    ArrayList<Entity> expectedList = new ArrayList<Entity>();
+ 
+    ListEventsHelper listEventsHelper = new ListEventsHelper("Event", mockRequest, mockUser);
+    Query receivedQuery = listEventsHelper.getQuery();
+
+    FetchOptions fetchOptions = FetchOptions.Builder.withLimit(10);
+    Assert.assertArrayEquals(expectedList.toArray(), datastore.prepare(receivedQuery).asList(fetchOptions).toArray());
+  }
 }
