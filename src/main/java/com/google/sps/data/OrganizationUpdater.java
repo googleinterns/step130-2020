@@ -63,7 +63,6 @@ public final class OrganizationUpdater {
       // Organization entity's ID will exist after it has been created.
       isModerator = user.isModeratorOfOrgWithId(this.entity.getKey().getId());
     }
-
     requiresMaintainer.add("isApproved");
     requiresModerator.add("moderatorList");
 
@@ -116,10 +115,8 @@ public final class OrganizationUpdater {
       } else {
           formValue = "";
       }
-
       setOrganizationProperty(propertyKey, formValue);
     }
-
     // updates open hours property separate since it is more complex
     updateOpenHoursProperty(request);
 
@@ -201,7 +198,6 @@ public final class OrganizationUpdater {
       Entity userEntity = new Entity("User");
       userEntity.setProperty("userId", user.getUserId());
       userEntity.setProperty("userEmail", user.getUserEmail());
-      userEntity.setProperty("isMaintainer", false);
       datastore.put(userEntity);
 
       /* This implementation stores history entries as embedded entities instead of custom objects

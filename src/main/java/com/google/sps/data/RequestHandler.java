@@ -31,7 +31,6 @@ public class RequestHandler {
 
   // Used when form value is a list. For example: used when multiple entries with ending "-from-times" is passed in from the request form.
   public static ArrayList<String> getParameterValuesOrThrow(HttpServletRequest request, String formKey){
-    System.out.println("Form Key is: " + formKey);
     ArrayList<String> results = new ArrayList<String>(Arrays.asList(request.getParameterValues(formKey)));
     if(results.isEmpty() || results == null) {
       throw new IllegalArgumentException("Form value cannot be null");

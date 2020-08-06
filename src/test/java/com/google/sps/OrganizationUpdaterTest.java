@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import org.junit.Assert;
@@ -33,6 +34,8 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /** */
 @RunWith(JUnit4.class)
@@ -40,28 +43,20 @@ public final class OrganizationUpdaterTest {
 
   private LocalServiceTestHelper helper;
   private DataHelper dataHelper;
+  private static Logger logger = Logger.getLogger("OrganizationUpdaterTest Logger");
 
-  // @After
-  // public void tearDown() {
-  //   helper.tearDown();
-  // }
-
-  /**
-   * Mocks request class and sets proper return values for property keys that are defined in parameterToValue HashMap.
-   */
-  private HttpServletRequest setMockReturnValuesAndGetRequest(HashMap<String, String> parameterToValue) {
-    HttpServletRequest request = mock(HttpServletRequest.class);
+  private HashMap<String, String> setUpAndReturnRequestParameterMap() {
     HashMap<String, String> requestParameters = new HashMap<String, String>();
     requestParameters.put("org-name", "");
     requestParameters.put("org-email", "");
-    requestParameters.put("org-street-address", "");
-    requestParameters.put("org-city", "");
-    requestParameters.put("org-state", "");
-    requestParameters.put("org-zip-code", "");
-    requestParameters.put("org-phone-num", "");
-    requestParameters.put("org-url", "");
-    requestParameters.put("org-description", "");
-    requestParameters.put("approval", "");
+    requestParameters.put("org-street-address", "tempAddress");
+    requestParameters.put("org-city", "tempCity");
+    requestParameters.put("org-state", "tempState");
+    requestParameters.put("org-zip-code", "tempZipcode");
+    requestParameters.put("org-phone-num", "0000000000");
+    requestParameters.put("org-url", "google.com");
+    requestParameters.put("org-description", "tempDescription");
+    requestParameters.put("approval", "notApproved");
     requestParameters.put("moderator-list", "");
     requestParameters.put("org-resource-categories", "");
     requestParameters.put("Monday-isOpen", "closed");
@@ -72,6 +67,16 @@ public final class OrganizationUpdaterTest {
     requestParameters.put("Saturday-isOpen", "closed");
     requestParameters.put("Sunday-isOpen", "closed");
 
+    return requestParameters;
+  }
+
+  /**
+   * Mocks request class and sets proper return values for property keys that are defined in parameterToValue HashMap.
+   */
+  private HttpServletRequest setMockReturnValuesAndGetRequest(HashMap<String, String> parameterToValue) {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HashMap<String, String> requestParameters = setUpAndReturnRequestParameterMap();
+
     for (Map.Entry<String,String> parameter: requestParameters.entrySet()) {
       if (parameterToValue.get(parameter.getKey()) == null) {
         when(request.getParameter(parameter.getKey())).thenReturn(parameter.getValue());
@@ -80,6 +85,40 @@ public final class OrganizationUpdaterTest {
       }
     }
     return request;
+  }
+
+  private boolean checkIfOrgEntitiesEqual(Entity expectedOrgEntity, Entity actualOrgEntity) {
+    HashSet<String> propertyKeys = new HashSet<String>();
+    propertyKeys.add("name");
+    propertyKeys.add("email");
+    propertyKeys.add("streetAddress");
+    propertyKeys.add("city");
+    propertyKeys.add("state");
+    propertyKeys.add("zipcode");
+    propertyKeys.add("phone");
+    propertyKeys.add("url");
+    propertyKeys.add("description");
+    propertyKeys.add("isApproved");
+    propertyKeys.add("moderatorList");
+    propertyKeys.add("resourceCategories");
+
+    for (String propertyKey: propertyKeys) {
+      if (propertyKey.equals("moderatorList") || propertyKey.equals("resourceCategories")) {
+        // moderatorList and resourceCategories are of type ArrayList when placed into Datastore.
+        ArrayList expectedList = (ArrayList) expectedOrgEntity.getProperty(propertyKey);
+        ArrayList actualList = (ArrayList) actualOrgEntity.getProperty(propertyKey);
+        for (int i = 0; i < expectedList.size(); i++) {
+          if (!expectedList.get(i).equals(actualList.get(i))) {
+            return false;
+          }
+        }
+        continue;
+      }
+      if (!expectedOrgEntity.getProperty(propertyKey).equals(actualOrgEntity.getProperty(propertyKey))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -95,12 +134,13 @@ public final class OrganizationUpdaterTest {
     parameterToValue.put("org-name", "Org3");
     // User should also be added to the Datastore, TODO: so we can check for that.
     parameterToValue.put("moderator-list", "baikj+test14@google.com");
+    parameterToValue.put("org-email", "org3+test14@google.com");
+    parameterToValue.put("org-resource-categories", "Food");
     HttpServletRequest request = setMockReturnValuesAndGetRequest(parameterToValue);
 
     boolean forRegistration = true;
     HistoryManager historyManager = new HistoryManager();
     EmbeddedEntity historyUpdate = historyManager.recordHistory("Organization 3 was registered.", 1);
-    // TODO: check history manager's changeAuthorId (should be User14)
 
     Entity actualOrgEntity = new Entity("Distributor");
     OrganizationUpdater orgUpdater = new OrganizationUpdater(actualOrgEntity);
@@ -108,9 +148,29 @@ public final class OrganizationUpdaterTest {
     try {
       orgUpdater.updateOrganization(request, user, forRegistration, historyUpdate);
     } catch (IllegalArgumentException err) {
-      System.out.println("ERROR!");
+      logger.log(Level.SEVERE, "ERROR: OrganizationUpdater's updateOrganization had an error.");
+      throw new IllegalArgumentException();
     }
-    Assert.assertEquals(1, 1);
+
+    ArrayList<String> expectedModeratorList = new ArrayList<String>();
+    expectedModeratorList.add("User14");
+    ArrayList<String> expectedResourceCategories = new ArrayList<String>();
+    expectedResourceCategories.add("Food");
+    Entity expectedOrgEntity = new Entity("Distributor");
+    expectedOrgEntity.setProperty("name", "Org3");
+    expectedOrgEntity.setProperty("email", "org3+test14@google.com");
+    expectedOrgEntity.setProperty("streetAddress", "tempAddress");
+    expectedOrgEntity.setProperty("city", "tempCity");
+    expectedOrgEntity.setProperty("state", "tempState");
+    expectedOrgEntity.setProperty("zipcode", "tempZipcode");
+    expectedOrgEntity.setProperty("phone", "0000000000");
+    expectedOrgEntity.setProperty("url", "google.com");
+    expectedOrgEntity.setProperty("description", "tempDescription");
+    expectedOrgEntity.setProperty("isApproved", false);
+    expectedOrgEntity.setProperty("moderatorList", expectedModeratorList);
+    expectedOrgEntity.setProperty("resourceCategories", expectedResourceCategories);
+
+    Assert.assertTrue(checkIfOrgEntitiesEqual(expectedOrgEntity, actualOrgEntity));
   }
 
   /*@Test

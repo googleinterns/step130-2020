@@ -205,7 +205,7 @@ System.out.println("EEEEEEEEE");
       envAttributeMap.put("com.google.appengine.api.users.UserService.user_id_key", "User0");
     } else {
       System.out.println("line 205" + userId);
-      helper.setEnvEmail("baikj+test" + userId.charAt(4) + "@google.com");
+      helper.setEnvEmail("baikj+test" + userId.substring(4) + "@google.com");
       envAttributeMap.put("com.google.appengine.api.users.UserService.user_id_key", userId);
     }
 
