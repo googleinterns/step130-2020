@@ -140,7 +140,7 @@ public final class OrganizationUpdaterTest {
 
     boolean forRegistration = true;
     HistoryManager historyManager = new HistoryManager();
-    EmbeddedEntity historyUpdate = historyManager.recordHistory("Organization 3 was registered.", 1);
+    EmbeddedEntity historyUpdate = historyManager.recordHistory("Organization 3 was registered.", 1 /* millisecondsSinceEpoch */);
 
     Entity actualOrgEntity = new Entity("Distributor");
     OrganizationUpdater orgUpdater = new OrganizationUpdater(actualOrgEntity);
@@ -173,13 +173,33 @@ public final class OrganizationUpdaterTest {
     Assert.assertTrue(checkIfOrgEntitiesEqual(expectedOrgEntity, actualOrgEntity));
   }
 
-  /*@Test
+  /**
+   * Tests user attempting to update an Organization that they do not moderate.
+   */
+  @Test(expected = IllegalArgumentException.class)
   public void updateOrganizationForEditWithoutRightCredentialsTest() {
+    // User5 is NOT a moderator. Updating an Organization without the right credentials will fail.
+    dataHelper = new DataHelper();
+    helper = dataHelper.setUpAndReturnLocalServiceTestHelper(false /* userIsMaintainer */, "User5" /* userId */);
 
+    boolean forRegistration = false;
+    HistoryManager historyManager = new HistoryManager();
+    EmbeddedEntity historyUpdate = historyManager.recordHistory("Organization is updated.", 1 /* millisecondsSinceEpoch */);
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    Entity actualOrgEntity = new Entity("Distributor");
+    OrganizationUpdater orgUpdater = new OrganizationUpdater(actualOrgEntity);
+    GivrUser user = GivrUser.getCurrentLoggedInUser();
+    try {
+      orgUpdater.updateOrganization(request, user, forRegistration, historyUpdate);
+    } catch (IllegalArgumentException err) {
+      logger.log(Level.SEVERE, "ERROR: OrganizationUpdater's updateOrganization had an error.");
+      throw new IllegalArgumentException();
+    }
   }
 
   @Test
   public void updateOrganizationForEditWithRightCredentialsTest() {
 
-  }*/
+  }
 }
